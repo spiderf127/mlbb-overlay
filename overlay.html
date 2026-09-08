@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MPL Draft Overlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  @font-face {
+    font-family: 'Eixample Villa';
+    src: url('assets/font/Eixample Villa Bold.otf') format('opentype');
+    font-weight: bold;
+  }
+  
+  :root {
+    --border-color: #333333;
+    --border-thin: 1px solid var(--border-color);
+    --blue-team: #2962FF;
+    --red-team: #D32F2F;
+    --text-dark: #2F2F2F;
+    --text-light: #FFFFFF;
+    --empty-slot: #F4F4F4;
+    --team-header-bg: #EAEAEA;
+    --dark-bg: #2F2F2F;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Roboto', sans-serif;
+    color: var(--text-dark);
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+  }
+  .gameplay-area {
+    flex: 1;
+    background: transparent;
+  }
+  .overlay-bottom {
+    height: 300px;
+    display: flex;
+    position: relative;
+    background: transparent;
+    gap: 10px;
+    padding: 0 10px 18px 10px;
+  }
+  
+  .side-column {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+  }
+  .center-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--empty-slot);
+  }
+  
+  .top-row {
+    height: 60px;
+    display: flex;
+    margin-bottom: 1px;
+  }
+  .bottom-row {
+    flex: 1;
+    display: flex;
+  }
+
+  /* TEAM HEADERS */
+  .team-header {
+    flex: 2;
+    background: var(--team-header-bg);
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+  }
+  .team-header.left {
+    margin-right: 1px;
+  }
+  .team-header.right {
+    justify-content: flex-end;
+    margin-left: 1px;
+  }
+  .team-logo {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+  }
+  .team-logo-fallback {
+    width: 40px;
+    height: 40px;
+    background: #dddddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    color: #333;
+  }
+  .team-name {
+    font-family: 'Eixample Villa', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-dark);
+    margin: 0 15px;
+  }
+
+  /* BANS */
+  .bans-container {
+    flex: 3;
+    display: flex;
+    gap: 1px;
+  }
+  .bans-container.right {
+    flex-direction: row-reverse;
+  }
+  .ban-card {
+    flex: 1;
+    background: var(--empty-slot);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .ban-empty-x {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ban-empty-x::after {
+    content: '';
+    position: absolute;
+    width: 3px;
+    height: 45%;
+    background: #6a6a6a;
+    transform: rotate(45deg);
+    border-radius: 4px;
+  }
+  .ban-card img.hero-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(100%) brightness(70%) contrast(110%);
+  }
+
+  /* CENTER PANEL */
+  @keyframes movingGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .center-top-spacer {
+    height: 60px;
+    background: transparent;
+    margin-bottom: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .draft-update-text {
+    font-family: 'Eixample Villa', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    text-transform: uppercase;
+    opacity: 0;
+    transition: opacity 0.5s ease, color 0.5s ease;
+  }
+  .center-info-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    background: linear-gradient(270deg, #F4F4F4, #FFFFFF, #EAEAEA, #F4F4F4);
+    background-size: 400% 400%;
+    animation: movingGradient 6s ease infinite;
+  }
+  .cip-tourney-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 5px;
+  }
+  .cip-tourney-logo {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+  }
+  .cip-teams-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+    width: 100%;
+    flex: 1;
+    gap: 10px; /* fallback min gap */
+  }
+  .cip-team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 100px;
+  }
+  .cip-logo {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cip-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .cip-tag {
+    font-family: 'Eixample Villa', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+  }
+  .cip-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 5px;
+  }
+  .cip-ticker {
+    font-family: 'Eixample Villa', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-dark);
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 5px;
+  }
+  .cip-ticker-text {
+    transition: opacity 0.5s ease;
+  }
+  
+  .cip-draft-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Eixample Villa', sans-serif;
+    color: var(--text-dark);
+    text-align: center;
+  }
+  .cip-ds-label {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+    text-align: center;
+  }
+  .cip-ds-timer-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 24px;
+    font-weight: 700;
+  }
+  .cip-ds-arrow {
+    font-size: 16px;
+  }
+  .cip-ds-timer {
+    font-size: 32px;
+    line-height: 1;
+    min-width: 40px;
+    text-align: center;
+  }
+  .bars-group {
+    display: flex;
+    gap: 6px;
+    width: 100%;
+    justify-content: center;
+  }
+  .bars-group.left {
+    flex-direction: row-reverse;
+  }
+  .score-bar {
+    flex: 1;
+    max-width: 28px;
+    height: 8px; /* Thinner bars */
+    background: #e0e0e0;
+    border-radius: 1px;
+  }
+  .score-bar.blue-fill {
+    background: var(--blue-team);
+  }
+  .score-bar.red-fill {
+    background: var(--red-team);
+  }
+  .big-timer {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--text-light, #FFFFFF);
+    text-align: center;
+    line-height: 60px;
+    margin: 0;
+    font-family: 'Rajdhani', sans-serif;
+  }
+  .cp-action {
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* PICKS */
+  .picks-container {
+    flex: 1;
+    display: flex;
+    gap: 1px;
+  }
+  .picks-container.right {
+    flex-direction: row-reverse;
+  }
+  .pick-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #eeeeee;
+    position: relative;
+    overflow: hidden;
+    transition: flex 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  .pick-card.active-slot {
+    flex: 1.6; /* Smoothly expands width of the currently active pick */
+  }
+  .pick-portrait {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .pick-portrait img.hero-img {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .pick-portrait .role-icon-wrapper {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    background: transparent;
+  }
+  .role-icon-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .pick-footer {
+    height: 26px;
+    background: #EEEEEE;
+    color: var(--text-dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    overflow: hidden;
+  }
+  .pick-ign {
+    font-family: 'Eixample Villa', sans-serif;
+    font-weight: bold;
+    font-size: 15px;
+    line-height: 1.1;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 100%;
+  }
+  .pick-hero-text {
+    font-weight: 600;
+    font-size: 10px;
+    color: #aaaaaa;
+    text-transform: uppercase;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .top-role-badge {
+    position: absolute;
+    top: 0;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    z-index: 10;
+    background: transparent;
+  }
+  .blue-role-badge { 
+    left: 0; 
+  }
+  .red-role-badge { 
+    right: 0; 
+  }
+  @keyframes shrinkToCornerBlue {
+    0% {
+      transform: scale(1.7) translate(25px, 50px);
+      opacity: 0.3;
+    }
+    100% {
+      transform: scale(1) translate(0, 0);
+      opacity: 1;
+    }
+  }
+  @keyframes shrinkToCornerRed {
+    0% {
+      transform: scale(1.7) translate(-25px, 50px);
+      opacity: 0.3;
+    }
+    100% {
+      transform: scale(1) translate(0, 0);
+      opacity: 1;
+    }
+  }
+  .top-role-icon-wrapper {
+    position: absolute;
+    top: 6px;
+    width: 26px;
+    height: 26px;
+    overflow: hidden;
+    display: flex;
+    background: transparent;
+  }
+  .blue-role-badge .top-role-icon-wrapper {
+    left: 6px;
+    animation: shrinkToCornerBlue 0.4s ease-out forwards;
+  }
+  .red-role-badge .top-role-icon-wrapper {
+    right: 6px;
+    animation: shrinkToCornerRed 0.4s ease-out forwards;
+  }
+  .top-role-icon-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* ACTIVE INDICATORS */
+  @keyframes activeDraftPulse {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 0.35; }
+  }
+  /* Ban card active-indicator keeps the dark pulse */
+  .ban-card .active-indicator {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #2F2F2F;
+    animation: activeDraftPulse 1.2s infinite ease-in-out;
+    pointer-events: none;
+    z-index: 10;
+    display: none;
+  }
+  .ban-card.active-slot .active-indicator {
+    display: block;
+  }
+  /* Pick card active-indicator hidden — replaced by team-colored bg on portrait */
+  .pick-card .active-indicator {
+    display: none !important;
+  }
+  @keyframes pickerGlow {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  /* Silver moving gradient behind player image similar to center info panel for both teams */
+  .pick-portrait.blue-picker-bg,
+  .pick-portrait.red-picker-bg {
+    background: linear-gradient(270deg, #F4F4F4, #FFFFFF, #EAEAEA, #F4F4F4);
+    background-size: 400% 400%;
+    animation: movingGradient 6s ease infinite;
+  }
+  
+
+  @keyframes slideRightStats {
+    0% { transform: translateX(100%); opacity: 0; }
+    15% { transform: translateX(0); opacity: 1; }
+    85% { transform: translateX(0); opacity: 1; }
+    100% { transform: translateX(100%); opacity: 0; }
+  }
+  .hero-stats-popup {
+    position: absolute;
+    bottom: 26px; left: 0; right: 0; top: 0;
+    border-top: 2px solid var(--gold-accent);
+    color: var(--text-light);
+    z-index: 50;
+    transform: translateX(100%);
+    opacity: 0;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Eixample Villa', sans-serif;
+  }
+  .left .hero-stats-popup { background: var(--blue-team); }
+  .right .hero-stats-popup { background: var(--red-team); }
+  
+  .hero-stats-popup.show-stats {
+    animation: slideRightStats 3.0s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+    animation-delay: 1.0s;
+  }
+  
+  @keyframes lockInGlow {
+    0% { box-shadow: inset 0 0 0px 0px #FFFFFF; opacity: 0; }
+    30% { box-shadow: inset 0 0 100px 30px #FFFFFF; opacity: 1; }
+    100% { box-shadow: inset 0 0 0px 0px #FFFFFF; opacity: 0; }
+  }
+  .pick-card.lock-glow::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 45;
+    animation: lockInGlow 1.2s ease-out forwards;
+  }
+  .stat-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  .stat-label {
+    font-size: 11px; /* Smaller to prevent wrapping */
+    color: #ffffff;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .stat-val {
+    font-size: 20px; /* Scaled down slightly */
+    color: var(--gold-accent);
+    font-weight: 700;
+    line-height: 1.1;
+  }
+  .debut-pick {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--gold-accent);
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  @keyframes blinkArrowText {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+  .blink-action {
+    animation: blinkArrowText 0.8s infinite;
+  }
+
+  /* TIMER BAR */
+  .timer-bar-container {
+    position: absolute;
+    bottom: 0;
+    left: 10px;
+    width: calc(100% - 20px);
+    height: 8px;
+    background: transparent;
+    z-index: 20;
+  }
+  .timer-bar {
+    height: 100%;
+    width: 100%;
+    transition: width 1s linear;
+    margin: 0 auto;
+  }
+  .timer-bar-lc {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 100%;
+    transition: width 1s linear;
+    background-color: #2F2F2F;
+    display: none;
+  }
+
+  /* ANIMATIONS */
+  @keyframes riseUp {
+    0% { transform: translateY(120%); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes slideRight {
+    0% { transform: translateX(-100%); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+  }
+  @keyframes slideLeft {
+    0% { transform: translateX(100%); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+  }
+  @keyframes fadeOutDown {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(120%); opacity: 0; }
+  }
+  @keyframes fadeOutLeft {
+    0% { transform: translateX(0); opacity: 1; }
+    100% { transform: translateX(-100%); opacity: 0; }
+  }
+  @keyframes fadeOutRight {
+    0% { transform: translateX(0); opacity: 1; }
+    100% { transform: translateX(100%); opacity: 0; }
+  }
+
+  /* Entrance */
+  body.show-overlay .center-column {
+    opacity: 0;
+    animation: riseUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+  body.show-overlay .side-column:first-child .top-row {
+    opacity: 0;
+    animation: slideRight 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+  body.show-overlay .side-column:nth-child(3) .top-row {
+    opacity: 0;
+    animation: slideLeft 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+  body.show-overlay .pick-card {
+    opacity: 0; /* hidden before delay starts */
+    animation: riseUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+
+  /* Entrance Delays (Outwards inwards) */
+  body.show-overlay #bluePickDOM4, body.show-overlay #redPickDOM4 { animation-delay: 0.1s; }
+  body.show-overlay #bluePickDOM3, body.show-overlay #redPickDOM3 { animation-delay: 0.25s; }
+  body.show-overlay #bluePickDOM2, body.show-overlay #redPickDOM2 { animation-delay: 0.4s; }
+  body.show-overlay #bluePickDOM1, body.show-overlay #redPickDOM1 { animation-delay: 0.55s; }
+  body.show-overlay #bluePickDOM0, body.show-overlay #redPickDOM0 { animation-delay: 0.7s; }
+
+  @keyframes borderFadeIn {
+    0% { border-top-color: transparent; }
+    100% { border-top-color: #333333; }
+  }
+  @keyframes fadeInOpacity {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  body.show-overlay .overlay-bottom {
+    /* (Border removed, no animation needed here) */
+  }
+  body.show-overlay .timer-bar-container {
+    opacity: 0;
+    animation: fadeInOpacity 0.4s 0.8s forwards;
+  }
+
+  /* Exit */
+  body.hide-overlay .center-column {
+    animation: fadeOutDown 0.6s cubic-bezier(0.8, 0.2, 0.8, 0.2) forwards;
+  }
+  body.hide-overlay .side-column:first-child .top-row {
+    animation: fadeOutLeft 0.6s cubic-bezier(0.8, 0.2, 0.8, 0.2) forwards;
+  }
+  body.hide-overlay .side-column:nth-child(3) .top-row {
+    animation: fadeOutRight 0.6s cubic-bezier(0.8, 0.2, 0.8, 0.2) forwards;
+  }
+  body.hide-overlay .pick-card {
+    animation: fadeOutDown 0.6s cubic-bezier(0.8, 0.2, 0.8, 0.2) forwards;
+  }
+  
+  /* Exit Delays (Inwards outwards) */
+  body.hide-overlay #bluePickDOM0, body.hide-overlay #redPickDOM0 { animation-delay: 0.0s; }
+  body.hide-overlay #bluePickDOM1, body.hide-overlay #redPickDOM1 { animation-delay: 0.1s; }
+  body.hide-overlay #bluePickDOM2, body.hide-overlay #redPickDOM2 { animation-delay: 0.2s; }
+  body.hide-overlay #bluePickDOM3, body.hide-overlay #redPickDOM3 { animation-delay: 0.3s; }
+  body.hide-overlay #bluePickDOM4, body.hide-overlay #redPickDOM4 { animation-delay: 0.4s; }
+
+  /* Fade out borders and timer cleanly */
+  @keyframes fadeBorderOut {
+    0% { border-top-color: #333333; }
+    100% { border-top-color: transparent; }
+  }
+  @keyframes fadeOutOpacity {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @keyframes slideUp {
+    0%   { transform: translateY(100%); opacity: 0; }
+    100% { transform: translateY(0);    opacity: 1; }
+  }
+  .player-img-popup {
+    animation: slideUp 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  }
+  body.hide-overlay .overlay-bottom {
+  }
+  body.hide-overlay .timer-bar-container {
+    animation: fadeOutOpacity 0.6s forwards;
+  }
+
+
+  /* Default hidden state for the initial load before class is applied */
+  body:not(.show-overlay):not(.hide-overlay) #overlayContainer {
+    opacity: 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="gameplay-area"></div>
+<div class="overlay-bottom" id="overlayContainer" style="display: flex;">
+
+  <!-- LEFT COLUMN -->
+  <div class="side-column">
+    <div class="top-row">
+      <div class="team-header left">
+        <div id="blueLogo"></div>
+        <div class="team-name" id="blueName">TEAM NAME A</div>
+      </div>
+      <div class="bans-container left" id="blueBans"></div>
+    </div>
+    <div class="bottom-row picks-container left" id="bluePicks"></div>
+  </div>
+
+  <!-- CENTER COLUMN -->
+  <div class="center-column">
+    <div class="center-top-spacer" id="draftBanner">
+      <div class="draft-update-text" id="draftUpdateText"></div>
+    </div>
+    <div class="center-info-panel">
+      <div class="cip-tourney-wrap">
+        <img src="assets/imgs/tournamentlogo.png" class="cip-tourney-logo" alt="Tournament Logo" onerror="this.style.display='none'">
+      </div>
+      <div class="cip-teams-container">
+        <div class="cip-team left">
+          <div class="cip-logo" id="cipBlueLogo"></div>
+          <div class="cip-tag" id="cipBlueTag">TAG</div>
+          <div class="bars-group left" id="blueBars"></div>
+        </div>
+        
+        <div class="cip-draft-state" id="cpAction">
+          <div class="cip-ds-label" id="actionText">PICKING</div>
+          <div class="cip-ds-timer-row">
+            <span class="cip-ds-arrow" id="arrowLeft" style="display:none;">◀</span>
+            <span class="cip-ds-timer" id="bigTimer"></span>
+            <span class="cip-ds-arrow" id="arrowRight" style="display:none;">▶</span>
+          </div>
+        </div>
+
+        <div class="cip-team right">
+          <div class="cip-logo" id="cipRedLogo"></div>
+          <div class="cip-tag" id="cipRedTag">TAG</div>
+          <div class="bars-group right" id="redBars"></div>
+        </div>
+      </div>
+      <div class="cip-bottom">
+        <div class="cip-ticker">
+          <div class="cip-ticker-text" id="cipTickerText"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="side-column">
+    <div class="top-row">
+      <div class="bans-container right" id="redBans"></div>
+      <div class="team-header right">
+        <div class="team-name" id="redName">TEAM NAME B</div>
+        <div id="redLogo"></div>
+      </div>
+    </div>
+    <div class="bottom-row picks-container right" id="redPicks"></div>
+  </div>
+
+  <!-- TIMER BAR -->
+  <div class="timer-bar-container">
+    <div class="timer-bar" id="timerBar"></div>
+    <div class="timer-bar-lc" id="timerBarLC"></div>
+  </div>
+
+</div>
+
+<script>
+window.onerror = function(m, s, l, c, e) { 
+  document.body.innerHTML += '<div style="color:red; background:white; position:fixed; top:0; left:0; padding:20px; z-index:9999;">' + m + ' at ' + l + ':' + c + '<br>' + e?.stack + '</div>'; 
+};
+
+const SK = 'mplDraft_v4';
+const LANES = ['EXP Lane','Jungle','Mid Lane','Gold Lane','Roam'];
+const BLACK_LANE_ICONS = {
+  'EXP Lane': 'assets/imgs/black_exp.png',
+  'Jungle': 'assets/imgs/black_core.png',
+  'Mid Lane': 'assets/imgs/black_mid.png',
+  'Gold Lane': 'assets/imgs/black_gold.png',
+  'Roam': 'assets/imgs/black_roam.png'
+};
+
+const WHITE_LANE_ICONS = {
+  'EXP Lane': 'assets/imgs/white_exp.png',
+  'Jungle': 'assets/imgs/white_core.png',
+  'Mid Lane': 'assets/imgs/white_mid.png',
+  'Gold Lane': 'assets/imgs/white_gold.png',
+  'Roam': 'assets/imgs/white_roam.png'
+};
+
+let S = null;
+let lastStr = '';
+let builtBans = 0, builtPicks = 0, builtFormat = '';
+let lastRenderedPicks = { blue: [], red: [] };
+
+// BroadcastChannel setup
+let bc = null;
+try {
+  bc = new BroadcastChannel('mplDraft_bc');
+  bc.onmessage = (e) => {
+    if(e.data.t === 'STATE') {
+      checkAndRender(e.data.d);
+    } else if(e.data.t === 'TICK') {
+      if(S) {
+        if(!S.timer) S.timer = {remaining: 30, max: 30};
+        S.timer.remaining = e.data.remaining;
+        S.timer.max = e.data.max;
+        renderTimer();
+      }
+    }
+  };
+} catch(e) {}
+
+function getState() {
+  try { const r=localStorage.getItem(SK); return r?JSON.parse(r):null; } catch(e){return null;}
+}
+
+let lastRenderStr = '';
+
+function checkAndRender(newData) {
+  if(!newData) return;
+  const cloneNew = JSON.parse(JSON.stringify(newData));
+  delete cloneNew.timer;
+  const newStr = JSON.stringify(cloneNew);
+  
+  if (newStr !== lastRenderStr) {
+    lastRenderStr = newStr;
+    S = newData;
+    render();
+  } else {
+    // Only timer changed
+    if(newData.timer) {
+      if(!S) S = {};
+      S.timer = newData.timer;
+      renderTimer();
+    }
+  }
+}
+
+// Ticker Loop for center info panel
+let tickerState = 0;
+setInterval(() => {
+  const el = document.getElementById('cipTickerText');
+  if(!el || !S) return;
+  el.style.opacity = 0;
+  setTimeout(() => {
+    tickerState = 1 - tickerState;
+    if (tickerState === 0) {
+      el.textContent = `${S?.meta?.match || ''} - GAME ${S?.meta?.game || '1'}`;
+    } else {
+      el.textContent = S?.meta?.tournament || '';
+    }
+    el.style.opacity = 1;
+  }, 500);
+}, 5000);
+
+setInterval(() => {
+  // Cross-browser sync via PHP (for OBS CEF)
+  fetch('sync.php')
+    .then(r => r.json())
+    .then(data => {
+      if(data && !data.error) {
+        const str = JSON.stringify(data);
+        if(str !== lastStr) {
+          lastStr = str;
+          checkAndRender(data);
+        }
+      }
+    }).catch(()=>{});
+}, 300);
+
+window.addEventListener('storage', e => {
+  if(e.key === SK && e.newValue) {
+    try { S = JSON.parse(e.newValue); render(); } catch(e){}
+  }
+});
+
+function buildStructure(state) {
+  const bansN = state.format === '5ban' ? 5 : (state.format === '4ban' ? 4 : 3);
+  const picksN = state.numPlayers || 5;
+  const needRebuild = builtBans !== bansN || builtPicks !== picksN || builtFormat !== state.format;
+  if(!needRebuild) return;
+  builtBans = bansN; builtPicks = picksN; builtFormat = state.format;
+
+  ['blue','red'].forEach(side => {
+    // Bans
+    const banCont = document.getElementById(`${side}Bans`);
+    banCont.innerHTML = '';
+    for(let i=0;i<bansN;i++) {
+      const idx = i;
+      const sl=document.createElement('div');
+      sl.className='ban-card';
+      sl.id=`${side}Ban${idx}`;
+      sl.innerHTML='<div class="active-indicator"></div><div class="ban-empty-x"></div>';
+      banCont.appendChild(sl);
+    }
+    
+    // Picks
+    const pickCont = document.getElementById(`${side}Picks`);
+    pickCont.innerHTML = '';
+    for(let i=0;i<picksN;i++) {
+      const idx = i;
+      const pc=document.createElement('div');
+      pc.className='pick-card';
+      pc.id=`${side}PickDOM${idx}`; // Use logical index for correct targeting
+      pc.innerHTML=`
+        <div class="pick-portrait" id="${side}PickPortrait${idx}"></div>
+        <div class="top-role-badge ${side}-role-badge" id="${side}TopRole${idx}"></div>
+        <div class="pick-footer" id="${side}PickIGN${idx}">—</div>
+        <div class="hero-stats-popup" id="${side}StatsPopup${idx}"></div>
+      `;
+      pickCont.appendChild(pc);
+    }
+  });
+}
+
+function renderTimer() {
+  if(!S) return;
+  const rem = S.timer?.remaining || 0;
+  const max = S.timer?.max || 30;
+  const pct = Math.max(0, rem/max);
+  const newWidth = (pct * 100) + '%';
+  
+  const bigTimer = document.getElementById('bigTimer');
+  if(bigTimer) {
+    if(S.status === 'running' || S.status === 'last_change') {
+      if(bigTimer.textContent !== String(rem)) bigTimer.textContent = rem;
+    } else {
+      if(bigTimer.textContent !== '') bigTimer.textContent = '';
+    }
+  }
+  
+  const bar = document.getElementById('timerBar');
+  const lcBar = document.getElementById('timerBarLC');
+  
+  if (S.status === 'last_change') {
+    if (bar && bar.style.display !== 'none') bar.style.display = 'none';
+    if (lcBar) {
+      if (lcBar.style.display !== 'block') lcBar.style.display = 'block';
+      if (lcBar.style.width !== newWidth) lcBar.style.width = newWidth;
+    }
+  } else {
+    if (lcBar && lcBar.style.display !== 'none') lcBar.style.display = 'none';
+    if (bar && bar.style.display !== 'block') bar.style.display = 'block';
+    if (bar && bar.style.width !== newWidth) bar.style.width = newWidth;
+    
+    const step = S.steps?.[S.currentStep];
+    const isRed = step && step.side === 'red';
+    if(isRed) {
+      if (bar.style.backgroundColor !== 'var(--red-team)') bar.style.backgroundColor = 'var(--red-team)';
+    } else {
+      if (bar.style.backgroundColor !== 'var(--blue-team)') bar.style.backgroundColor = 'var(--blue-team)';
+    }
+  }
+}
+
+function render() {
+  if(!S) return;
+  
+  if(S.overlayVisible) {
+    document.body.classList.remove('hide-overlay');
+    document.body.classList.add('show-overlay');
+  } else {
+    document.body.classList.remove('show-overlay');
+    document.body.classList.add('hide-overlay');
+  }
+
+  document.getElementById('overlayContainer').style.display = 'flex';
+  
+
+  buildStructure(S);
+
+  // Meta & Ticker are handled by ticker loop
+  const tickerEl = document.getElementById('cipTickerText');
+  if (tickerEl && !tickerEl.textContent) {
+    tickerEl.textContent = `${S?.meta?.match || ''} - GAME ${S?.meta?.game || '1'}`;
+  }
+  // Score Bars
+  const boText = S.meta?.bo || 'BO3';
+  const totalGames = parseInt(boText.replace(/\D/g, '')) || 3;
+  const nBars = Math.ceil(totalGames / 2);
+  const bScore = S.meta?.blueWins || 0;
+  const rScore = S.meta?.redWins || 0;
+
+  const bGroup = document.getElementById('blueBars');
+  const rGroup = document.getElementById('redBars');
+  if (bGroup && rGroup) {
+    bGroup.innerHTML = '';
+    rGroup.innerHTML = '';
+    for(let i=0; i<nBars; i++) {
+      const bb = document.createElement('div');
+      bb.className = 'score-bar' + (i < bScore ? ' blue-fill' : '');
+      bGroup.appendChild(bb);
+
+      const rb = document.createElement('div');
+      rb.className = 'score-bar' + (i < rScore ? ' red-fill' : '');
+      rGroup.appendChild(rb);
+    }
+  }
+
+  // Teams
+  const bLogo = document.getElementById('blueLogo');
+  const rLogo = document.getElementById('redLogo');
+  const cipBlueLogo = document.getElementById('cipBlueLogo');
+  const cipRedLogo = document.getElementById('cipRedLogo');
+  
+  document.getElementById('blueName').textContent = S.teams?.blue?.name||'';
+  document.getElementById('redName').textContent = S.teams?.red?.name||'';
+  document.getElementById('cipBlueTag').textContent = S.teams?.blue?.tag||'';
+  document.getElementById('cipRedTag').textContent = S.teams?.red?.tag||'';
+  
+  if(S.teams?.blue?.logo) {
+    let bSrc = S.teams.blue.logo.includes("/") ? S.teams.blue.logo : "assets/teams/"+S.teams.blue.logo;
+    bLogo.innerHTML=`<img src="${bSrc}" class="team-logo" onerror="this.innerHTML='<div class=\\'team-logo-fallback\\'>B</div>'">`;
+    cipBlueLogo.innerHTML=`<img src="${bSrc}" onerror="this.innerHTML='<div class=\\'team-logo-fallback\\'>B</div>'">`;
+  } else { 
+    bLogo.innerHTML=`<div class='team-logo-fallback'>B</div>`; 
+    cipBlueLogo.innerHTML=`<div class='team-logo-fallback'>B</div>`;
+  }
+  
+  if(S.teams?.red?.logo) {
+    let rSrc = S.teams.red.logo.includes("/") ? S.teams.red.logo : "assets/teams/"+S.teams.red.logo;
+    rLogo.innerHTML=`<img src="${rSrc}" class="team-logo" onerror="this.innerHTML='<div class=\\'team-logo-fallback\\'>R</div>'">`;
+    cipRedLogo.innerHTML=`<img src="${rSrc}" onerror="this.innerHTML='<div class=\\'team-logo-fallback\\'>R</div>'">`;
+  } else { 
+    rLogo.innerHTML=`<div class='team-logo-fallback'>R</div>`;
+    cipRedLogo.innerHTML=`<div class='team-logo-fallback'>R</div>`;
+  }
+
+  // Bans
+  const bansN = S.format==='5ban'?5:(S.format==='4ban'?4:3);
+  for(let i=0;i<bansN;i++) {
+    ['blue','red'].forEach(side => {
+      const hero = side==='blue' ? S.blueBans?.[i] : S.redBans?.[i];
+      const sl = document.getElementById(`${side}Ban${i}`);
+      if(sl) {
+        sl.className = 'ban-card'; // reset active class
+        let html = '<div class="active-indicator"></div>';
+        if(hero && hero.name === 'No Ban') {
+          html += `<div class="ban-empty-x"></div>`;
+        } else if(hero && hero.icon) {
+          html += `<img src="${hero.icon}" class="hero-icon">`;
+        } else {
+          html += `<div class="ban-empty-x"></div>`;
+        }
+        sl.innerHTML = html;
+      }
+    });
+  }
+
+  // Picks
+  const picksN = S.numPlayers||5;
+  for(let i=0;i<picksN;i++) {
+    ['blue','red'].forEach(side => {
+      const hero = side==='blue' ? S.bluePicks?.[i] : S.redPicks?.[i];
+      const ign = (side==='blue' ? S.players?.blue?.[i] : S.players?.red?.[i]) || '—';
+      const role = (side==='blue' ? S.roles?.blue?.[i] : S.roles?.red?.[i]) || LANES[i];
+      const blackRoleImgSrc = role ? BLACK_LANE_ICONS[role] : '';
+      const whiteRoleImgSrc = role ? WHITE_LANE_ICONS[role] : '';
+      
+      const pt = document.getElementById(`${side}PickPortrait${i}`);
+      const ignEl = document.getElementById(`${side}PickIGN${i}`);
+      const pc = document.getElementById(`${side}PickDOM${i}`);
+      const topRoleEl = document.getElementById(`${side}TopRole${i}`);
+
+      const statsPopup = document.getElementById(`${side}StatsPopup${i}`);
+      
+      if(hero && hero.name) {
+        if(lastRenderedPicks[side][i] !== hero.name) {
+          lastRenderedPicks[side][i] = hero.name;
+          
+          if(pc) {
+            pc.classList.remove('lock-glow');
+            void pc.offsetWidth; // Force reflow
+            pc.classList.add('lock-glow');
+          }
+          
+          if(statsPopup) {
+            const picks = hero.picks || 0;
+            const bans = hero.bans || 0;
+            const wins = hero.wins || 0;
+            const total = S.meta?.totalMatches || 0;
+            
+            if (S.meta.statsEnabled !== false) {
+              if (picks === 0 && bans === 0) {
+                statsPopup.innerHTML = `<div class="debut-pick">DEBUT<br>PICK</div>`;
+              } else {
+                const pRate = total > 0 ? ((picks / total) * 100).toFixed(1) : 0;
+                const bRate = total > 0 ? ((bans / total) * 100).toFixed(1) : 0;
+                const cRate = total > 0 ? (((picks + bans) / total) * 100).toFixed(1) : 0;
+                const wRate = picks > 0 ? ((wins / picks) * 100).toFixed(1) : 0;
+                
+                statsPopup.innerHTML = `
+                  <div class="stat-box"><span class="stat-label">Pick</span> <span class="stat-val">${pRate}%</span></div>
+                  <div class="stat-box"><span class="stat-label">Win</span> <span class="stat-val">${wRate}%</span></div>
+                  <div class="stat-box"><span class="stat-label">Contest</span> <span class="stat-val">${cRate}%</span></div>
+                `;
+              }
+              
+              // Trigger animation
+              if (S.status !== 'last_change') {
+                statsPopup.classList.remove('show-stats');
+                void statsPopup.offsetWidth; // Force reflow
+                statsPopup.classList.add('show-stats');
+              }
+            }
+          }
+        }
+      } else {
+        lastRenderedPicks[side][i] = null;
+        if(statsPopup) statsPopup.classList.remove('show-stats');
+      }
+
+      const playerImg = (side==='blue' ? S.playerImages?.blue?.[i] : S.playerImages?.red?.[i]) || '';
+
+      // Determine if this slot is active (current OR next consecutive pick for same side)
+      const curStep = S.steps?.[S.currentStep];
+      const nextStep = S.steps?.[S.currentStep + 1];
+      const activePickIdx = side === 'blue' ? S.bluePickIdx : S.redPickIdx;
+
+      const isCurrentPick = S.status === 'running'
+        && curStep?.action === 'pick'
+        && curStep?.side === side
+        && i === activePickIdx;
+
+      // Double-pick: next step is also a pick for same side → show BOTH slots
+      const isNextPick = S.status === 'running'
+        && curStep?.action === 'pick'
+        && curStep?.side === side
+        && nextStep?.action === 'pick'
+        && nextStep?.side === side
+        && i === activePickIdx + 1;
+
+      const isActivePick = isCurrentPick || isNextPick;
+
+      const pickerBgClass = side === 'blue' ? 'blue-picker-bg' : 'red-picker-bg';
+      const isPopupEnabled = S.meta?.playerPopupEnabled !== false;
+
+      if(hero && hero.portrait) {
+        // Hero locked — show hero portrait, clear bg
+        pt.classList.remove('blue-picker-bg', 'red-picker-bg');
+        pt.innerHTML = `<img src="${hero.portrait}" class="hero-img">`;
+        pt.dataset.lastActive = '';
+      } else if (isActivePick && playerImg && isPopupEnabled) {
+        // It's this player's turn AND popup is enabled — slide up their photo, show team-colored bg behind it
+        const pSrc = playerImg.includes("/") ? playerImg : "assets/players/" + playerImg;
+        pt.classList.add(pickerBgClass);
+        // Only retrigger slide animation when this slot first becomes active or player image changes
+        const activeKey = `${side}${i}_${pSrc}`;
+        if(pt.dataset.lastActive !== activeKey) {
+          pt.dataset.lastActive = activeKey;
+          pt.innerHTML = `<img src="${pSrc}" class="hero-img player-img-popup" style="object-fit:cover; object-position:top;">`;
+        }
+      } else if (isActivePick && !isPopupEnabled) {
+        // It's this player's turn BUT popup is disabled — show team-colored bg, keep large role icon centered
+        pt.classList.add(pickerBgClass);
+        pt.dataset.lastActive = '';
+        if(blackRoleImgSrc) {
+          pt.innerHTML = `<div class="role-icon-wrapper"><img src="${blackRoleImgSrc}" class="role-icon-img"></div>`;
+        } else {
+          pt.innerHTML = '';
+        }
+      } else {
+        // Not their turn yet — show role icon, no bg
+        pt.classList.remove('blue-picker-bg', 'red-picker-bg');
+        pt.dataset.lastActive = '';
+        if(blackRoleImgSrc) {
+          pt.innerHTML = `<div class="role-icon-wrapper"><img src="${blackRoleImgSrc}" class="role-icon-img"></div>`;
+        } else {
+          pt.innerHTML = '';
+        }
+      }
+
+      if(topRoleEl) {
+        const isLocked = !!(hero && hero.portrait);
+        const isPicking = !isLocked && (isActivePick && playerImg && isPopupEnabled);
+        const roleImgSrc = isLocked ? whiteRoleImgSrc : blackRoleImgSrc;
+
+        if(roleImgSrc && (isLocked || isPicking)) {
+          const stateKey = `${roleImgSrc}_${isLocked ? 'locked' : 'picking'}`;
+          
+          if(topRoleEl.dataset.roleState !== stateKey) {
+            topRoleEl.dataset.roleState = stateKey;
+            const imgClass = isLocked ? 'top-role-icon-img locked' : 'top-role-icon-img picking';
+            topRoleEl.innerHTML = `<div class="top-role-icon-wrapper"><img src="${roleImgSrc}" class="${imgClass}"></div>`;
+          }
+          topRoleEl.style.display = 'flex';
+        } else {
+          topRoleEl.dataset.roleState = '';
+          topRoleEl.style.display = 'none';
+        }
+      }
+
+      if(ignEl) {
+        ignEl.innerHTML = `<div class="pick-ign">${ign}</div>`;
+      }
+    });
+  }
+
+
+
+  // Active Highlight & Action Text
+  const step = S.steps?.[S.currentStep];
+  let actionText = 'LAST CHANGE';
+  let bArrow = false;
+  let rArrow = false;
+  let cpColor = '#2F2F2F';
+  let isDrafting = false;
+
+  if(S.status === 'running' && step) {
+    isDrafting = true;
+    const isBlue = step.side === 'blue';
+    const action = step.action === 'ban' ? 'BANNING' : 'PICKING';
+    actionText = action;
+    if (isBlue) { bArrow = true; cpColor = 'var(--blue-team)'; }
+    else { rArrow = true; cpColor = 'var(--red-team)'; }
+    
+    // Highlight active slot
+    const activeSlotIds = [];
+    if(step.action === 'ban') {
+      const idx = isBlue ? S.blueBanIdx : S.redBanIdx;
+      activeSlotIds.push(`${step.side}Ban${idx}`);
+    } else {
+      const idx = isBlue ? S.bluePickIdx : S.redPickIdx;
+      activeSlotIds.push(`${step.side}PickDOM${idx}`);
+      
+      // Double pick lookahead: highlight the next slot as well if it's a back-to-back pick for the same team
+      const nextStep = S.steps?.[S.currentStep + 1];
+      if (nextStep && nextStep.side === step.side && nextStep.action === 'pick') {
+        const nextIdx = idx + 1;
+        activeSlotIds.push(`${step.side}PickDOM${nextIdx}`);
+      }
+    }
+
+    document.querySelectorAll('.active-slot').forEach(el => {
+      if(!activeSlotIds.includes(el.id)) el.classList.remove('active-slot');
+    });
+    activeSlotIds.forEach(id => {
+      const el = document.getElementById(id);
+      if(el && !el.classList.contains('active-slot')) el.classList.add('active-slot');
+    });
+  } else if (S.status === 'last_change') {
+    actionText = 'LAST CHANGE';
+    cpColor = '#D4AF37'; // gold
+  } else if (S.status === 'complete') {
+    actionText = 'DRAFT COMPLETE';
+  }
+
+  document.getElementById('actionText').textContent = actionText;
+  
+  const cpActionEl = document.getElementById('cpAction');
+  cpActionEl.style.color = cpColor;
+  cpActionEl.classList.remove('blink-action');
+
+  document.getElementById('arrowLeft').style.display = bArrow ? 'inline' : 'none';
+  document.getElementById('arrowRight').style.display = rArrow ? 'inline' : 'none';
+
+  renderTimer();
+  checkDraftUpdates();
+}
+
+let draftBannerFadeTimer = null;
+let lastKnownStepIndex = -1;
+let currentBannerActionId = 0;
+
+function checkDraftUpdates() {
+  if (!S || !S.steps) return;
+  const isDraftEnd = (S.status === 'last_change' || S.status === 'complete');
+  
+  // Find the exact step that was just completed
+  const currentStepIdx = isDraftEnd ? S.steps.length : S.currentStep;
+  
+  if (currentStepIdx === lastKnownStepIndex) {
+    return; // No change in draft position
+  }
+  
+  lastKnownStepIndex = currentStepIdx;
+  let updateData = null;
+  
+  if (currentStepIdx > 0) {
+    // Loop backwards to find the most recent valid locked hero
+    for (let i = currentStepIdx - 1; i >= 0; i--) {
+      const step = S.steps[i];
+      let c = 0;
+      for (let j = 0; j <= i; j++) {
+        if (S.steps[j].side === step.side && S.steps[j].action === step.action) c++;
+      }
+      const arrIdx = c - 1;
+      let h = null;
+      if (step.action === 'ban') {
+        h = step.side === 'blue' ? S.blueBans?.[arrIdx] : S.redBans?.[arrIdx];
+      } else {
+        h = step.side === 'blue' ? S.bluePicks?.[arrIdx] : S.redPicks?.[arrIdx];
+      }
+      
+      if (h && h.name && h.name !== 'No Ban') {
+        updateData = {
+          name: h.name,
+          action: step.action === 'ban' ? 'BAN' : 'PICKED',
+          side: step.side
+        };
+        break;
+      }
+    }
+  }
+
+  const el = document.getElementById('draftUpdateText');
+  if (!el) return;
+
+  currentBannerActionId++;
+  const thisActionId = currentBannerActionId;
+
+  if (!updateData) {
+    // If undone to the very beginning, clear it
+    el.style.opacity = 0;
+    return;
+  }
+  
+  el.style.opacity = 0;
+  
+  setTimeout(() => {
+    if (currentBannerActionId !== thisActionId) return;
+    el.textContent = `${updateData.name} ${updateData.action}`;
+    el.style.color = updateData.side === 'blue' ? 'var(--blue-team)' : 'var(--red-team)';
+    el.style.opacity = 1;
+    
+    if (draftBannerFadeTimer) clearTimeout(draftBannerFadeTimer);
+    
+    if (isDraftEnd) {
+      draftBannerFadeTimer = setTimeout(() => {
+        if (currentBannerActionId === thisActionId) {
+          el.style.opacity = 0;
+        }
+      }, 5000); // Fades out after 5 seconds
+    }
+  }, 300);
+}
+
+const init = getState();
+S = init || {
+  status: 'idle', format: '3ban', numPlayers: 5,
+  teams: {blue:{name:''}, red:{name:''}},
+  meta: {tournament:'MPL', match:'Draft', bo:'BO3'}
+};
+render();
+</script>
+</body>
+</html>

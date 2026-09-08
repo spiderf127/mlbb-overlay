@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MPL Draft - Full Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  @font-face {
+    font-family: 'Eixample Villa';
+    src: url('assets/font/Eixample Villa Bold.otf') format('opentype');
+    font-weight: bold;
+  }
+  
+  :root {
+    --blue-team: #2962FF;
+    --red-team: #D32F2F;
+    --border-color: #333333;
+    --card-bg: #141418;
+    --text-dark: #2F2F2F;
+    --text-light: #FFFFFF;
+    --gold-accent: #ffb300;
+  }
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Eixample Villa', 'Roboto', sans-serif;
+    background: transparent;
+    color: var(--text-light);
+    user-select: none;
+  }
+
+  /* Main Dynamic Background - 60% Black Overlay */
+  #mainBg {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.6s ease-in-out;
+  }
+  #mainBg.bg-show { opacity: 1; }
+
+  .hidden { opacity: 0; pointer-events: none; display: none !important; }
+
+  /* Main Container Phase */
+  .preview-container {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 40px;
+    opacity: 0;
+  }
+
+  /* 1. MATCH INFO BAR & EVENT BRANDING */
+  .top-broadcast-header {
+    width: 100%;
+    max-width: 1400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  .center-event-branding {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .tournament-logo-img {
+    height: 56px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+  }
+
+  /* 2. MATCH INFO BAR */
+  .match-info-bar {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto 25px auto;
+    font-family: 'Eixample Villa', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+  .info-bar-section {
+    padding: 4px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .info-bar-round {
+    background: #2F2F2F;
+    color: #ffffff;
+    border-radius: 0;
+  }
+  .info-bar-game {
+    background: #ffffff;
+    color: #2F2F2F;
+    border-radius: 0;
+  }
+
+  /* 3. CONTINUOUS 10-CARD DRAFT LINEUP GRID */
+  .draft-lineup-grid {
+    width: 100%;
+    max-width: 1400px;
+    height: 480px;
+    max-height: 520px;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 1px;
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    position: relative;
+  }
+
+  .draft-card {
+    background: var(--card-bg);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    border-radius: 0;
+  }
+
+  /* Hero & Player Layer */
+  .card-media-layer {
+    flex: 1;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #101014;
+  }
+
+  .hero-art {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    filter: brightness(0.85);
+  }
+
+  .player-cutout {
+    position: absolute;
+    bottom: -5%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110%;
+    height: 55%;
+    object-fit: cover;
+    object-position: top center;
+    z-index: 2;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.8));
+  }
+
+  /* Gradient Overlay - smoother and lighter so player images remain crisp */
+  .card-gradient-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent 55%, rgba(47, 47, 47, 0.35) 80%, rgba(47, 47, 47, 0.85) 100%);
+  }
+
+  /* Role Icon Badge over Image - CENTERED HORIZONTALLY, MOVED HIGHER */
+  .role-icon-badge {
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .role-icon-badge img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* Gap between card 5 and card 6 to separate Blue & Red teams */
+  .draft-card:nth-child(5) {
+    margin-right: 12px;
+  }
+
+  /* Bottom Player Name Footer */
+  .card-footer {
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    z-index: 5;
+    background: #EAEAEA;
+  }
+
+  .player-name-text {
+    font-family: 'Eixample Villa', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #2F2F2F;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* 4. BOTTOM TEAM HEADERS CONTAINER */
+  .bottom-team-headers {
+    width: 100%;
+    max-width: 1400px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 25px;
+  }
+
+  .team-header-wrapper {
+    width: 50%;
+    display: flex;
+    align-items: center;
+  }
+  .team-header-wrapper.left {
+    justify-content: center;
+  }
+  .team-header-wrapper.right {
+    justify-content: center;
+  }
+
+  .team-header-panel {
+    display: flex;
+    align-items: center;
+    width: 320px;
+    height: 48px;
+    background: #ffffff;
+    color: #2F2F2F;
+    border-radius: 0;
+    padding: 0 12px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  }
+  .team-header-panel.left {
+    border-left: 6px solid #2F2F2F;
+  }
+  .team-header-panel.right {
+    border-right: 6px solid #2F2F2F;
+    flex-direction: row-reverse;
+  }
+
+  .team-hdr-logo {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+  }
+  .team-hdr-name {
+    font-family: 'Eixample Villa', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #2F2F2F;
+    margin: 0 10px;
+    flex: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .team-header-panel.left .team-hdr-name { text-align: left; }
+  .team-header-panel.right .team-hdr-name { text-align: right; }
+
+  .team-hdr-score {
+    font-family: 'Eixample Villa', sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    background: #EEEEEE;
+    color: #2F2F2F;
+    padding: 2px 10px;
+    border-radius: 0;
+    letter-spacing: 1px;
+  }
+
+  /* ================= Animations (Fade & Slide) ================= */
+  @keyframes slideInFromLeft {
+    0% { opacity: 0; transform: translateX(-100vw); }
+    100% { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slideInFromRight {
+    0% { opacity: 0; transform: translateX(100vw); }
+    100% { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slideOutToLeft {
+    0% { opacity: 1; transform: translateX(0); }
+    100% { opacity: 0; transform: translateX(-100vw); }
+  }
+  @keyframes slideOutToRight {
+    0% { opacity: 1; transform: translateX(0); }
+    100% { opacity: 0; transform: translateX(100vw); }
+  }
+
+  .play-anim { opacity: 1 !important; }
+  .play-anim .top-broadcast-header,
+  .play-anim .match-info-bar,
+  .play-anim .bottom-team-headers {
+    animation: fadeInMain 0.6s ease-in-out both;
+  }
+  .play-anim .team-blue-card {
+    animation: slideInFromLeft 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .play-anim .team-red-card {
+    animation: slideInFromRight 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  /* Center-first cascade outward: closest to center shows up first! */
+  .play-anim #card4 { animation-delay: 0.0s; }
+  .play-anim #card3 { animation-delay: 0.08s; }
+  .play-anim #card2 { animation-delay: 0.16s; }
+  .play-anim #card1 { animation-delay: 0.24s; }
+  .play-anim #card0 { animation-delay: 0.32s; }
+
+  .play-anim #card5 { animation-delay: 0.0s; }
+  .play-anim #card6 { animation-delay: 0.08s; }
+  .play-anim #card7 { animation-delay: 0.16s; }
+  .play-anim #card8 { animation-delay: 0.24s; }
+  .play-anim #card9 { animation-delay: 0.32s; }
+
+  .hide-anim { opacity: 1 !important; }
+  .hide-anim .top-broadcast-header,
+  .hide-anim .match-info-bar,
+  .hide-anim .bottom-team-headers {
+    animation: fadeOutMain 0.6s ease-in-out both;
+  }
+  .hide-anim .team-blue-card {
+    animation: slideOutToLeft 0.6s cubic-bezier(0.8, 0.2, 0.8, 1) both;
+  }
+  .hide-anim .team-red-card {
+    animation: slideOutToRight 0.6s cubic-bezier(0.8, 0.2, 0.8, 1) both;
+  }
+
+  .hide-anim #card0 { animation-delay: 0.0s; }
+  .hide-anim #card1 { animation-delay: 0.08s; }
+  .hide-anim #card2 { animation-delay: 0.16s; }
+  .hide-anim #card3 { animation-delay: 0.24s; }
+  .hide-anim #card4 { animation-delay: 0.32s; }
+
+  .hide-anim #card9 { animation-delay: 0.0s; }
+  .hide-anim #card8 { animation-delay: 0.08s; }
+  .hide-anim #card7 { animation-delay: 0.16s; }
+  .hide-anim #card6 { animation-delay: 0.24s; }
+  .hide-anim #card5 { animation-delay: 0.32s; }
+</style>
+</head>
+<body>
+
+<div id="mainBg" class="hidden"></div>
+
+<!-- 10-Card Continuous Lineup Container -->
+<div class="preview-container hidden" id="previewContainer">
+  <!-- 1. EVENT BRANDING HEADER -->
+  <div class="top-broadcast-header">
+    <div class="center-event-branding">
+      <img id="tournamentHeaderLogo" src="assets/imgs/tournamentlogo.png" class="tournament-logo-img">
+    </div>
+  </div>
+
+  <!-- 2. MATCH INFORMATION BAR -->
+  <div class="match-info-bar">
+    <div class="info-bar-section info-bar-round" id="infoBarRound">REGULAR SEASON — WEEK 3 DAY 3</div>
+    <div class="info-bar-section info-bar-game" id="infoBarGame">MATCH 1 — GAME 1</div>
+  </div>
+
+  <!-- 3. CONTINUOUS 10-CARD DRAFT LINEUP GRID -->
+  <div class="draft-lineup-grid" id="draftLineupGrid"></div>
+
+  <!-- 4. BOTTOM TEAM HEADERS -->
+  <div class="bottom-team-headers">
+    <div class="team-header-wrapper left">
+      <div class="team-header-panel left">
+        <img id="blueHeaderLogo" src="assets/imgs/tournamentlogo.png" class="team-hdr-logo">
+        <div id="blueHeaderName" class="team-hdr-name">TEAM BLUE</div>
+        <div id="blueHeaderScore" class="team-hdr-score">0</div>
+      </div>
+    </div>
+    <div class="team-header-wrapper right">
+      <div class="team-header-panel right">
+        <img id="redHeaderLogo" src="assets/imgs/tournamentlogo.png" class="team-hdr-logo">
+        <div id="redHeaderName" class="team-hdr-name">TEAM RED</div>
+        <div id="redHeaderScore" class="team-hdr-score">0</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SK = 'mplDraft_v4';
+const ROLE_ORDER = ['EXP Lane', 'Jungle', 'Mid Lane', 'Gold Lane', 'Roam'];
+const ROLE_ICONS = {
+  'EXP Lane': 'assets/imgs/white_exp.png',
+  'Jungle': 'assets/imgs/white_core.png',
+  'Mid Lane': 'assets/imgs/white_mid.png',
+  'Gold Lane': 'assets/imgs/white_gold.png',
+  'Roam': 'assets/imgs/white_roam.png'
+};
+
+let S = null;
+
+function getState() {
+  try {
+    const raw = localStorage.getItem(SK);
+    if(raw) return JSON.parse(raw);
+  } catch(e) {}
+  return null;
+}
+
+function buildHTML() {
+  if(!S) return;
+
+  // 1. Update Header Team A (Blue)
+  const bName = S.teams?.blue?.name || S.teams?.blue?.tag || '';
+  const bLogo = S.teams?.blue?.logo || 'assets/imgs/placeholder.png';
+  const bWins = S.meta?.blueWins || 0;
+  document.getElementById('blueHeaderName').textContent = bName;
+  document.getElementById('blueHeaderLogo').src = bLogo;
+  document.getElementById('blueHeaderScore').textContent = bWins;
+
+  // 2. Update Header Team B (Red)
+  const rName = S.teams?.red?.name || S.teams?.red?.tag || '';
+  const rLogo = S.teams?.red?.logo || 'assets/imgs/placeholder.png';
+  const rWins = S.meta?.redWins || 0;
+  document.getElementById('redHeaderName').textContent = rName;
+  document.getElementById('redHeaderLogo').src = rLogo;
+  document.getElementById('redHeaderScore').textContent = rWins;
+
+  // 3. Update Match Info Bar
+  const tourStr = S.meta?.tournament || 'MPL SEASON 15';
+  const matchStr = S.meta?.match || 'MATCH 1';
+  const gameStr = S.meta?.game || 1;
+  const boStr = S.meta?.bo || 'BO3';
+  document.getElementById('infoBarRound').textContent = `${tourStr} — ${matchStr}`;
+  document.getElementById('infoBarGame').textContent = `${boStr} — GAME ${gameStr}`;
+
+  // 4. Build Continuous 10-Card Lineup
+  const grid = document.getElementById('draftLineupGrid');
+  grid.innerHTML = '';
+
+  const num = S.numPlayers || 5;
+
+  // Cards 1-5 (Team A / Blue)
+  for(let i = 0; i < num; i++) {
+    const pName = S.players?.blue?.[i] || `PLAYER ${i+1}`;
+    const pRole = S.roles?.blue?.[i] || ROLE_ORDER[i] || 'EXP Lane';
+    const pImg = S.playerImages?.blue?.[i] ? (S.playerImages.blue[i].includes('/') ? S.playerImages.blue[i] : 'assets/players/' + S.playerImages.blue[i]) : '';
+    const hero = S.bluePicks?.[i];
+    const heroArt = hero && (hero.portrait || hero.img) ? (hero.portrait || hero.img) : '';
+    const roleIcon = ROLE_ICONS[pRole] || 'assets/imgs/white_exp.png';
+
+    const card = document.createElement('div');
+    card.className = 'draft-card team-blue-card';
+    card.id = 'card' + i;
+    card.innerHTML = `
+      <div class="card-media-layer">
+        ${heroArt ? `<img src="${heroArt}" class="hero-art">` : '<div style="width:100%;height:100%;background:#141418;"></div>'}
+        ${pImg ? `<img src="${pImg}" class="player-cutout">` : ''}
+        <div class="card-gradient-overlay"></div>
+        <div class="role-icon-badge">
+          <img src="${roleIcon}">
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="player-name-text">${pName}</span>
+      </div>
+    `;
+    grid.appendChild(card);
+  }
+
+  // Cards 6-10 (Team B / Red)
+  for(let i = 0; i < num; i++) {
+    const pName = S.players?.red?.[i] || `PLAYER ${i+1}`;
+    const pRole = S.roles?.red?.[i] || ROLE_ORDER[i] || 'EXP Lane';
+    const pImg = S.playerImages?.red?.[i] ? (S.playerImages.red[i].includes('/') ? S.playerImages.red[i] : 'assets/players/' + S.playerImages.red[i]) : '';
+    const hero = S.redPicks?.[i];
+    const heroArt = hero && (hero.portrait || hero.img) ? (hero.portrait || hero.img) : '';
+    const roleIcon = ROLE_ICONS[pRole] || 'assets/imgs/white_exp.png';
+
+    const card = document.createElement('div');
+    card.className = 'draft-card team-red-card';
+    card.id = 'card' + (num + i);
+    card.innerHTML = `
+      <div class="card-media-layer">
+        ${heroArt ? `<img src="${heroArt}" class="hero-art">` : '<div style="width:100%;height:100%;background:#141418;"></div>'}
+        ${pImg ? `<img src="${pImg}" class="player-cutout">` : ''}
+        <div class="card-gradient-overlay"></div>
+        <div class="role-icon-badge">
+          <img src="${roleIcon}">
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="player-name-text">${pName}</span>
+      </div>
+    `;
+    grid.appendChild(card);
+  }
+}
+
+function playAnimation() {
+  const container = document.getElementById('previewContainer');
+  const mainBg = document.getElementById('mainBg');
+  
+  // Reset classes
+  container.classList.remove('hide-anim', 'play-anim');
+  container.classList.add('hidden');
+  
+  mainBg.classList.remove('hidden');
+  void mainBg.offsetWidth;
+  mainBg.classList.add('bg-show');
+
+  container.classList.remove('hidden');
+  void container.offsetWidth;
+  container.classList.add('play-anim');
+}
+
+function hideAnimation() {
+  const container = document.getElementById('previewContainer');
+  const mainBg = document.getElementById('mainBg');
+  
+  container.classList.remove('hidden');
+  container.classList.remove('play-anim', 'hide-anim');
+  void container.offsetWidth;
+  container.classList.add('hide-anim');
+  
+  mainBg.classList.remove('bg-show');
+  
+  setTimeout(() => {
+    mainBg.classList.add('hidden');
+    container.classList.add('hidden');
+  }, 1200);
+}
+
+// Initial build
+S = getState();
+if(S) {
+  buildHTML();
+}
+
+// Broadcast Channel setup
+try {
+  const bc = new BroadcastChannel('mplDraft_bc');
+  bc.onmessage = (e) => {
+    if(e.data.t === 'STATE') {
+      S = e.data.d;
+      buildHTML();
+    } else if(e.data.t === 'PLAY_PREVIEW') {
+      playAnimation();
+    } else if(e.data.t === 'HIDE_PREVIEW') {
+      hideAnimation();
+    }
+  };
+} catch(e) {}
+
+// Listen to local storage changes just in case
+window.addEventListener('storage', e => {
+  if(e.key === SK && e.newValue) {
+    try { S = JSON.parse(e.newValue); buildHTML(); } catch(err){}
+  }
+});
+
+let lastStr = '';
+let currentPreviewState = false;
+let lastRenderStr = '';
+
+function checkPreviewState() {
+  if (S && S.previewPlaying !== undefined && S.previewPlaying !== currentPreviewState) {
+    currentPreviewState = S.previewPlaying;
+    if (currentPreviewState) {
+      playAnimation();
+    } else {
+      hideAnimation();
+    }
+  }
+}
+
+function checkAndRender(newData) {
+  if(!newData) return;
+  const cloneNew = JSON.parse(JSON.stringify(newData));
+  delete cloneNew.timer;
+  const newStr = JSON.stringify(cloneNew);
+  
+  if (newStr !== lastRenderStr) {
+    lastRenderStr = newStr;
+    S = newData;
+    buildHTML();
+  } else {
+    if(!S) S = {};
+    if(newData.timer) S.timer = newData.timer;
+  }
+  
+  if(newData.previewPlaying !== undefined) {
+    S.previewPlaying = newData.previewPlaying;
+    checkPreviewState();
+  }
+}
+
+setInterval(() => {
+  // Cross-browser sync via PHP (for OBS CEF)
+  fetch('sync.php')
+    .then(r => r.json())
+    .then(data => {
+      if(data && !data.error) {
+        const str = JSON.stringify(data);
+        if(str !== lastStr) {
+          lastStr = str;
+          checkAndRender(data);
+        }
+      }
+    }).catch(()=>{});
+}, 800);
+
+</script>
+</body>
+</html>

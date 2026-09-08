@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MPL HUD - Lower Thirds Only</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:1920px;height:1080px;background:transparent;overflow:hidden;font-family:'Inter',sans-serif;}
+
+@font-face {
+  font-family: 'Heathergreen';
+  src: url('assets/font/Heathergreen.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Gotham Bold';
+  src: url('assets/font/Gotham Bold.otf') format('opentype');
+}
+
+/* === LOWER THIRD === */
+.lower-third{
+  position:absolute;
+  top: 778px;
+  left: 50%;
+  display: flex;
+  height: 228px;
+  
+  /* Exit state */
+  transform: translateX(-50%) translateY(30px);
+  opacity: 0;
+  transition: transform 0.6s ease, opacity 0.6s ease;
+}
+.lower-third.on {
+  /* Parent snaps to visible on entry */
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  transition: none;
+}
+
+.lt-left-col {
+  display: flex;
+  flex-direction: column;
+  width: 279px;
+  z-index: 2;
+  
+  /* Exit state */
+  transform: translateY(0);
+  opacity: 1;
+}
+.lower-third.on .lt-left-col {
+  /* Entry state */
+  transform: translateY(50px);
+  opacity: 0;
+  animation: leftIn 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.1) forwards;
+}
+@keyframes leftIn {
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.lt-portrait {
+  width: 279px;
+  height: 182px;
+  object-fit: cover;
+  object-position: center;
+  display: none;
+}
+
+.lt-player-plate {
+  display: flex;
+  align-items: stretch;
+  width: 279px;
+  height: 46px;
+}
+
+.lt-role {
+  width: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lt-role.blue { background: #3B71F3; }
+.lt-role.red { background: #F44336; }
+.lt-role img { 
+  width: 30px; 
+  height: 30px; 
+  mix-blend-mode: screen; 
+}
+
+.lt-ign {
+  background: #FFFFFF;
+  color: #2F2F2F;
+  font-family: 'Gotham Bold', 'Inter', sans-serif;
+  font-size: 22px;
+  font-weight: normal;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.lt-right-wrap {
+  overflow: hidden;
+  display: flex;
+  width: 650px;
+  height: 228px;
+}
+
+.lt-text-plate {
+  background-color: #1a1a1a;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 30px 30px;
+  box-shadow: inset 0 0 40px #000;
+  border-top: 2px solid rgba(255, 255, 255, 0.15);
+  padding: 0 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 650px;
+  height: 228px;
+  position: relative;
+  
+  /* Exit state */
+  transform: translateX(0);
+}
+.lt-text-plate::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 0; width: 100%; height: 4px;
+  background: linear-gradient(90deg, #FF9800 0%, #F44336 100%);
+  box-shadow: 0 0 15px rgba(244, 67, 54, 0.8);
+}
+.lower-third.on .lt-text-plate {
+  /* Entry state */
+  transform: translateX(-100%);
+  animation: rightSlideIn 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.1) 0.3s forwards;
+}
+@keyframes rightSlideIn {
+  to { transform: translateX(0); }
+}
+
+.lt-event {
+  font-family: 'Heathergreen', 'Bebas Neue', 'Inter', sans-serif;
+  font-size: 160px;
+  color: transparent;
+  line-height: 0.85;
+  letter-spacing: 2px;
+  position: relative;
+  width: 100%;
+  text-align: center;
+  z-index: 2;
+  white-space: nowrap;
+  
+  /* Exit state */
+  transform: translate(0,0);
+}
+
+.lt-event::before, .lt-event::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  color: #FFFFFF;
+  text-align: center;
+}
+
+/* === ANIMATION: CUT === */
+.lower-third.on.anim-cut .lt-event {
+  opacity: 0;
+  animation: fadeInPop 0.3s ease 0.4s forwards;
+}
+.anim-cut .lt-event::before { clip-path: polygon(0 0, 100% 0, 100% 40%, 0 60%); }
+.anim-cut .lt-event::after { clip-path: polygon(0 60%, 100% 40%, 100% 100%, 0 100%); }
+
+.lower-third.on.anim-cut .lt-event::before { animation: sliceTop 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.1) 0.8s forwards; }
+.lower-third.on.anim-cut .lt-event::after { animation: sliceBottom 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.1) 0.8s forwards; }
+
+/* === ANIMATION: QUAKE === */
+.anim-quake .lt-event::before { clip-path: none; }
+.anim-quake .lt-event::after { display: none; }
+
+.lower-third.on.anim-quake .lt-event {
+  opacity: 0;
+  animation: fadeInPop 0.3s ease 0.4s forwards;
+}
+
+.lower-third.on.anim-quake .lt-event::before {
+  animation: earthquake 0.4s linear 0.7s forwards;
+}
+
+@keyframes fadeInPop {
+  0% { opacity: 0; transform: scale(1.2); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes sliceTop {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(-20px, -10px); }
+}
+@keyframes sliceBottom {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(20px, 10px); }
+}
+@keyframes earthquake {
+  0% { transform: translate(0, 0); opacity: 0; }
+  1% { opacity: 1; }
+  10% { transform: translate(-10px, -5px) scale(1.05); }
+  20% { transform: translate(8px, 10px) scale(1.05); }
+  30% { transform: translate(-8px, -10px) scale(1.05); }
+  40% { transform: translate(10px, 5px) scale(1.05); }
+  50% { transform: translate(-10px, 8px) scale(1.05); }
+  60% { transform: translate(8px, -5px) scale(1.05); }
+  70% { transform: translate(-8px, 10px) scale(1.05); }
+  80% { transform: translate(5px, -8px) scale(1.05); }
+  90% { transform: translate(-5px, 5px) scale(1); }
+  100% { transform: translate(0, 0) scale(1); opacity: 1; }
+}
+
+</style>
+</head>
+<body>
+
+  <!-- LOWER THIRD ONLY -->
+  <div class="lower-third" id="lowerThird">
+    <div class="lt-left-col" id="ltLeftCol">
+      <img class="lt-portrait" id="ltPortrait" src="" onerror="this.style.display='none'">
+      <div class="lt-player-plate">
+        <div class="lt-role" id="ltRoleWrap"><img id="ltRoleIcon" src=""></div>
+        <div class="lt-ign" id="ltIgn">KARLTZY</div>
+      </div>
+    </div>
+    
+    <div class="lt-right-wrap">
+      <div class="lt-text-plate" id="ltTextPlate">
+        <div class="lt-event" id="ltEventText">TURTLE SECURED</div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const SK = 'mplDraft_v4';
+const BCAST = 'mplDraft_bc';
+const ROLE_ICONS = {
+  'EXP Lane':'assets/imgs/exp.png',
+  'Jungle':'assets/imgs/jungler.png',
+  'Mid Lane':'assets/imgs/mid.png',
+  'Gold Lane':'assets/imgs/gold.png',
+  'Roam':'assets/imgs/Roamer.png',
+  'Fighter':'assets/imgs/exp.png',
+  'Assassin':'assets/imgs/jungler.png',
+  'Mage':'assets/imgs/mid.png',
+  'Marksman':'assets/imgs/gold.png',
+  'Tank':'assets/imgs/Roamer.png',
+  'Support':'assets/imgs/Roamer.png'
+};
+
+let S = null;
+
+function render() {
+  if (!S) return;
+  const lt = S.hud?.lowerThird || {};
+  const ltEl = document.getElementById('lowerThird');
+  
+  if(lt.visible) {
+    if (ltEl.dataset.time !== String(lt.triggerTime)) {
+      ltEl.dataset.time = String(lt.triggerTime);
+      ltEl.classList.remove('on');
+      void ltEl.offsetWidth; // Force reflow
+    }
+    
+    // Add logic for animations
+    const evtType = lt.eventType || '';
+    if (evtType.includes('SLAIN')) {
+      ltEl.classList.add('anim-cut');
+      ltEl.classList.remove('anim-quake');
+    } else {
+      ltEl.classList.add('anim-quake');
+      ltEl.classList.remove('anim-cut');
+    }
+    
+    ltEl.classList.add('on');
+  } else {
+    ltEl.classList.remove('on', 'anim-cut', 'anim-quake');
+    ltEl.dataset.time = '';
+  }
+
+  const elEvent = document.getElementById('ltEventText');
+  if (elEvent) {
+    elEvent.textContent = String(lt.eventType || '');
+    elEvent.dataset.text = String(lt.eventType || '');
+  }
+  
+  // Wiped Out custom logic
+  const isWipedOut = (lt.eventType === 'WIPED OUT');
+  const roleWrap = document.getElementById('ltRoleWrap');
+  const portrait = document.getElementById('ltPortrait');
+  const roleIcon = document.getElementById('ltRoleIcon');
+  
+  if (isWipedOut) {
+    roleWrap.style.display = 'none';
+    setText('ltIgn', lt.teamName || '');
+    
+    const isBlue = lt.teamName === S.teams?.blue?.name;
+    const isRed = lt.teamName === S.teams?.red?.name;
+    let logoSrc = 'assets/imgs/placeholder.png';
+    let tLogo = '';
+    if(isBlue) tLogo = S.teams?.blue?.logo || '';
+    if(isRed) tLogo = S.teams?.red?.logo || '';
+    
+    if (tLogo) {
+      logoSrc = tLogo.includes('/') ? tLogo : `assets/teams/${tLogo}`;
+    }
+    
+    portrait.src = logoSrc;
+    portrait.style.display = 'block';
+  } else {
+    // Normal logic
+    setText('ltIgn', lt.ign || '');
+    if (lt.portrait) {
+      portrait.src = lt.portrait;
+      portrait.style.display = 'block';
+    } else {
+      portrait.style.display = 'none';
+    }
+    
+    // Resolve role icon
+    let riSrc = ROLE_ICONS[lt.role] || '';
+    if(!riSrc && lt.role) {
+       const base = lt.role.split(' ')[0];
+       riSrc = ROLE_ICONS[base] || '';
+    }
+    
+    if (riSrc) {
+      roleWrap.style.display = 'flex';
+      roleIcon.src = riSrc;
+      roleWrap.className = 'lt-role ' + (lt.side || 'blue');
+    } else {
+      roleWrap.style.display = 'none';
+    }
+  }
+}
+
+function setText(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = String(val ?? '');
+}
+
+function setLogo(id, logo) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (logo) { el.src = logo; el.style.display = 'block'; }
+  else { el.style.display = 'none'; }
+}
+
+function applyState(data) {
+  if (!data || !data.status) return;
+  S = data;
+  render();
+}
+
+try {
+  const bc = new BroadcastChannel(BCAST);
+  bc.onmessage = ev => {
+    if (ev.data?.t === 'STATE' && ev.data.d) applyState(ev.data.d);
+  };
+} catch(x) {}
+
+window.addEventListener('storage', ev => {
+  if (ev.key === SK && ev.newValue) {
+    try { applyState(JSON.parse(ev.newValue)); } catch(x) {}
+  }
+});
+
+async function poll() {
+  try {
+    const r = await fetch('sync.php?t=' + Date.now());
+    if (r.ok) applyState(await r.json());
+  } catch(x) {}
+}
+
+try {
+  const ls = localStorage.getItem(SK);
+  if (ls) applyState(JSON.parse(ls));
+} catch(x) {}
+
+setInterval(poll, 800);
+
+// Counteract browser zoom syncing by automatically scaling the hud to fit the window exactly
+function fitToWindow() {
+  const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+  const dx = (window.innerWidth - 1920 * scale) / 2;
+  const dy = (window.innerHeight - 1080 * scale) / 2;
+  document.body.style.transform = `translate(${dx}px, ${dy}px) scale(${scale})`;
+  document.body.style.transformOrigin = 'top left';
+}
+window.addEventListener('resize', fitToWindow);
+fitToWindow();
+</script>
+</body>
+</html>
