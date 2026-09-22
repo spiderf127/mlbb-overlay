@@ -16,6 +16,10 @@ html,body{width:1920px;height:1080px;background:transparent;overflow:hidden;font
   font-family: 'Gotham Bold';
   src: url('assets/font/Gotham Bold.otf') format('opentype');
 }
+@font-face {
+  font-family: 'Eixample Villa';
+  src: url('assets/font/Eixample Villa Bold.otf') format('opentype');
+}
 
 /* === LOWER THIRD === */
 .lower-third{
@@ -89,7 +93,7 @@ html,body{width:1920px;height:1080px;background:transparent;overflow:hidden;font
 .lt-ign {
   background: #FFFFFF;
   color: #2F2F2F;
-  font-family: 'Gotham Bold', 'Inter', sans-serif;
+  font-family: 'Eixample Villa', 'Gotham Bold', 'Inter', sans-serif;
   font-size: 22px;
   font-weight: normal;
   flex: 1;
@@ -243,17 +247,11 @@ html,body{width:1920px;height:1080px;background:transparent;overflow:hidden;font
 const SK = 'mplDraft_v4';
 const BCAST = 'mplDraft_bc';
 const ROLE_ICONS = {
-  'EXP Lane':'assets/imgs/exp.png',
-  'Jungle':'assets/imgs/jungler.png',
-  'Mid Lane':'assets/imgs/mid.png',
-  'Gold Lane':'assets/imgs/gold.png',
-  'Roam':'assets/imgs/Roamer.png',
-  'Fighter':'assets/imgs/exp.png',
-  'Assassin':'assets/imgs/jungler.png',
-  'Mage':'assets/imgs/mid.png',
-  'Marksman':'assets/imgs/gold.png',
-  'Tank':'assets/imgs/Roamer.png',
-  'Support':'assets/imgs/Roamer.png'
+  'EXP Lane':'assets/imgs/white_exp.png',
+  'Jungle':'assets/imgs/white_core.png',
+  'Mid Lane':'assets/imgs/white_mid.png',
+  'Gold Lane':'assets/imgs/white_gold.png',
+  'Roam':'assets/imgs/white_roam.png'
 };
 
 let S = null;
@@ -315,14 +313,17 @@ function render() {
     
     portrait.src = logoSrc;
     portrait.style.display = 'block';
+    portrait.style.backgroundColor = '#EAEAEA';
   } else {
     // Normal logic
     setText('ltIgn', lt.ign || '');
     if (lt.portrait) {
       portrait.src = lt.portrait;
       portrait.style.display = 'block';
+      portrait.style.backgroundColor = 'transparent';
     } else {
       portrait.style.display = 'none';
+      portrait.style.backgroundColor = 'transparent';
     }
     
     // Resolve role icon

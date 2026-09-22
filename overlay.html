@@ -409,11 +409,19 @@
     z-index: 10;
     background: transparent;
   }
-  .blue-role-badge { 
-    left: 0; 
+  .blue-role-badge {
+    left: 0;
   }
-  .red-role-badge { 
-    right: 0; 
+  .red-role-badge {
+    right: 0;
+  }
+  /* Corner fade only once the hero is actually locked in — before that there's no pick
+     portrait behind the icon yet, so the fade has nothing to contrast against and looks off. */
+  .blue-role-badge:has(.top-role-icon-img.locked) {
+    background: radial-gradient(circle at top left, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 45%, rgba(0,0,0,0) 75%);
+  }
+  .red-role-badge:has(.top-role-icon-img.locked) {
+    background: radial-gradient(circle at top right, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 45%, rgba(0,0,0,0) 75%);
   }
   @keyframes shrinkToCornerBlue {
     0% {
@@ -715,6 +723,157 @@
   body:not(.show-overlay):not(.hide-overlay) #overlayContainer {
     opacity: 0;
   }
+
+  /* ══════════════════ DRAFT PREDICTOR ══════════════════ */
+  /* Width matches a side-column's actual rendered width: (100vw - 20px padding - 20px gaps) * 2/5 */
+  .predictor-panel {
+    position: fixed;
+    bottom: 310px; /* 300px strip + the same 10px gap used between side/center columns; stays strictly above left/right columns */
+    width: calc(40vw - 16px);
+    background: #2B2B2B;
+    border: none;
+    outline: none;
+    overflow: hidden;
+    box-shadow: 0 -8px 24px rgba(0,0,0,.28);
+    font-family: 'Eixample Villa', sans-serif;
+    opacity: 0;
+    transform: translateY(-28px); /* fades in/out strictly ABOVE the left/right column below */
+    pointer-events: none;
+    transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 60;
+  }
+  .predictor-panel.left { left: 10px; }
+  .predictor-panel.right { right: 10px; }
+  .predictor-panel.visible { opacity: 1; transform: translateY(0); }
+
+  .predictor-header {
+    background: #2B2B2B;
+    color: #FFFFFF;
+    font-family: 'Eixample Villa', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 8px 0;
+  }
+
+  .predictor-body {
+    height: 128px;
+    overflow: hidden;
+    position: relative;
+    background: #2B2B2B;
+  }
+
+  .predictor-track {
+    display: flex;
+    height: 100%;
+    width: max-content;
+    will-change: transform;
+  }
+  .predictor-track.spinning { animation: predictorSpin linear infinite; }
+  .predictor-track.spinning.flow-reverse { animation-direction: reverse; }
+
+  @keyframes predictorSpin {
+    from { transform: translateX(-25%); }
+    to { transform: translateX(-50%); }
+  }
+
+  .predictor-card {
+    width: 88px;
+    height: 100%;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(0,0,0,.25);
+    position: relative;
+    background: #2B2B2B;
+    transition: opacity .3s ease, filter .3s ease, box-shadow .3s ease;
+  }
+  .predictor-card .pc-portrait {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: #2B2B2B;
+  }
+  .predictor-card .pc-portrait img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center 20%;
+  }
+  /* Placement number (1 = most picked) — plain text, no pill/background */
+  .predictor-card .pc-rank {
+    position: absolute;
+    top: 4px;
+    font-family: 'Eixample Villa', sans-serif;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 800;
+    text-shadow: 0 1px 3px rgba(0,0,0,.85), 0 0 6px rgba(0,0,0,.5);
+    z-index: 2;
+  }
+  .predictor-panel.left .pc-rank { left: 5px; }
+  .predictor-panel.right .pc-rank { right: 5px; }
+  /* Pick rate — raised slightly off the bottom, centered, with an increased fade backdrop for legibility */
+  .predictor-card .pc-rate-fade {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 68px;
+    background: linear-gradient(to top, rgba(0,0,0,.95) 0%, rgba(0,0,0,.7) 45%, rgba(0,0,0,0) 100%);
+    pointer-events: none;
+  }
+  .predictor-card .pc-rate {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: 6px;
+    text-align: center;
+    font-family: 'Eixample Villa', sans-serif;
+    color: #FFFFFF;
+    font-size: 10px;
+    font-weight: 800;
+    z-index: 2;
+  }
+  .predictor-card .pc-name {
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Eixample Villa', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: #2B2B2B;
+    color: #FFFFFF;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 4px;
+    position: relative;
+    z-index: 3;
+  }
+  .predictor-card.dimmed {
+    opacity: 1;
+    filter: grayscale(100%) brightness(65%) contrast(115%);
+  }
+  .predictor-card.matched {
+    opacity: 1 !important;
+    filter: none !important;
+    z-index: 5;
+  }
+  .predictor-card.matched::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .predictor-card.matched.side-blue::after {
+    border: 4px solid var(--blue-team);
+  }
+  .predictor-card.matched.side-red::after {
+    border: 4px solid var(--red-team);
+  }
 </style>
 </head>
 <body>
@@ -793,6 +952,14 @@
 
 </div>
 
+<!-- DRAFT PREDICTOR -->
+<div class="predictor-panel" id="predictorPanel">
+  <div class="predictor-header" id="predictorHeader">Draft Prediction</div>
+  <div class="predictor-body">
+    <div class="predictor-track" id="predictorTrack"></div>
+  </div>
+</div>
+
 <script>
 window.onerror = function(m, s, l, c, e) { 
   document.body.innerHTML += '<div style="color:red; background:white; position:fixed; top:0; left:0; padding:20px; z-index:9999;">' + m + ' at ' + l + ':' + c + '<br>' + e?.stack + '</div>'; 
@@ -820,6 +987,18 @@ let S = null;
 let lastStr = '';
 let builtBans = 0, builtPicks = 0, builtFormat = '';
 let lastRenderedPicks = { blue: [], red: [] };
+
+// Draft Predictor state
+let predictorInitialized = false;
+let predictorSeenPickCount = { blue: 0, red: 0 };
+let predictorSeenBanCount = { blue: 0, red: 0 };
+let predictorHistory = {};       // "action:side:idx" -> { action, side, pickIdx, top10 } recorded for every prediction computed
+let predictorLastShown = null;   // { action, side, pickIdx, top10, baseCount } currently rendered in DOM
+let predictorRenderedKey = null; // "action:side:idx" currently built into the DOM track
+let predictorSettling = false;   // true while holding a prediction celebration or playing fade-out animation
+let predictorInHoldPhase = false;
+let predictorSettleTimer = null;
+let predictorMatchQueue = [];    // queued { action, side, pickIdx, heroName, top10, hit } resolutions for back-to-back bans/picks
 
 // BroadcastChannel setup
 let bc = null;
@@ -1003,12 +1182,15 @@ function render() {
   if (tickerEl && !tickerEl.textContent) {
     tickerEl.textContent = `${S?.meta?.match || ''} - GAME ${S?.meta?.game || '1'}`;
   }
+  // Teams/scores stay hidden on the overlay until the match is actually started
+  const preMatch = S.status === 'idle';
+
   // Score Bars
   const boText = S.meta?.bo || 'BO3';
   const totalGames = parseInt(boText.replace(/\D/g, '')) || 3;
   const nBars = Math.ceil(totalGames / 2);
-  const bScore = S.meta?.blueWins || 0;
-  const rScore = S.meta?.redWins || 0;
+  const bScore = preMatch ? 0 : (S.meta?.blueWins || 0);
+  const rScore = preMatch ? 0 : (S.meta?.redWins || 0);
 
   const bGroup = document.getElementById('blueBars');
   const rGroup = document.getElementById('redBars');
@@ -1032,25 +1214,28 @@ function render() {
   const cipBlueLogo = document.getElementById('cipBlueLogo');
   const cipRedLogo = document.getElementById('cipRedLogo');
   
-  document.getElementById('blueName').textContent = S.teams?.blue?.name||'';
-  document.getElementById('redName').textContent = S.teams?.red?.name||'';
-  document.getElementById('cipBlueTag').textContent = S.teams?.blue?.tag||'';
-  document.getElementById('cipRedTag').textContent = S.teams?.red?.tag||'';
-  
-  if(S.teams?.blue?.logo) {
-    let bSrc = S.teams.blue.logo.includes("/") ? S.teams.blue.logo : "assets/teams/"+S.teams.blue.logo;
+  const blueTeam = preMatch ? {} : (S.teams?.blue || {});
+  const redTeam = preMatch ? {} : (S.teams?.red || {});
+
+  document.getElementById('blueName').textContent = blueTeam.name||'';
+  document.getElementById('redName').textContent = redTeam.name||'';
+  document.getElementById('cipBlueTag').textContent = blueTeam.tag||'';
+  document.getElementById('cipRedTag').textContent = redTeam.tag||'';
+
+  if(blueTeam.logo) {
+    let bSrc = blueTeam.logo.includes("/") ? blueTeam.logo : "assets/teams/"+blueTeam.logo;
     bLogo.innerHTML=`<img src="${bSrc}" class="team-logo" onerror="this.innerHTML='<div class=\\'team-logo-fallback\\'>B</div>'">`;
     cipBlueLogo.innerHTML=`<img src="${bSrc}" onerror="this.innerHTML='<div class=\\'team-logo-fallback\\'>B</div>'">`;
-  } else { 
-    bLogo.innerHTML=`<div class='team-logo-fallback'>B</div>`; 
+  } else {
+    bLogo.innerHTML=`<div class='team-logo-fallback'>B</div>`;
     cipBlueLogo.innerHTML=`<div class='team-logo-fallback'>B</div>`;
   }
-  
-  if(S.teams?.red?.logo) {
-    let rSrc = S.teams.red.logo.includes("/") ? S.teams.red.logo : "assets/teams/"+S.teams.red.logo;
+
+  if(redTeam.logo) {
+    let rSrc = redTeam.logo.includes("/") ? redTeam.logo : "assets/teams/"+redTeam.logo;
     rLogo.innerHTML=`<img src="${rSrc}" class="team-logo" onerror="this.innerHTML='<div class=\\'team-logo-fallback\\'>R</div>'">`;
     cipRedLogo.innerHTML=`<img src="${rSrc}" onerror="this.innerHTML='<div class=\\'team-logo-fallback\\'>R</div>'">`;
-  } else { 
+  } else {
     rLogo.innerHTML=`<div class='team-logo-fallback'>R</div>`;
     cipRedLogo.innerHTML=`<div class='team-logo-fallback'>R</div>`;
   }
@@ -1285,6 +1470,346 @@ function render() {
 
   renderTimer();
   checkDraftUpdates();
+  renderPredictor();
+}
+
+// ══════════════════ DRAFT PREDICTOR (PICK & BAN) ══════════════════
+// S.rolePrediction is precomputed operator-side (operator.html: recalcDraftPrediction()) from
+// actual Match History pick-by-role and ban frequency — this file only ever displays it, never ranks heroes itself.
+function renderPredictor(){
+  const panel = document.getElementById('predictorPanel');
+  const track = document.getElementById('predictorTrack');
+  const header = document.getElementById('predictorHeader');
+  if(!panel || !track || !S) return;
+
+  const pickEnabled = !!S.meta?.predictorVisible;
+  const banEnabled = S.meta?.banPredictorVisible !== undefined ? !!S.meta.banPredictorVisible : pickEnabled;
+  const anyEnabled = pickEnabled || banEnabled;
+  const pred = S.rolePrediction;
+
+  // Reset predictor state if match is reset to idle
+  if(S.status === 'idle'){
+    panel.classList.remove('visible');
+    predictorHistory = {};
+    predictorMatchQueue = [];
+    predictorSeenPickCount = { blue: 0, red: 0 };
+    predictorSeenBanCount = { blue: 0, red: 0 };
+    predictorRenderedKey = null;
+    predictorLastShown = null;
+    if(predictorSettleTimer){ clearTimeout(predictorSettleTimer); predictorSettleTimer = null; }
+    predictorSettling = false;
+    predictorInHoldPhase = false;
+    return;
+  }
+
+  if(!predictorInitialized){
+    predictorInitialized = true;
+    predictorSeenPickCount.blue = (S.bluePicks || []).filter(h => h && h.name).length;
+    predictorSeenPickCount.red = (S.redPicks || []).filter(h => h && h.name).length;
+    predictorSeenBanCount.blue = (S.blueBans || []).filter(h => h && h.name).length;
+    predictorSeenBanCount.red = (S.redBans || []).filter(h => h && h.name).length;
+  }
+
+  // Always record incoming prediction for this (action, side, idx) immediately — even if a previous ban/pick is currently celebrating/fading out
+  if(pred && Array.isArray(pred.top10) && pred.top10.length > 0){
+    const act = pred.action || 'pick';
+    predictorHistory[act + ':' + pred.side + ':' + pred.pickIdx] = {
+      action: act,
+      side: pred.side,
+      pickIdx: pred.pickIdx,
+      top10: pred.top10
+    };
+  }
+
+  // Detect all newly locked BANS across both sides
+  ['blue', 'red'].forEach(side => {
+    const bansArr = (side === 'blue' ? S.blueBans : S.redBans) || [];
+    const count = bansArr.filter(h => h && h.name).length;
+    if(count < predictorSeenBanCount[side]){
+      predictorSeenBanCount[side] = count;
+    } else if(count > predictorSeenBanCount[side]){
+      for(let idx = predictorSeenBanCount[side]; idx < count; idx++){
+        const hero = bansArr[idx];
+        if(!hero || !hero.name) continue;
+        const hist = predictorHistory['ban:' + side + ':' + idx]
+          || (predictorLastShown && predictorLastShown.action === 'ban' && predictorLastShown.side === side ? predictorLastShown : null);
+        if(banEnabled && hist && hist.top10 && hist.top10.length){
+          const hit = hero.name !== 'No Ban' && hist.top10.some(h => h.name === hero.name);
+          predictorMatchQueue.push({
+            action: 'ban',
+            side,
+            pickIdx: idx,
+            heroName: hero.name,
+            top10: hist.top10,
+            hit
+          });
+        }
+      }
+      predictorSeenBanCount[side] = count;
+    }
+  });
+
+  // Detect all newly locked PICKS across both sides (handles simultaneous / back-to-back double picks without dropping the second animation)
+  ['blue', 'red'].forEach(side => {
+    const picksArr = (side === 'blue' ? S.bluePicks : S.redPicks) || [];
+    const count = picksArr.filter(h => h && h.name).length;
+    if(count < predictorSeenPickCount[side]){
+      predictorSeenPickCount[side] = count;
+    } else if(count > predictorSeenPickCount[side]){
+      for(let idx = predictorSeenPickCount[side]; idx < count; idx++){
+        const hero = picksArr[idx];
+        if(!hero || !hero.name) continue;
+        const hist = predictorHistory['pick:' + side + ':' + idx]
+          || (predictorLastShown && predictorLastShown.action === 'pick' && predictorLastShown.side === side ? predictorLastShown : null);
+        if(pickEnabled && hist && hist.top10 && hist.top10.length){
+          const hit = hist.top10.some(h => h.name === hero.name);
+          predictorMatchQueue.push({
+            action: 'pick',
+            side,
+            pickIdx: idx,
+            heroName: hero.name,
+            top10: hist.top10,
+            hit
+          });
+        }
+      }
+      predictorSeenPickCount[side] = count;
+    }
+  });
+
+  if(!anyEnabled){
+    panel.classList.remove('visible');
+    predictorRenderedKey = null;
+    predictorLastShown = null;
+    predictorMatchQueue = [];
+    if(predictorSettleTimer){ clearTimeout(predictorSettleTimer); predictorSettleTimer = null; }
+    predictorSettling = false;
+    predictorInHoldPhase = false;
+    return;
+  }
+
+  // If currently playing a celebration or fade-out animation, keep it running (and expedite hold if another ban/pick is already queued)
+  if(predictorSettling){
+    if(predictorInHoldPhase && predictorMatchQueue.length > 0){
+      predictorInHoldPhase = false;
+      if(predictorSettleTimer) clearTimeout(predictorSettleTimer);
+      predictorSettleTimer = setTimeout(() => fadeOutAndAdvancePredictor(), 450);
+    }
+    return;
+  }
+
+  // Process any queued ban/pick resolutions BEFORE checking !pred,
+  // so the last ban/pick of a phase still plays its full animation and fade-out before the panel hides or switches phase.
+  if(predictorMatchQueue.length > 0){
+    processPredictorQueue();
+    return;
+  }
+
+  const curAction = pred?.action || 'pick';
+  const curActionEnabled = curAction === 'ban' ? banEnabled : pickEnabled;
+
+  if(!pred || !curActionEnabled || !pred.top10 || !pred.top10.length){
+    panel.classList.remove('visible');
+    predictorRenderedKey = null;
+    predictorLastShown = null;
+    return;
+  }
+
+  const key = curAction + ':' + pred.side + ':' + pred.pickIdx;
+  if(predictorRenderedKey === key){
+    panel.classList.add('visible');
+    return;
+  }
+
+  // If panel is already visible from a previous step (e.g. after undo/skip), fade out cleanly above the column before switching
+  if(panel.classList.contains('visible') && predictorRenderedKey !== null){
+    predictorSettling = true;
+    fadeOutAndAdvancePredictor();
+    return;
+  }
+
+  if(header) header.textContent = curAction === 'ban' ? 'Ban Prediction' : 'Draft Prediction';
+  panel.classList.remove('left', 'right');
+  panel.classList.add(pred.side === 'blue' ? 'left' : 'right');
+  predictorRenderedKey = key;
+  buildPredictorTrack(pred.top10, pred.side, pred.pickIdx, curAction);
+  void panel.offsetWidth; // force reflow so fade-in animation plays cleanly above the column
+  panel.classList.add('visible');
+}
+
+function buildPredictorTrack(top10, side, pickIdx, action = 'pick'){
+  const track = document.getElementById('predictorTrack');
+  const header = document.getElementById('predictorHeader');
+  if(!track || !top10 || !top10.length) return;
+
+  if(header) header.textContent = action === 'ban' ? 'Ban Prediction' : 'Draft Prediction';
+  track.style.transition = 'none';
+  track.style.transform = 'translateX(-25%)';
+
+  // Preserve original 1..N rank for each hero while repeating the sequence enough times
+  // to exceed the panel width (>= 12 cards = 1056px), preventing any cut/white gap or teleport even if < 10 heroes exist.
+  const ranked = top10.map((h, idx) => ({ ...h, rank: idx + 1 }));
+  const minCards = 12;
+  const repeats = Math.max(1, Math.ceil(minCards / ranked.length));
+  const baseSet = [];
+  for(let r = 0; r < repeats; r++){
+    for(let i = 0; i < ranked.length; i++){
+      baseSet.push(ranked[i]);
+    }
+  }
+
+  // 4 identical copies of baseSet:
+  // @keyframes predictorSpin runs from -25% (-1 * baseSetWidth) to -50% (-2 * baseSetWidth),
+  // so at every single frame there is >= 1056px of cards on BOTH left and right, and stopping on an already-visible card never needs to revolve or jump.
+  const quadrupled = [...baseSet, ...baseSet, ...baseSet, ...baseSet];
+  track.innerHTML = quadrupled.map((h, i) => `
+    <div class="predictor-card" data-hero="${h.name}" data-set="${Math.floor(i / baseSet.length)}">
+      <div class="pc-portrait">
+        ${h.portrait ? `<img src="${h.portrait}" onerror="this.style.display='none'">` : ''}
+        <div class="pc-rank">${h.rank}</div>
+        <div class="pc-rate-fade"></div>
+        <div class="pc-rate">${h.pickRate}%</div>
+      </div>
+      <div class="pc-name">${h.name}</div>
+    </div>
+  `).join('');
+
+  track.classList.remove('spinning', 'flow-reverse');
+  // Blue team flows left-to-right (flow-reverse); Red team flows right-to-left (normal)
+  if(side === 'blue') track.classList.add('flow-reverse');
+  void track.offsetWidth; // force reflow so the animation restarts cleanly
+  track.style.animationDuration = (baseSet.length * 2.2) + 's';
+  track.classList.add('spinning');
+
+  predictorLastShown = { action, side, pickIdx, top10, baseCount: baseSet.length };
+}
+
+function processPredictorQueue(){
+  if(predictorSettling || !predictorMatchQueue.length) return;
+  const panel = document.getElementById('predictorPanel');
+  const track = document.getElementById('predictorTrack');
+  if(!panel || !track) return;
+
+  const item = predictorMatchQueue.shift();
+  const act = item.action || 'pick';
+  const itemKey = act + ':' + item.side + ':' + item.pickIdx;
+  predictorSettling = true;
+  predictorInHoldPhase = false;
+
+  // If this ban/pick's prediction is already visible on screen, resolve it directly
+  if(predictorRenderedKey === itemKey && panel.classList.contains('visible')){
+    runPickResolution(item);
+  } else {
+    // If a second player banned/picked while the first animation was still running,
+    // fade in the second prediction carousel above the column and play its animation in full.
+    panel.classList.remove('left', 'right');
+    panel.classList.add(item.side === 'blue' ? 'left' : 'right');
+    predictorRenderedKey = itemKey;
+    buildPredictorTrack(item.top10, item.side, item.pickIdx, act);
+    void panel.offsetWidth;
+    panel.classList.add('visible');
+    clearTimeout(predictorSettleTimer);
+    predictorSettleTimer = setTimeout(() => {
+      runPickResolution(item);
+    }, 950);
+  }
+}
+
+function runPickResolution(item){
+  const track = document.getElementById('predictorTrack');
+  if(!track){
+    fadeOutAndAdvancePredictor();
+    return;
+  }
+
+  if(item.hit){
+    // Immediately stop spinning at the current visual position (no extra high-speed revolution!)
+    const cards = [...track.querySelectorAll('.predictor-card')];
+    const computedStyle = window.getComputedStyle(track);
+    const wrap = track.parentElement;
+    const wrapWidth = wrap ? wrap.clientWidth : 752;
+    const centerX = wrapWidth / 2;
+
+    let currentTx = -wrapWidth;
+    if(computedStyle.transform && computedStyle.transform !== 'none'){
+      const m = computedStyle.transform.match(/matrix\(([^)]+)\)/);
+      if(m){
+        const parts = m[1].split(',');
+        currentTx = parseFloat(parts[4]) || 0;
+      }
+    }
+
+    track.classList.remove('spinning');
+    track.style.transition = 'none';
+    track.style.transform = `translateX(${currentTx}px)`;
+    void track.offsetWidth;
+
+    // Find all copies of the selected hero and prefer one that is ALREADY visible in the display
+    const matchingCards = cards.filter(c => c.dataset.hero === item.heroName);
+    const visibleMatches = matchingCards.filter(c => {
+      const screenLeft = c.offsetLeft + currentTx;
+      const screenRight = screenLeft + c.offsetWidth;
+      return screenLeft >= -12 && screenRight <= wrapWidth + 12;
+    });
+
+    const pool = visibleMatches.length > 0 ? visibleMatches : matchingCards;
+    let target = pool[0] || null;
+    if(pool.length > 1){
+      target = pool.reduce((best, c) => {
+        const cScreenCenter = c.offsetLeft + c.offsetWidth / 2 + currentTx;
+        const bScreenCenter = best.offsetLeft + best.offsetWidth / 2 + currentTx;
+        return Math.abs(cScreenCenter - centerX) < Math.abs(bScreenCenter - centerX) ? c : best;
+      }, pool[0]);
+    }
+
+    if(target){
+      const targetCenter = target.offsetLeft + target.offsetWidth / 2;
+      track.style.transition = 'transform .45s cubic-bezier(0.22, 1, 0.36, 1)';
+      track.style.transform = `translateX(${centerX - targetCenter}px)`;
+    }
+
+    cards.forEach(c => {
+      const isMatch = c === target;
+      c.classList.toggle('matched', isMatch);
+      c.classList.toggle('side-blue', isMatch && item.side === 'blue');
+      c.classList.toggle('side-red', isMatch && item.side === 'red');
+      c.classList.toggle('dimmed', !isMatch);
+    });
+
+    predictorInHoldPhase = true;
+    const curPredKey = S?.rolePrediction ? ((S.rolePrediction.action || 'pick') + ':' + S.rolePrediction.side + ':' + S.rolePrediction.pickIdx) : null;
+    const thisKey = (item.action || 'pick') + ':' + item.side + ':' + item.pickIdx;
+    const hasNextWaiting = predictorMatchQueue.length > 0 || (curPredKey && curPredKey !== thisKey);
+    const holdMs = predictorMatchQueue.length > 0 ? 1400 : (hasNextWaiting ? 2000 : 2600);
+    clearTimeout(predictorSettleTimer);
+    predictorSettleTimer = setTimeout(() => {
+      fadeOutAndAdvancePredictor();
+    }, holdMs);
+  } else {
+    // Selected ban/pick is NOT in the prediction: apply black & white filter to unpicked cards and play normal fade-out animation above the column
+    const cards = [...track.querySelectorAll('.predictor-card')];
+    cards.forEach(c => {
+      c.classList.remove('matched', 'side-blue', 'side-red');
+      c.classList.add('dimmed');
+    });
+    clearTimeout(predictorSettleTimer);
+    predictorSettleTimer = setTimeout(() => {
+      fadeOutAndAdvancePredictor();
+    }, 450);
+  }
+}
+
+function fadeOutAndAdvancePredictor(){
+  predictorInHoldPhase = false;
+  const panel = document.getElementById('predictorPanel');
+  if(panel) panel.classList.remove('visible');
+  clearTimeout(predictorSettleTimer);
+  predictorSettleTimer = setTimeout(() => {
+    predictorSettling = false;
+    predictorRenderedKey = null;
+    predictorLastShown = null;
+    renderPredictor();
+  }, 820);
 }
 
 let draftBannerFadeTimer = null;

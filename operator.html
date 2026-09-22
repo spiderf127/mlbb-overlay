@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>MPL Draft — Operator Panel</title>
+<title>Operator Panel</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
@@ -33,15 +33,33 @@ html,body{min-height:100vh;background:var(--bg);font-family:'Inter',sans-serif;c
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
 
-.layout{display:grid;grid-template-columns:280px 1fr;min-height:100vh;}
+.layout{display:grid;grid-template-columns:280px 1fr;min-height:100vh;transition:grid-template-columns .18s ease;position:relative;}
+.layout.sb-collapsed{grid-template-columns:72px 1fr;}
 
 /* SIDEBAR */
-.sidebar{background:#F8FAFC;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;}
-.sb-head{padding:24px 20px 20px;background:#F8FAFC;border-bottom:1px solid var(--border2);flex-shrink:0;}
-.sb-logo{font-size:20px;font-weight:800;color:var(--text);letter-spacing:.08em;text-transform:uppercase;}
-.sb-logo::first-letter{color:var(--blue);}
-.sb-sub{font-size:10px;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;margin-top:7px;}
+.sidebar{background:#F8FAFC;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;transition:width .18s ease;}
+.sb-head{display:flex;align-items:center;gap:12px;padding:18px 16px;background:#F8FAFC;border-bottom:1px solid var(--border2);flex-shrink:0;}
+.sb-mark{width:38px;height:38px;flex-shrink:0;border-radius:9px;overflow:hidden;background:#fff;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(21,101,192,.15);}
+.sb-mark img{width:100%;height:100%;object-fit:contain;}
+.sb-txt{min-width:0;overflow:hidden;}
+.sb-logo{font-family:'Eixample Villa',sans-serif;font-size:17px;font-weight:800;color:var(--text);letter-spacing:.02em;line-height:1.2;white-space:nowrap;}
+.sb-sub{font-size:9.5px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sb-collapse-btn{margin-left:auto;flex-shrink:0;width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:var(--panel);color:var(--text3);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
+.sb-collapse-btn:hover{color:var(--blue);border-color:var(--blue-b);background:var(--blue-l);}
+.sb-collapse-btn i{font-size:16px;transition:transform .18s ease;}
 .sb-body{padding:16px 12px;display:flex;flex-direction:column;gap:8px;flex:1;}
+
+/* COLLAPSED SIDEBAR */
+.sidebar.collapsed{width:72px;}
+.sidebar.collapsed .sb-head{padding:18px 0;justify-content:center;}
+.sidebar.collapsed .sb-txt,.sidebar.collapsed .sb-collapse-btn{display:none;}
+.sidebar.collapsed .nav-label{display:none;}
+.sidebar.collapsed .tab{justify-content:center;padding:10px 0;gap:0;}
+.sidebar.collapsed .tab span{display:none;}
+.sb-collapse-mini{display:none;position:absolute;top:18px;left:72px;transform:translateX(-50%);width:22px;height:22px;border-radius:50%;border:1px solid var(--border);background:var(--panel);color:var(--text3);align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--sh);z-index:5;}
+.layout.sb-collapsed .sb-collapse-mini{display:flex;}
+.sb-collapse-mini:hover{color:var(--blue);border-color:var(--blue-b);}
+.sb-collapse-mini i{font-size:13px;}
 .sc{background:var(--panel2);border:1px solid var(--border);border-radius:var(--r);padding:10px;display:flex;flex-direction:column;gap:7px;}
 .sc-t{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border2);padding-bottom:5px;margin-bottom:2px;}
 
@@ -189,8 +207,13 @@ select option{background:var(--panel);color:var(--text);}
 /* HERO POOL */
 .hero-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:9px;}
 .fchips{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:9px;}
-.chip{padding:3px 10px;border-radius:20px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;user-select:none;background:var(--panel);border:1px solid var(--border);color:var(--text2);transition:all .15s;}
-.chip.active{background:var(--blue);border-color:var(--blue);color:#fff;}
+/* Icon-only role filter buttons — plain pressable icons (no box/background), same height as the button row on the right of the Hero Pool header. */
+.role-chip{width:44px;height:44px;padding:0;border-radius:4px;background:transparent;border:none;display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--text3);cursor:pointer;user-select:none;transition:all .15s;}
+.role-chip:hover{background:var(--panel2);color:var(--text2);}
+.role-chip.active{color:var(--blue);}
+.role-chip-icon{width:26px;height:26px;background-color:var(--text3);-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;-webkit-mask-position:center;mask-size:contain;mask-repeat:no-repeat;mask-position:center;transition:background-color .15s;}
+.role-chip:hover .role-chip-icon{background-color:var(--text2);}
+.role-chip.active .role-chip-icon{background-color:var(--blue);}
 .hgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:7px;}
 .hcard{border-radius:0px;overflow:hidden;position:relative;cursor:pointer;border:none;background:var(--panel);transition:all .15s;aspect-ratio:3/4;display:flex;flex-direction:column;box-shadow:var(--sh);}
 .hcard:hover:not(.hu){border-color:var(--blue-m);transform:translateY(-2px);box-shadow:var(--sh2);}
@@ -202,6 +225,25 @@ select option{background:var(--panel);color:var(--text);}
 .hph{font-size:26px;color:var(--text3);}
 .hcn{background:var(--panel);padding:3px 3px 5px;font-size:8px;font-weight:700;letter-spacing:.2px;text-transform:uppercase;text-align:center;color:var(--text);line-height:1.1;flex-shrink:0;}
 .hrd{width:5px;height:5px;border-radius:50%;position:absolute;top:4px;right:4px;}
+
+/* HERO POOL — STAT CARDS */
+#rosterList.hgrid{grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:12px;}
+.pcard{border-radius:var(--r);overflow:hidden;position:relative;cursor:pointer;border:1px solid var(--border);background:var(--panel);transition:all .15s;box-shadow:var(--sh);display:flex;flex-direction:column;}
+.pcard:hover{transform:translateY(-3px);box-shadow:var(--sh2);border-color:var(--blue-m);}
+.pci{position:relative;aspect-ratio:16/11;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.pci img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 20%;}
+.pci.logo img{object-fit:contain;object-position:center;padding:12px;background:#fff;}
+.pci-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--panel2);color:var(--text3);font-size:28px;}
+.pinfo{padding:9px 10px 10px;}
+.pname{font-size:12px;font-weight:800;color:var(--text);letter-spacing:.1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.prole{font-size:8.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-top:2px;}
+.pstats{display:flex;margin-top:9px;border-top:1px solid var(--border2);padding-top:7px;}
+.pstat{flex:1;text-align:center;position:relative;}
+.pstat+.pstat::before{content:'';position:absolute;left:0;top:2px;bottom:2px;width:1px;background:var(--border2);}
+.pstat-v{font-size:13px;font-weight:800;color:var(--text);line-height:1.1;}
+.pstat-l{font-size:7.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-top:3px;}
+.pwr-bar{height:4px;border-radius:2px;background:var(--panel3);margin-top:9px;overflow:hidden;}
+.pwr-fill{height:100%;border-radius:2px;transition:width .2s;}
 
 /* SEQUENCE */
 .seq-list{display:flex;flex-direction:column;gap:2px;}
@@ -220,9 +262,28 @@ select option{background:var(--panel);color:var(--text);}
 .rrow input,.rrow select{padding:4px 6px;font-size:11px;}
 .rimg{width:28px;height:28px;border-radius:4px;object-fit:cover;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
 
+/* HERO POOL HEADER */
+.hp-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;}
+.hp-title{display:flex;align-items:baseline;gap:9px;}
+.hp-title-main{font-size:15px;font-weight:800;color:var(--text);letter-spacing:.1px;}
+.hp-count{font-size:11px;font-weight:700;color:var(--text3);background:var(--panel2);border:1px solid var(--border2);padding:2px 9px;border-radius:20px;}
+.rt-search{position:relative;width:230px;}
+.rt-search i{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--text3);pointer-events:none;}
+.rt-search input{padding-left:32px;border-radius:20px;background:var(--panel2);border-color:var(--border2);}
+.rt-search input:focus{background:var(--panel);}
+
 /* ROSTER TOOLBAR */
-.roster-toolbar{display:flex;gap:6px;align-items:center;margin-bottom:8px;flex-wrap:wrap;}
-.roster-sort-bar{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;}
+.roster-toolbar{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;}
+.rt-sortbar{display:flex;align-items:center;gap:0;background:var(--panel2);border:1px solid var(--border2);border-radius:var(--rs);padding:0 4px 0 10px;height:30px;}
+.rt-sortbar>i{font-size:13px;color:var(--text3);flex-shrink:0;}
+.rt-sortbar select{width:auto;background:transparent;border:none;box-shadow:none;padding:0 4px 0 8px;height:28px;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer;}
+.rt-sortbar select:focus{box-shadow:none;}
+.rt-sortbar .rt-icon-btn{width:24px;height:24px;border:none;background:transparent;font-size:12px;}
+.rt-sortbar .rt-icon-btn:hover{background:var(--blue-l);}
+.rt-controls{display:flex;gap:8px;align-items:center;}
+.rt-icon-btn{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:var(--rs);border:1px solid var(--border);background:var(--panel);color:var(--text2);font-size:14px;cursor:pointer;transition:all .15s;}
+.rt-icon-btn:hover,.rt-icon-btn.active{border-color:var(--blue-m);color:var(--blue);background:var(--blue-l);}
+.rt-icon-btn:disabled{opacity:.35;cursor:not-allowed;pointer-events:none;}
 
 /* RIGHT PANEL & HORIZONTAL DRAFTBOARD */
 .h-draft { display: flex; background: #2f2f2f; padding: 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.1); align-items: stretch; justify-content: space-between; border-bottom: 2px solid #1a1a1a; height: 64px; }
@@ -339,7 +400,7 @@ select option{background:var(--panel);color:var(--text);}
 .flex-btn.current { border-color: var(--blue-b); background: var(--blue-l); }
 .flex-pn { font-weight: 700; font-size: 11px; color: var(--text); margin-top: 8px; margin-bottom: 2px; }
 .flex-pr { font-size: 9px; color: var(--text2); text-transform: uppercase; letter-spacing: .5px; }
-.flex-role-icon { width: 32px; height: 32px; filter: invert(1); mix-blend-mode: multiply; opacity: 0.82; object-fit: contain; }
+.flex-role-icon { width: 32px; height: 32px; opacity: 0.82; object-fit: contain; }
 
 /* MODIFY MODAL */
 .mmod{max-width:520px;}
@@ -356,6 +417,212 @@ select option{background:var(--panel);color:var(--text);}
 .stats-row{display:flex;flex-direction:column;gap:3px;}
 .stats-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);}
 .stat-inp{font-size:13px;}
+.hem-rates{display:flex;background:var(--panel2);border:1px solid var(--border);border-radius:var(--rs);overflow:hidden;}
+.hem-rate{flex:1;text-align:center;padding:9px 4px;position:relative;}
+.hem-rate+.hem-rate::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:1px;background:var(--border2);}
+.hem-rate b{display:block;font-size:14px;font-weight:800;color:var(--blue);}
+.hem-rate span{display:block;font-size:8.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-top:2px;}
+.hem-role-stats{display:flex;background:var(--panel2);border:1px solid var(--border);border-radius:var(--rs);overflow:hidden;margin-bottom:14px;}
+.hem-role-stat{flex:1;text-align:center;padding:9px 3px;position:relative;}
+.hem-role-stat+.hem-role-stat::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:1px;background:var(--border2);}
+.hem-role-icon{width:18px;height:18px;object-fit:contain;opacity:.65;margin-bottom:4px;}
+.hem-role-count{font-size:13px;font-weight:800;color:var(--text);line-height:1.1;}
+.hem-role-pct{font-size:8.5px;font-weight:700;color:var(--text3);margin-top:2px;}
+.hem-side-tendency{display:flex;gap:10px;margin-bottom:14px;}
+.hem-side-block{flex:1;border-radius:var(--rs);border:1px solid var(--border2);overflow:hidden;}
+.hem-side-label{font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;text-align:center;padding:5px;color:#fff;}
+.hem-side-block.blue .hem-side-label{background:var(--blue);}
+.hem-side-block.red .hem-side-label{background:var(--red);}
+.hem-side-stats{display:flex;background:var(--panel2);}
+.hem-side-stat{flex:1;text-align:center;padding:7px 2px;position:relative;}
+.hem-side-stat+.hem-side-stat::before{content:'';position:absolute;left:0;top:6px;bottom:6px;width:1px;background:var(--border2);}
+.hem-side-stat b{display:block;font-size:12px;font-weight:800;color:var(--text);}
+.hem-side-stat span{display:block;font-size:7.5px;font-weight:700;color:var(--text3);text-transform:uppercase;margin-top:2px;}
+.hem-stats-note{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--text3);margin-bottom:8px;}
+.hem-stats-note i{font-size:12px;}
+
+/* TWO COLUMN MODALS (Hero / Player / Team edit + stats) */
+.modal-2col{max-width:820px;max-height:88vh;display:flex;flex-direction:column;}
+.modal-2col.single{max-width:480px;}
+.modal-2col .m-head,.modal-2col .mbtns{flex-shrink:0;}
+.hem-columns{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start;flex:1;min-height:0;overflow-y:auto;padding-right:4px;}
+.hem-columns.single-col{grid-template-columns:1fr;}
+.hem-columns.single-col .hem-col-history{display:none;}
+.hem-col-history{border-left:1px solid var(--border2);padding-left:22px;min-width:0;}
+.hem-breakdown-sort{margin-bottom:8px;}
+.hem-breakdown-sort select{font-size:11px;padding:5px 8px;}
+.hem-history-list{display:flex;flex-direction:column;gap:6px;max-height:420px;overflow-y:auto;padding-right:2px;}
+.hem-history-row{background:var(--panel2);border:1px solid var(--border2);border-radius:var(--rs);padding:8px 10px;cursor:pointer;transition:all .15s;}
+.hem-history-row:hover{border-color:var(--blue-m);background:var(--blue-l);}
+.hem-history-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px;}
+.hem-history-left{display:flex;align-items:center;gap:7px;min-width:0;}
+.hem-history-icons{display:flex;align-items:center;flex-shrink:0;}
+.hem-history-team-icon{width:16px;height:16px;border-radius:50%;object-fit:contain;background:#fff;border:1px solid var(--border2);margin-right:-4px;position:relative;z-index:1;}
+.hem-history-role-icon{width:16px;height:16px;object-fit:contain;background:var(--panel);border:1px solid var(--border2);border-radius:50%;padding:2px;}
+.hem-history-player{font-size:12px;font-weight:800;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.hem-history-result{font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;padding:2px 8px;border-radius:10px;flex-shrink:0;}
+.hem-history-result.win{background:var(--green-l);color:var(--green);}
+.hem-history-result.loss{background:var(--red-l);color:var(--red);}
+.hem-history-result.pending{background:var(--panel3);color:var(--text3);}
+.hem-history-meta{font-size:10px;color:var(--text3);display:flex;flex-wrap:wrap;align-items:center;gap:3px 8px;}
+.hem-history-meta span{white-space:nowrap;}
+.hem-history-side-tag{font-size:8px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;padding:1px 6px;border-radius:8px;}
+.hem-history-side-tag.blue{background:var(--blue-l);color:var(--blue);}
+.hem-history-side-tag.red{background:var(--red-l);color:var(--red);}
+.hem-history-empty{font-size:11.5px;color:var(--text3);padding:20px 0;text-align:center;}
+
+/* MODAL HEADER */
+.m-head{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+.m-head-ic{flex-shrink:0;width:38px;height:38px;border-radius:10px;background:var(--blue-l);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:18px;}
+.m-head .mt{margin-bottom:1px;}
+.m-head .ms{margin-bottom:0;}
+
+/* HERO MEDIA UPLOAD */
+.hem-media{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.hem-up{position:relative;cursor:pointer;border:1.5px dashed var(--border);border-radius:var(--r);background:var(--panel2);aspect-ratio:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;overflow:hidden;transition:all .15s;}
+.hem-up:hover{border-color:var(--blue-m);background:var(--blue-l);}
+.hem-up-in{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--text3);position:relative;}
+.hem-up:hover .hem-up-in{color:var(--blue);}
+.hem-up-in img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.hem-up-lbl{position:absolute;bottom:0;left:0;right:0;background:rgba(26,29,35,.72);color:#fff;font-size:8.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-align:center;padding:4px 0;}
+.hem-up.has-img{border-style:solid;}
+.hem-up.has-img .hem-up-in{color:transparent;}
+
+/* SECTION DIVIDER */
+.hem-divider{display:flex;align-items:center;gap:8px;margin:14px 0 12px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);}
+.hem-divider::before,.hem-divider::after{content:'';flex:1;height:1px;background:var(--border2);}
+
+/* INLINE TOGGLE ROW */
+.et-toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:var(--panel2);border:1px solid var(--border2);border-radius:var(--rs);font-size:12.5px;font-weight:600;color:var(--text2);cursor:pointer;}
+
+/* MATCH HISTORY — LIST */
+.mh-list{display:flex;flex-direction:column;gap:8px;}
+.mh-card{display:flex;align-items:center;gap:14px;padding:13px 16px;border:1px solid var(--border);border-radius:var(--r);background:var(--panel);cursor:pointer;transition:all .15s;box-shadow:var(--sh);}
+.mh-card:hover{border-color:var(--blue-m);transform:translateY(-2px);box-shadow:var(--sh2);}
+.mh-teams{display:flex;align-items:center;gap:7px;flex:1;min-width:0;font-size:13px;font-weight:800;overflow:hidden;}
+.mh-team{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mh-team-b{color:var(--blue);}
+.mh-team-r{color:var(--red);}
+.mh-vs{color:var(--text3);font-size:9.5px;font-weight:700;flex-shrink:0;}
+.mh-meta{font-size:11px;color:var(--text3);white-space:nowrap;flex-shrink:0;}
+.mh-result{font-size:9.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;padding:5px 11px;border-radius:20px;flex-shrink:0;}
+.mh-result.pending{background:var(--panel2);color:var(--text3);border:1px solid var(--border2);}
+.mh-result.blue{background:var(--blue-l);color:var(--blue);}
+.mh-result.red{background:var(--red-l);color:var(--red);}
+.mh-empty{padding:60px 20px;text-align:center;color:var(--text3);}
+.mh-empty i{font-size:46px;opacity:.35;margin-bottom:12px;display:block;}
+.mh-empty-t{font-size:14px;font-weight:700;color:var(--text2);margin-bottom:4px;}
+.mh-empty-d{font-size:12px;}
+
+/* MATCH HISTORY — DETAIL MODAL */
+.mhd-sides{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.mhd-side-head{display:flex;align-items:center;gap:7px;font-weight:800;font-size:13px;margin-bottom:2px;}
+.mhd-side-head.blue{color:var(--blue);}
+.mhd-side-head.red{color:var(--red);}
+.mhd-sec-lbl{font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin:10px 0 6px;}
+.mhd-bans{display:flex;flex-wrap:wrap;gap:6px;}
+.mhd-ban-chip{display:flex;align-items:center;gap:5px;background:var(--panel2);border:1px solid var(--border2);border-radius:20px;padding:3px 10px 3px 3px;font-size:10.5px;font-weight:600;color:var(--text2);}
+.mhd-ban-chip img{width:18px;height:18px;border-radius:50%;object-fit:cover;filter:grayscale(60%);}
+.mhd-picks{display:flex;flex-direction:column;gap:5px;}
+.mhd-pick-row{display:flex;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--border2);border-radius:var(--rs);padding:5px 8px;}
+.mhd-pick-row img{width:26px;height:26px;border-radius:6px;object-fit:cover;flex-shrink:0;}
+.mhd-pick-name{font-size:11.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mhd-pick-player{font-size:9.5px;color:var(--text3);margin-left:auto;flex-shrink:0;white-space:nowrap;}
+.mhd-none{font-size:11px;color:var(--text3);}
+.mhd-winner{margin-top:18px;padding-top:16px;border-top:1px solid var(--border2);}
+.mhd-winner-row{display:flex;gap:10px;margin-top:8px;}
+.mhd-win-btn{flex:1;padding:12px;border-radius:var(--r);border:1.5px solid var(--border);background:var(--panel2);cursor:pointer;text-align:center;font-weight:800;font-size:12px;letter-spacing:.3px;transition:all .15s;color:var(--text2);}
+.mhd-win-btn:hover{border-color:var(--blue-m);}
+.mhd-win-btn i{display:block;font-size:17px;margin-bottom:4px;}
+.mhd-win-btn.sel-blue{border-color:var(--blue);background:var(--blue-l);color:var(--blue);}
+.mhd-win-btn.sel-red{border-color:var(--red);background:var(--red-l);color:var(--red);}
+.mhd-clear-link{display:block;text-align:center;margin-top:8px;font-size:10.5px;font-weight:700;color:var(--text3);cursor:pointer;text-decoration:underline;}
+
+/* TEAM DATABASE — LIST */
+.td-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;}
+.td-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--sh);transition:all .15s;}
+.td-card:hover{box-shadow:var(--sh2);border-color:var(--blue-m);}
+.td-head{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.td-logo{width:44px;height:44px;border-radius:10px;background:var(--panel2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
+.td-logo img{width:100%;height:100%;object-fit:contain;}
+.td-logo i{font-size:19px;color:var(--text3);}
+.td-name{font-size:14.5px;font-weight:800;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.td-tag{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;margin-top:1px;}
+.td-head-info{min-width:0;flex:1;}
+.td-actions{display:flex;gap:6px;flex-shrink:0;}
+.td-roster{display:flex;gap:10px;padding-top:14px;border-top:1px solid var(--border2);}
+.td-player{flex:1;min-width:0;text-align:center;}
+.td-player-avatar{position:relative;width:40px;height:40px;margin:0 auto;border-radius:50%;overflow:hidden;background:var(--panel2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;}
+.td-player-role-icon{width:18px;height:18px;object-fit:contain;opacity:.5;}
+.td-player-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.td-player-name{font-size:9.5px;font-weight:700;margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2);}
+.td-player-role{font-size:7.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.td-empty{grid-column:1/-1;padding:60px 20px;text-align:center;color:var(--text3);}
+.td-empty i{font-size:46px;opacity:.35;margin-bottom:12px;display:block;}
+.td-empty-t{font-size:14px;font-weight:700;color:var(--text2);margin-bottom:4px;}
+.td-empty-d{font-size:12px;}
+
+/* TEAM DATABASE — EDITOR */
+.td-logo-tile{position:relative;width:64px;height:64px;border-radius:var(--r);border:1.5px dashed var(--border);background:var(--panel2);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;flex-shrink:0;transition:all .15s;}
+.td-logo-tile:hover{border-color:var(--blue-m);background:var(--blue-l);}
+.td-logo-tile i{font-size:22px;color:var(--text3);}
+.td-logo-tile:hover i{color:var(--blue);}
+.td-logo-tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;}
+.td-roster-edit{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:6px;}
+.td-player-edit{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.td-player-tile{position:relative;width:100%;aspect-ratio:1/1;border-radius:var(--r);border:1.5px dashed var(--border);background:var(--panel2);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;transition:all .15s;}
+.td-player-tile:hover{border-color:var(--blue-m);background:var(--blue-l);}
+.td-player-tile i{font-size:20px;color:var(--text3);}
+.td-player-tile:hover i{color:var(--blue);}
+.td-player-tile.readonly{cursor:default;}
+.td-player-tile.readonly:hover{border-color:var(--border);background:var(--panel2);}
+.td-player-tile.readonly:hover i{color:var(--text3);}
+.td-role-fallback-icon{width:24px;height:24px;object-fit:contain;opacity:.5;}
+.td-tile-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.td-player-edit input[type="text"],.td-player-edit select{text-align:center;font-size:10.5px;padding:5px 2px;width:100%;}
+.te-scroll{max-height:340px;overflow-y:auto;padding-right:2px;margin-bottom:4px;}
+.hem-divider-note{font-weight:500;text-transform:none;letter-spacing:0;color:var(--text3);margin-left:4px;}
+.td-pool{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;}
+.td-pool-row{display:flex;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--border2);border-radius:var(--rs);padding:6px 8px;}
+.td-pool-avatar{position:relative;width:34px;height:34px;border-radius:50%;background:var(--panel);border:1.5px dashed var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;flex-shrink:0;transition:all .15s;}
+.td-pool-avatar:hover{border-color:var(--blue-m);background:var(--blue-l);}
+.td-pool-avatar i{font-size:15px;color:var(--text3);}
+.td-pool-avatar:hover i{color:var(--blue);}
+.td-pool-avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.td-pool-row input[type="text"]{flex:1;font-size:12px;padding:6px 8px;}
+
+/* STATISTICS — MODE SWITCH */
+#statModeSwitch{width:auto;max-width:360px;margin-bottom:14px;}
+#statModeSwitch .seg-btn{display:flex;align-items:center;justify-content:center;gap:5px;padding:7px 12px;}
+#statModeSwitch .seg-btn i{font-size:14px;}
+
+/* STATISTICS — PLAYER / TEAM CARDS */
+.pt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;}
+#playerStatsList,#teamStatsList{grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:12px;}
+.pt-card{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:var(--r);background:var(--panel);cursor:pointer;transition:all .15s;box-shadow:var(--sh);}
+.pt-card:hover{border-color:var(--blue-m);transform:translateY(-2px);box-shadow:var(--sh2);}
+.pt-avatar{width:42px;height:42px;border-radius:50%;background:var(--panel2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:19px;overflow:hidden;flex-shrink:0;}
+.pt-avatar img{width:100%;height:100%;object-fit:contain;}
+.pt-avatar.is-photo img{object-fit:cover;}
+.pt-info{min-width:0;flex:1;}
+.pt-name{font-size:13px;font-weight:800;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pt-sub{font-size:10.5px;color:var(--text3);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:4px;}
+.pt-team-icon{width:12px;height:12px;object-fit:contain;flex-shrink:0;}
+.pt-wr{font-size:14px;font-weight:800;flex-shrink:0;}
+
+/* STATISTICS — DETAIL MODAL */
+.pd-head{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+.pd-avatar{width:52px;height:52px;border-radius:50%;background:var(--panel2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:24px;overflow:hidden;flex-shrink:0;}
+.pd-avatar img{width:100%;height:100%;object-fit:contain;}
+.pd-avatar.is-photo img{object-fit:cover;}
+.pd-name{font-size:16px;font-weight:800;color:var(--text);}
+.pd-sub{font-size:11.5px;color:var(--text3);margin-top:1px;}
+.pd-hero-list{display:flex;flex-direction:column;gap:6px;max-height:320px;overflow-y:auto;}
+.pd-hero-row{display:flex;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--border2);border-radius:var(--rs);padding:7px 10px;}
+.pd-hero-row img{width:30px;height:30px;border-radius:6px;object-fit:cover;flex-shrink:0;}
+.pd-hero-name{font-size:12px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pd-hero-stat{font-size:10.5px;color:var(--text3);white-space:nowrap;}
+.pd-hero-wr{font-size:12px;font-weight:800;width:42px;text-align:right;flex-shrink:0;}
 
 /* TOAST */
 .twrap{position:fixed;top:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:6px;}
@@ -536,34 +803,12 @@ input:checked + .slider:before { transform: translateX(16px); }
   .out-btn:hover { background: var(--blue-l); color: var(--blue); }
   .out-btn.border-right { border-right: 1px solid var(--border); }
   
-  .mixer-wrap { background: #1a1a1a; border-radius: 10px; padding: 16px; color: #fff; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 16px; position: relative; overflow: hidden; }
-  .mixer-screen { background: #000; border: 1px solid #333; border-radius: 6px; padding: 12px; display: flex; flex-direction: column; gap: 8px; position: relative; }
-  .mixer-screen::after { content:''; position:absolute; top:0; left:0; right:0; bottom:0; background: linear-gradient(rgba(255,255,255,0.03) 50%, transparent 50%); background-size: 100% 4px; pointer-events: none; }
-  .track-info { display: flex; justify-content: space-between; align-items: center; font-family: monospace; font-size: 12px; color: #0f0; text-shadow: 0 0 5px rgba(0,255,0,0.5); }
-  .visualizer { display: flex; gap: 2px; height: 16px; align-items: flex-end; }
-  .vis-bar { animation-play-state: paused; width: 4px; background: #0f0; border-radius: 1px; animation: bounce 0.5s infinite alternate; }
-  @keyframes bounce { 0% { height: 4px; } 100% { height: 16px; } }
-  .vis-bar:nth-child(even) { animation-duration: 0.7s; background: #ffeb3b; }
-  .vis-bar:nth-child(3n) { animation-duration: 0.6s; background: #f44336; }
-  .mixer-controls { display: flex; gap: 12px; justify-content: center; }
-  .mx-btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: #333; color: #fff; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-  .mx-btn:hover { background: #444; transform: scale(1.05); }
-  .mx-btn.active { background: var(--blue); color: #fff; box-shadow: 0 0 10px var(--blue); }
-  .mx-slider-wrap { display: flex; align-items: center; gap: 12px; }
-  .mx-slider-wrap i { color: #888; }
-  .mx-slider { -webkit-appearance: none; flex: 1; height: 6px; border-radius: 3px; background: #333; outline: none; }
-  .mx-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #fff; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+
+
 
   .draft-exec { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
   .btn-mega { font-size: 16px; padding: 18px; font-weight: 800; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(21,101,192,0.3); transition: transform 0.2s, box-shadow 0.2s; }
   .btn-mega:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(21,101,192,0.4); }
-  
-  .stream-timer-big { background: #F8F9FA; border: 1px solid var(--border2); border-radius: 10px; padding: 20px; text-align: center; }
-  .st-digits { font-size: 56px; font-weight: 900; color: var(--text); font-variant-numeric: tabular-nums; line-height: 1; margin-bottom: 16px; text-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-  
-  .btn-st { flex: 1; border-radius: 6px; font-weight: 700; border: 1px solid var(--border); padding: 10px; background: #fff; color: var(--text); cursor: pointer; transition: 0.15s; }
-  .btn-st:hover { background: var(--panel2); }
-
 
   /* MODERN SETTINGS CSS */
   .settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 24px; padding: 24px; max-width: 1200px; margin: 0 auto; background: var(--bg); }
@@ -718,61 +963,107 @@ input:checked + .slider:before { transform: translateX(16px); }
 <!-- ESPORTS MODAL -->
 <div class="mbg" id="esportsModal">
   <div class="mbox stats-modal-box">
-    <div class="mt">Esports Settings</div>
-    <div class="ms">Set global tournament stats</div>
-    <div class="stats-field" style="grid-template-columns:1fr; gap:12px;">
-      <div class="stats-row">
-        <label class="stats-lbl">Total Matches Played</label>
-        <input type="number" class="stat-inp" id="emTotalMatches" min="0">
-      </div>
-      <div class="stats-row">
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px;font-weight:700;margin-top:8px;">
-          <input type="checkbox" id="emStatsEnabled" style="width:16px;height:16px;margin:0;"> ENABLE STATS POPUP
-        </label>
-      </div>
+    <div class="m-head"><div class="m-head-ic"><i class='bx bx-trophy'></i></div><div><div class="mt">Esports Stats</div><div class="ms">Hero totals, tracked automatically</div></div></div>
+    <div class="hem-rates" style="margin-bottom:14px;">
+      <div class="hem-rate"><b id="emTotalMatches">0</b><span>Total Matches</span></div>
+      <div class="hem-rate"><b id="emTotalPicks">0</b><span>Total Picks</span></div>
+      <div class="hem-rate"><b id="emTotalBans">0</b><span>Total Bans</span></div>
     </div>
-    <div class="mbtns" style="margin-top:15px;">
-      <button class="btn bg2" onclick="cEsports()">Cancel</button>
-      <button class="btn bp" onclick="doEsports()">Save Settings</button>
+    <div class="ms" style="margin-bottom:0;">Matches are counted from picks &amp; bans across all heroes — save completed drafts in Match History to grow these totals.</div>
+    <div class="mbtns" style="margin-top:18px; justify-content:space-between;">
+      <button class="btn bg2" onclick="resetAllHeroStats()" style="color:var(--red);border-color:var(--red-b);"><i class='bx bx-reset'></i> Reset All Stats</button>
+      <button class="btn bp" onclick="cEsports()">Done</button>
     </div>
   </div>
 </div>
 
 <!-- EDIT HERO MODAL -->
 <div class="mbg" id="heroEditModal">
-  <div class="mbox" style="max-width:480px;">
-    <div class="mt" id="hemTitle">Edit Hero</div>
-    <div class="ms">Update details and statistics</div>
-    
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
-      <div class="ig"><label class="lbl">Name</label><input type="text" id="hemName"></div>
-      <div class="ig"><label class="lbl">Role</label>
-        <select id="hemRole">
-          <option>Fighter</option><option>Mage</option><option>Assassin</option>
-          <option>Marksman</option><option>Tank</option><option>Support</option>
-        </select>
+  <div class="mbox modal-2col">
+    <div class="m-head"><div class="m-head-ic"><i class='bx bx-group'></i></div><div><div class="mt" id="hemTitle">Edit Hero</div><div class="ms">Update details, media and statistics</div></div></div>
+
+    <div class="hem-columns">
+      <div class="hem-col-main">
+        <div class="hem-media">
+          <div class="hem-up" id="hemIconUp" onclick="document.getElementById('hemIconFile').click()">
+            <div class="hem-up-in" id="hemIconIn"><i class='bx bx-image-add'></i></div>
+            <input type="file" id="hemIconFile" accept="image/*" style="display:none;" onchange="handleHeroUpload(this,'icon')">
+            <div class="hem-up-lbl">Icon</div>
+            <input type="hidden" id="hemIcon">
+          </div>
+          <div class="hem-up" id="hemPortraitUp" onclick="document.getElementById('hemPortraitFile').click()">
+            <div class="hem-up-in" id="hemPortraitIn"><i class='bx bx-image-add'></i></div>
+            <input type="file" id="hemPortraitFile" accept="image/*" style="display:none;" onchange="handleHeroUpload(this,'portrait')">
+            <div class="hem-up-lbl">Portrait</div>
+            <input type="hidden" id="hemPortrait">
+          </div>
+          <div class="hem-up" id="hemSplashUp" onclick="document.getElementById('hemSplashFile').click()">
+            <div class="hem-up-in" id="hemSplashIn"><i class='bx bx-image-add'></i></div>
+            <input type="file" id="hemSplashFile" accept="image/*" style="display:none;" onchange="handleHeroUpload(this,'splash')">
+            <div class="hem-up-lbl">Splash</div>
+            <input type="hidden" id="hemSplash">
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
+          <div class="ig"><label class="lbl">Name</label><input type="text" id="hemName"></div>
+          <div class="ig"><label class="lbl">Original Role</label>
+            <select id="hemRole">
+              <option value="EXP Lane">EXP Lane</option><option value="Jungle">Jungler</option>
+              <option value="Mid Lane">Mid Lane</option><option value="Gold Lane">Gold Lane</option>
+              <option value="Roam">Roamer</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="hem-divider"><span>Statistics</span></div>
+        <div class="hem-stats-note"><i class='bx bx-info-circle'></i> Tracked automatically from Match History — not editable here.</div>
+
+        <div class="hem-rates" style="margin-bottom:8px;">
+          <div class="hem-rate"><b id="hemPicksView">0</b><span>Picks</span></div>
+          <div class="hem-rate"><b id="hemBansView">0</b><span>Bans</span></div>
+          <div class="hem-rate"><b id="hemWinsView">0</b><span>Wins</span></div>
+        </div>
+
+        <div class="hem-rates" style="margin-bottom:14px;">
+          <div class="hem-rate"><b id="hemPR">0%</b><span>Pick Rate</span></div>
+          <div class="hem-rate"><b id="hemBR">0%</b><span>Ban Rate</span></div>
+          <div class="hem-rate"><b id="hemWR">0%</b><span>Win Rate</span></div>
+          <div class="hem-rate"><b id="hemCR">0%</b><span>Contest</span></div>
+        </div>
+
+        <div class="hem-divider"><span>Picks by Role</span></div>
+        <div class="hem-role-stats" id="hemRoleStats"></div>
+
+        <div class="hem-divider"><span>Side Tendency</span></div>
+        <div class="hem-side-tendency">
+          <div class="hem-side-block blue">
+            <div class="hem-side-label">Blue Side</div>
+            <div class="hem-side-stats">
+              <div class="hem-side-stat"><b id="hemBluePicks">0</b><span>Picks</span></div>
+              <div class="hem-side-stat"><b id="hemBlueBans">0</b><span>Bans</span></div>
+              <div class="hem-side-stat"><b id="hemBlueWR">0%</b><span>Win Rate</span></div>
+            </div>
+          </div>
+          <div class="hem-side-block red">
+            <div class="hem-side-label">Red Side</div>
+            <div class="hem-side-stats">
+              <div class="hem-side-stat"><b id="hemRedPicks">0</b><span>Picks</span></div>
+              <div class="hem-side-stat"><b id="hemRedBans">0</b><span>Bans</span></div>
+              <div class="hem-side-stat"><b id="hemRedWR">0%</b><span>Win Rate</span></div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="ig"><label class="lbl">Icon URL</label><input type="text" id="hemIcon"></div>
-      <div class="ig"><label class="lbl">Portrait URL</label><input type="text" id="hemPortrait"></div>
+
+      <div class="hem-col-history">
+        <div class="hem-divider" style="margin-top:0;"><span>Pick History</span></div>
+        <div class="hem-history-list" id="hemHistoryList"></div>
+      </div>
     </div>
-    
-    <div style="border-top:1px solid var(--border); margin:12px 0;"></div>
-    
-    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:12px;">
-      <div class="ig"><label class="lbl">Picks</label><input type="number" id="hemPicks" min="0" oninput="updHemRates()"></div>
-      <div class="ig"><label class="lbl">Bans</label><input type="number" id="hemBans" min="0" oninput="updHemRates()"></div>
-      <div class="ig"><label class="lbl">Wins</label><input type="number" id="hemWins" min="0" oninput="updHemRates()"></div>
-    </div>
-    
-    <div style="display:flex; justify-content:space-between; font-size:11px; background:var(--panel2); padding:8px; border-radius:var(--rs); border:1px solid var(--border);">
-      <div><b id="hemPR">0%</b> Pick</div>
-      <div><b id="hemBR">0%</b> Ban</div>
-      <div><b id="hemWR">0%</b> Win</div>
-      <div><b id="hemCR">0%</b> Contest</div>
-    </div>
-    
-    <div class="mbtns" style="margin-top:15px; display:flex; justify-content:space-between;">
-      <button class="btn bd" onclick="doDeleteHero()" id="hemDelBtn">Delete</button>
+
+    <div class="mbtns" style="margin-top:18px; justify-content:space-between;">
+      <button class="btn bg2" onclick="doDeleteHero()" id="hemDelBtn" style="color:var(--red);border-color:var(--red-b);">Delete</button>
       <div style="display:flex; gap:7px;">
         <button class="btn bg2" onclick="cHeroEdit()">Cancel</button>
         <button class="btn bp" onclick="doHeroEdit()">Save Hero</button>
@@ -780,6 +1071,25 @@ input:checked + .slider:before { transform: translateX(16px); }
     </div>
   </div>
 </div>
+
+<!-- MATCH DETAIL MODAL -->
+<div class="mbg" id="matchDetailModal">
+  <div class="mbox" style="max-width:640px;">
+    <div class="m-head">
+      <div class="m-head-ic"><i class='bx bx-history'></i></div>
+      <div>
+        <div class="mt" id="mhdTitle">Match Detail</div>
+        <div class="ms" id="mhdSub">—</div>
+      </div>
+    </div>
+    <div class="mhd-body" id="mhdBody"></div>
+    <div class="mbtns" style="margin-top:18px; justify-content:space-between;">
+      <button class="btn bg2" onclick="deleteMatchFromDetail()" style="color:var(--red);border-color:var(--red-b);"><i class='bx bx-trash'></i> Delete Match</button>
+      <button class="btn bp" onclick="closeMatchDetail()">Close</button>
+    </div>
+  </div>
+</div>
+
 
 <!-- EVENT PLAYER MODAL -->
 <div class="mbg" id="eventPlayerModal">
@@ -802,26 +1112,31 @@ input:checked + .slider:before { transform: translateX(16px); }
   </div>
 </div>
 
-<div class="layout">
+<div class="layout" id="layout">
 <!-- SIDEBAR -->
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
   <div class="sb-head">
-    <div class="sb-logo">MPL Draft</div>
-    <div class="sb-sub">Operator Control Panel</div>
+    <div class="sb-mark"><img src="assets/imgs/mobilelegendslogo.png" alt="Logo"></div>
+    <div class="sb-txt">
+      <div class="sb-logo">MLBB Tournament</div>
+      <div class="sb-sub">Operator Panel</div>
+    </div>
+    <div class="sb-collapse-btn" onclick="toggleSidebar()" title="Collapse sidebar"><i class='bx bx-chevron-left'></i></div>
   </div>
   <div class="sb-body">
     <div class="tab-bar">
       <div class="nav-label">Workspace</div>
-      <div class="tab active" data-tab="live" onclick="sw('live',this)"><i class='bx bx-broadcast'></i> Live Draft</div>
-      <div class="tab" data-tab="broadcast" onclick="sw('broadcast',this)"><i class='bx bx-slideshow'></i> Broadcast</div>
-      <div class="tab" data-tab="setup" onclick="sw('setup',this)"><i class='bx bx-cog'></i> Match Setup</div>
-      <div class="tab" data-tab="teams" onclick="sw('teams',this)"><i class='bx bx-id-card'></i> Team Database</div>
-      <div class="tab" data-tab="heroes" onclick="sw('heroes',this)"><i class='bx bx-group'></i> Hero Pool</div>
-      <div class="tab" data-tab="settings" onclick="sw('settings',this)"><i class='bx bx-slider-alt'></i> Settings</div>
+      <div class="tab active" data-tab="live" onclick="sw('live',this)"><i class='bx bx-broadcast'></i> <span>Live Draft</span></div>
+      <div class="tab" data-tab="broadcast" onclick="sw('broadcast',this)"><i class='bx bx-slideshow'></i> <span>Broadcast</span></div>
+      <div class="tab" data-tab="setup" onclick="sw('setup',this)"><i class='bx bx-cog'></i> <span>Match Setup</span></div>
+      <div class="tab" data-tab="heroes" onclick="sw('heroes',this)"><i class='bx bx-bar-chart-alt-2'></i> <span>Statistics</span></div>
+      <div class="tab" data-tab="matchHistory" onclick="sw('matchHistory',this)"><i class='bx bx-history'></i> <span>Match History</span></div>
+      <div class="tab" data-tab="settings" onclick="sw('settings',this)"><i class='bx bx-slider-alt'></i> <span>Settings</span></div>
     </div>
 
   </div>
 </div>
+<div class="sb-collapse-mini" onclick="toggleSidebar()" title="Expand sidebar"><i class='bx bx-chevron-right'></i></div>
 
 <!-- CENTER -->
 <div class="main-area">
@@ -899,6 +1214,7 @@ input:checked + .slider:before { transform: translateX(16px); }
 
                 <!-- Buttons -->
                 <div style="display:flex; align-items:center; gap:8px; height: 100%;">
+                    <button class="btn bg2" id="btnLiveTogglePredictor" onclick="toggleDraftPredictor()" style="padding:10px 12px; border:1px solid var(--border); border-radius:4px;" title="Toggle Draft Predictor"><i class='bx bx-shape-square' style="font-size:24px;"></i></button>
                     <button class="btn bw" id="btnLiveTogglePause" onclick="if(S.status==='running'){pauseDraft();}else{resumeDraft();}" disabled style="padding:10px 12px; border:1px solid var(--border); border-radius:4px;" title="Pause"><i class='bx bx-pause' style="font-size:24px;"></i></button>
                     <button class="btn bg2" id="btnLiveSkip" onclick="skipTurn()" disabled style="padding:10px 12px; border:1px solid var(--border); border-radius:4px;" title="Skip Turn"><i class='bx bx-skip-next' style="font-size:24px;"></i></button>
                     <button class="btn bg2" id="btnLiveUndo" onclick="undoAction()" disabled style="padding:10px 12px; border:1px solid var(--border); border-radius:4px;" title="Undo Last"><i class='bx bx-undo' style="font-size:24px;"></i></button>
@@ -950,17 +1266,6 @@ input:checked + .slider:before { transform: translateX(16px); }
             <div class="seg-btn" onclick="setSeg('fmt','5ban',this)">5 ban</div>
           </div>
         </div>
-        <div class="setup-field-group">
-          <label class="lbl">Roster size</label>
-          <div class="segment-control" id="segP">
-            <div class="seg-btn" onclick="setSeg('p',3,this)">3v3</div>
-            <div class="seg-btn" onclick="setSeg('p',4,this)">4v4</div>
-            <div class="seg-btn" onclick="setSeg('p',5,this)">5v5</div>
-          </div>
-        </div>
-      
-
-        
         <div class="ig" style="margin-bottom:7px;">
           <label class="lbl">Ban Timer (seconds)</label>
           <div class="segment-control" id="segBanT">
@@ -1044,39 +1349,112 @@ input:checked + .slider:before { transform: translateX(16px); }
 </div>
 </div>
 
-  <!-- TEAM DATABASE TAB -->
-  <div class="tab-panel" id="tab-teams">
-    <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-       <h3>Saved Teams</h3>
-       <button class="btn bp" onclick="openTeamEditor()"><i class='bx bx-plus'></i> Create New Team</button>
-    </div>
-    <div id="teamDbList" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
-  </div>
-
   <!-- HERO POOL TAB: ROSTER AND STATS -->
   <div class="tab-panel" id="tab-heroes">
     <div class="sc3">
-      <div class="sc3-t tn">Hero Statistics</div>
-      <div class="roster-toolbar" style="justify-content:space-between; margin-bottom:12px; display:flex;">
-        <input type="text" id="rosterSearch" placeholder="Search heroes..." style="max-width:240px;" oninput="renderRoster()">
-        <div style="display:flex; gap:6px; align-items:center;">
-          <div class="segment-control" style="width:auto;" id="rosterSortSeg">
-            <div class="seg-btn active" onclick="setRosterSort('name',this)">Name</div>
-            <div class="seg-btn" onclick="setRosterSort('role',this)">Role</div>
-            <div class="seg-btn" onclick="setRosterSort('picks',this)">Picks</div>
-            <div class="seg-btn" onclick="setRosterSort('bans',this)">Bans</div>
-            <div class="seg-btn" onclick="setRosterSort('wins',this)">Wins</div>
-            <div class="seg-btn" onclick="setRosterSort('contestRate',this)">Contest</div>
-          </div>
-          <button class="btn bg2 bxs" style="padding:4px 8px; font-size:12px;" onclick="toggleRosterSortDir()" id="rosterSortDirBtn">↓</button>
-          <button class="btn bs bsm" title="Add Hero" onclick="openAddHero()"><i class='bx bx-plus'></i></button>
-          <input type="file" id="importJsonFile" style="display:none;" accept=".json" onchange="importRoster(this)">
-          <button class="btn bg2 bsm" title="Import JSON" onclick="document.getElementById('importJsonFile').click()"><i class='bx bx-import'></i></button>
-          <button class="btn bg2 bsm" title="Export JSON" onclick="exportRoster()"><i class='bx bx-export'></i></button>
-          <button class="btn bgo bsm" title="Esports Settings" onclick="openEsports()"><i class='bx bx-trophy'></i></button>
+      <div class="hp-head">
+        <div class="hp-title">
+          <div class="hp-title-main">Statistics</div>
+          <div class="hp-count" id="hpCount">0 heroes</div>
+        </div>
+        <div class="rt-search">
+          <i class='bx bx-search'></i>
+          <input type="text" id="statSearch" placeholder="Search heroes..." oninput="onStatSearch()">
         </div>
       </div>
+
+      <div class="segment-control" id="statModeSwitch">
+        <div class="seg-btn active" data-mode="heroes" onclick="setStatMode('heroes',this)"><i class='bx bx-group'></i> Heroes</div>
+        <div class="seg-btn" data-mode="players" onclick="setStatMode('players',this)"><i class='bx bx-user'></i> Players</div>
+        <div class="seg-btn" data-mode="teams" onclick="setStatMode('teams',this)"><i class='bx bx-id-card'></i> Teams</div>
+      </div>
+
+      <div class="roster-toolbar" id="heroesToolbar">
+        <div class="rt-sortbar">
+          <i class='bx bx-sort-alt-2'></i>
+          <select id="rosterSortSel" onchange="setRosterSort(this.value)">
+            <option value="name">Name</option>
+            <option value="role">Role</option>
+            <option value="picks">Picks</option>
+            <option value="bans">Bans</option>
+            <option value="wins">Wins</option>
+            <option value="contestRate">Contest</option>
+          </select>
+          <button class="rt-icon-btn" title="Toggle sort direction" onclick="toggleRosterSortDir()" id="rosterSortDirBtn"><i class='bx bx-sort-down'></i></button>
+        </div>
+        <div class="rt-controls">
+          <input type="file" id="importJsonFile" style="display:none;" accept=".json" onchange="importRoster(this)">
+          <button class="rt-icon-btn" title="Import JSON" onclick="document.getElementById('importJsonFile').click()"><i class='bx bx-import'></i></button>
+          <button class="rt-icon-btn" title="Export JSON" onclick="exportRoster()"><i class='bx bx-export'></i></button>
+          <button class="rt-icon-btn" title="Esports Settings" onclick="openEsports()"><i class='bx bx-trophy'></i></button>
+          <button class="rt-icon-btn" title="Save completed draft to Match History" onclick="saveMatchRecord()" id="hpSaveMatchBtn"><i class='bx bx-save'></i></button>
+          <button class="btn bp bsm" onclick="openAddHero()"><i class='bx bx-plus'></i> Add Hero</button>
+        </div>
+      </div>
+
+      <div class="roster-toolbar" id="playersToolbar" style="display:none;">
+        <div class="rt-sortbar">
+          <i class='bx bx-sort-alt-2'></i>
+          <select id="playerSortSel" onchange="setPlayerSort(this.value)">
+            <option value="name">Name</option>
+            <option value="games">Games</option>
+            <option value="wins">Wins</option>
+            <option value="losses">Losses</option>
+            <option value="winrate">Win Rate</option>
+          </select>
+          <button class="rt-icon-btn" title="Toggle sort direction" onclick="togglePlayerSortDir()" id="playerSortDirBtn"><i class='bx bx-sort-down'></i></button>
+        </div>
+        <div class="rt-controls">
+          <input type="file" id="importPlayersFile" style="display:none;" accept=".json" onchange="importPlayersDB(this)">
+          <button class="rt-icon-btn" title="Import JSON" onclick="document.getElementById('importPlayersFile').click()"><i class='bx bx-import'></i></button>
+          <button class="rt-icon-btn" title="Export JSON" onclick="exportPlayersDB()"><i class='bx bx-export'></i></button>
+          <button class="btn bp bsm" onclick="openPlayerQuickEdit(null)"><i class='bx bx-plus'></i> Add Player</button>
+        </div>
+      </div>
+
+      <div class="roster-toolbar" id="teamsToolbar" style="display:none;">
+        <div class="rt-sortbar">
+          <i class='bx bx-sort-alt-2'></i>
+          <select id="teamSortSel" onchange="setTeamSort(this.value)">
+            <option value="name">Name</option>
+            <option value="games">Games</option>
+            <option value="wins">Wins</option>
+            <option value="losses">Losses</option>
+            <option value="winrate">Win Rate</option>
+          </select>
+          <button class="rt-icon-btn" title="Toggle sort direction" onclick="toggleTeamSortDir()" id="teamSortDirBtn"><i class='bx bx-sort-down'></i></button>
+        </div>
+        <div class="rt-controls">
+          <input type="file" id="importTeamsFile" style="display:none;" accept=".json" onchange="importTeamsDB(this)">
+          <button class="rt-icon-btn" title="Import JSON" onclick="document.getElementById('importTeamsFile').click()"><i class='bx bx-import'></i></button>
+          <button class="rt-icon-btn" title="Export JSON" onclick="exportTeamsDB()"><i class='bx bx-export'></i></button>
+          <button class="btn bp bsm" onclick="openTeamEditor()"><i class='bx bx-plus'></i> Create Team</button>
+        </div>
+      </div>
+
       <div class="hgrid" id="rosterList"></div>
+      <div class="pt-grid" id="playerStatsList" style="display:none;"></div>
+      <div class="pt-grid" id="teamStatsList" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- MATCH HISTORY TAB -->
+  <div class="tab-panel" id="tab-matchHistory">
+    <div class="sc3">
+      <div class="hp-head">
+        <div class="hp-title">
+          <div class="hp-title-main">Match History</div>
+          <div class="hp-count" id="mhCount">0 matches</div>
+        </div>
+        <div class="rt-controls">
+          <input type="file" id="importMatchHistoryFile" style="display:none;" accept=".json" onchange="importMatchRecords(this)">
+          <button class="rt-icon-btn" title="Seed 50 Pro Matches" onclick="seed50ProMatchRecords(false)"><i class='bx bx-data'></i></button>
+          <button class="rt-icon-btn" title="Import JSON" onclick="document.getElementById('importMatchHistoryFile').click()"><i class='bx bx-import'></i></button>
+          <button class="rt-icon-btn" title="Export All" onclick="exportAllMatchRecords()"><i class='bx bx-export'></i></button>
+          <button class="rt-icon-btn" title="Clear All" onclick="clearAllMatchRecords()"><i class='bx bx-trash'></i></button>
+        </div>
+      </div>
+      <div class="mh-list" id="mhList"></div>
     </div>
   </div>
 
@@ -1121,22 +1499,23 @@ input:checked + .slider:before { transform: translateX(16px); }
             <!-- DIV 5: Stream Timer -->
             <div class="bc-div5 s-section" style="margin:0;">
                 <div class="s-header"><i class='bx bx-stopwatch'></i> Stream Timer</div>
-                <div class="s-body" style="align-items: center; justify-content: center; gap: 12px;">
-                    <div class="st-digits" id="streamTimerDisplay" style="font-size: 32px; font-weight: 900; color: var(--text);">00:00</div>
-                    <div style="display:flex; gap:12px; justify-content: center;">
-                        <button class="btn bs" style="width: 40px; height: 40px; border-radius: 50%; display:flex; align-items:center; justify-content:center;" onclick="startStreamTimer()"><i class='bx bx-play' style="font-size:24px;"></i></button>
-                        <button class="btn bw" style="width: 40px; height: 40px; border-radius: 50%; display:flex; align-items:center; justify-content:center;" onclick="pauseStreamTimer()"><i class='bx bx-pause' style="font-size:24px;"></i></button>
-                        <button class="btn bg2" style="width: 40px; height: 40px; border-radius: 50%; display:flex; align-items:center; justify-content:center;" onclick="resetStreamTimer()"><i class='bx bx-reset' style="font-size:20px;"></i></button>
-                    </div>
-                    
-                    <div style="display:flex; gap:8px; width: 100%; margin-top:8px;">
-                        <button class="btn bg2" style="flex: 1; padding:6px;" onclick="setStreamTimer(5)">5m</button>
-                        <button class="btn bg2" style="flex: 1; padding:6px;" onclick="setStreamTimer(10)">10m</button>
-                        <button class="btn bg2" style="flex: 1; padding:6px;" onclick="setStreamTimer(15)">15m</button>
-                    </div>
-                    <div style="display:flex; gap:8px; width: 100%;">
-                        <input type="number" id="streamTimerCustom" min="1" max="999" value="1" style="flex:1; border:1px solid var(--border); border-radius:4px; padding:4px; text-align:center;">
-                        <button class="btn bp bf" style="padding: 0 12px;" onclick="setStreamTimerFromInput()">SET</button>
+                <div class="s-body">
+                    <div style="display:flex; flex-direction:column; align-items:center; background:#fff; border:1px solid var(--border); border-radius:8px; padding:24px;">
+                        <div id="streamTimerDisplay" style="font-family:'Eixample Villa', sans-serif; font-size:48px; font-weight:bold; color:var(--text); line-height:1; margin-bottom:16px;">00:00</div>
+                        <div style="display:flex; gap:8px; margin-bottom:16px;">
+                            <button class="btn bs" style="border-radius:24px; padding:6px 16px; display:flex; align-items:center; gap:4px; font-weight:600; font-size:13px;" onclick="startStreamTimer()"><i class='bx bx-play' style="font-size:18px;"></i> Play</button>
+                            <button class="btn bw" style="border-radius:24px; padding:6px 16px; display:flex; align-items:center; gap:4px; font-weight:600; font-size:13px;" onclick="pauseStreamTimer()"><i class='bx bx-pause' style="font-size:18px;"></i> Pause</button>
+                            <button class="btn bg2" style="border-radius:24px; padding:6px 16px; display:flex; align-items:center; gap:4px; font-weight:600; font-size:13px;" onclick="resetStreamTimer()"><i class='bx bx-reset' style="font-size:18px;"></i> Reset</button>
+                        </div>
+                        <div style="display:flex; gap:8px; width:100%; margin-bottom:8px;">
+                            <button class="btn bg2" style="flex:1; border-radius:6px; font-size:12px; padding:8px 0;" onclick="setStreamTimer(5)">5 Min</button>
+                            <button class="btn bg2" style="flex:1; border-radius:6px; font-size:12px; padding:8px 0;" onclick="setStreamTimer(10)">10 Min</button>
+                            <button class="btn bg2" style="flex:1; border-radius:6px; font-size:12px; padding:8px 0;" onclick="setStreamTimer(15)">15 Min</button>
+                        </div>
+                        <div style="display:flex; gap:8px; width:100%;">
+                            <input type="number" id="streamTimerCustom" min="1" max="999" value="1" style="flex:2; border:1px solid var(--border); background:#F8F9FA; border-radius:6px; padding:8px; text-align:center; font-weight:600; font-size:13px; outline:none;">
+                            <button class="btn bp" style="flex:1; border-radius:6px; font-weight:600; font-size:13px;" onclick="setStreamTimerFromInput()">SET</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1145,21 +1524,24 @@ input:checked + .slider:before { transform: translateX(16px); }
             <div class="bc-div6 s-section" style="margin:0;">
                 <div class="s-header"><i class='bx bx-slider-alt'></i> Audio Mixer</div>
                 <div class="s-body">
-                    <div class="mixer-wrap">
-                        <div class="mixer-screen">
-                            <div class="track-info">
-                                <span>MPL Draft BGM</span>
-                                <span id="bgmTime">00:00 / 00:00</span>
-                            </div>
-                            <div class="visualizer">
-                                <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
-                                <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
+                    <div style="background:#fff; border:1px solid var(--border); border-radius:8px; padding:20px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <div style="width:40px; height:40px; background:var(--panel2); border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--blue); font-size:24px;">
+                                    <i class='bx bx-music'></i>
+                                </div>
+                                <div style="display:flex; flex-direction:column; align-items:flex-start;">
+                                    <div style="font-weight:700; color:var(--text); font-size:14px;">BGM Track</div>
+                                    <div id="bgmTime" style="font-size:12px; color:var(--text3); font-weight:600; margin-top:2px;">00:00 / 00:00</div>
+                                </div>
                             </div>
                         </div>
-                        <div class="mixer-controls">
-                            <button id="btnPlayBGM" onclick="playBGM()"><i class='bx bx-play-circle'></i></button>
-                            <button id="btnPauseBGM" onclick="pauseBGM()"><i class='bx bx-pause-circle'></i></button>
-                            <button id="btnStopBGM" onclick="stopBGM()"><i class='bx bx-stop-circle'></i></button>
+
+                        <!-- Controls -->
+                        <div style="display:flex; gap:8px;">
+                            <button class="btn bs" id="btnPlayBGM" style="flex:1; border-radius:6px; display:flex; align-items:center; justify-content:center; gap:6px; font-weight:600; font-size:13px;" onclick="bgmPlay()"><i class='bx bx-play' style="font-size:18px;"></i> Play</button>
+                            <button class="btn bw" id="btnPauseBGM" style="flex:1; border-radius:6px; display:flex; align-items:center; justify-content:center; gap:6px; font-weight:600; font-size:13px;" onclick="bgmPause()"><i class='bx bx-pause' style="font-size:18px;"></i> Pause</button>
+                            <button class="btn bg2" id="btnStopBGM" style="width:40px; border-radius:6px; display:flex; align-items:center; justify-content:center;" onclick="bgmRestart()"><i class='bx bx-stop' style="font-size:18px;"></i></button>
                         </div>
                     </div>
                 </div>
@@ -1196,6 +1578,7 @@ input:checked + .slider:before { transform: translateX(16px); }
                 <div class="s-header"><i class='bx bx-shield-quarter'></i> In-Game Events (HUD)</div>
                 <div class="s-body" style="gap: 12px; height: 100%;">
                     <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px;">
+                        <button class="btn bg2 bf" style="padding: 16px; text-align:center;" onclick="openEventPlayerModal('FIRST BLOOD', false)">First Blood</button>
                         <button class="btn bg2 bf" style="padding: 16px; text-align:center;" onclick="openEventPlayerModal('TURTLE SLAIN', true)">Turtle</button>
                         <button class="btn bg2 bf" style="padding: 16px; text-align:center;" onclick="openEventPlayerModal('LORD SLAIN', true)">Lord</button>
                         <button class="btn bg2 bf" style="padding: 16px; text-align:center;" onclick="openEventPlayerModal('DOUBLE KILL', false)">Double</button>
@@ -1307,12 +1690,24 @@ input:checked + .slider:before { transform: translateX(16px); }
               </div>
               <div class="st-row">
                 <div class="st-info">
-                  <span class="st-name">Dynamic Hero Stats</span>
-                  <span class="st-desc">Display winrates and roles on hover</span>
+                  <span class="st-name">Hero Stats Popup</span>
+                  <span class="st-desc">Show pick/ban/win stats for locked-in heroes in the overlay</span>
                 </div>
                 <div class="st-action">
                   <label class="ios-switch">
                     <input type="checkbox" id="setHeroStats" onchange="updateSetting('broadcast','heroStats',this.checked)">
+                    <span class="ios-slider"></span>
+                  </label>
+                </div>
+              </div>
+              <div class="st-row">
+                <div class="st-info">
+                  <span class="st-name">Draft Predictor On By Default</span>
+                  <span class="st-desc">Pick/Ban Predictor is already on when a match starts</span>
+                </div>
+                <div class="st-action">
+                  <label class="ios-switch">
+                    <input type="checkbox" id="setPredictorDefaultOn" onchange="updateSetting('broadcast','predictorDefaultOn',this.checked)">
                     <span class="ios-slider"></span>
                   </label>
                 </div>
@@ -1425,35 +1820,115 @@ input:checked + .slider:before { transform: translateX(16px); }
 
 <!-- TEAM EDITOR MODAL -->
 <div class="mbg" id="teamEditorModal" onclick="if(event.target===this)closeTeamEditor()">
-  <div class="mbox" style="max-width:600px;">
-    <div class="mt" id="teTitle">Create Team</div>
-    <div class="ms">Manage team info and player roster</div>
-    
-    <input type="hidden" id="teId">
-    
-    <div style="display:flex; gap:10px; margin-bottom:15px;">
-      <div class="ig" style="flex:2;"><label class="lbl">Team Name</label><input type="text" id="teName"></div>
-      <div class="ig" style="flex:1;"><label class="lbl">Tag</label><input type="text" id="teTag"></div>
-    </div>
-    
-    <div class="ig" style="margin-bottom:15px;">
-      <label class="lbl">Team Logo</label>
-      <div style="display:flex; gap:10px; align-items:center;">
-        <img id="teLogoPreview" src="" style="width:40px; height:40px; object-fit:contain; border:1px solid var(--border); border-radius:4px; display:none;">
-        <button class="btn bg2" onclick="document.getElementById('teLogoFile').click()"><i class='bx bx-upload'></i> Upload Logo</button>
-        <input type="file" id="teLogoFile" style="display:none;" accept="image/*" onchange="uploadFile(this, 'team', 'teLogoPreview', 'teLogoPath')">
-        <input type="hidden" id="teLogoPath">
+  <div class="mbox modal-2col">
+    <div class="m-head"><div class="m-head-ic"><i class='bx bx-id-card'></i></div><div><div class="mt" id="teTitle">Create Team</div><div class="ms">Team info, lineup, stats and hero breakdown</div></div></div>
+
+    <div class="hem-columns">
+      <div class="hem-col-main">
+        <input type="hidden" id="teId">
+
+        <div style="display:flex; gap:14px; margin-bottom:16px;">
+          <div class="td-logo-tile" onclick="document.getElementById('teLogoFile').click()">
+            <i class='bx bx-image-add'></i>
+            <img id="teLogoPreview" src="" style="display:none;" onerror="this.style.display='none'">
+            <input type="file" id="teLogoFile" style="display:none;" accept="image/*" onchange="uploadFile(this, 'team', 'teLogoPreview', 'teLogoPath')">
+            <input type="hidden" id="teLogoPath">
+          </div>
+          <div class="ig" style="flex:2;"><label class="lbl">Team Name</label><input type="text" id="teName" oninput="renderTeamModalStats(this.value)"></div>
+          <div class="ig" style="flex:1;"><label class="lbl">Tag</label><input type="text" id="teTag" maxlength="6" style="text-transform:uppercase;"></div>
+        </div>
+
+        <div class="hem-divider"><span>Starting Lineup</span></div>
+        <div class="hem-stats-note"><i class='bx bx-info-circle'></i> Add/edit players for this team from the Players tab, then assign them to a slot here.</div>
+        <div class="td-roster-edit" id="teLineupContainer">
+          <!-- Generated by JS -->
+        </div>
+
+        <div class="hem-divider"><span>Statistics</span></div>
+        <div class="hem-rates">
+          <div class="hem-rate"><b id="teGames">0</b><span>Games</span></div>
+          <div class="hem-rate"><b id="teWins">0</b><span>Wins</span></div>
+          <div class="hem-rate"><b id="teLosses">0</b><span>Losses</span></div>
+          <div class="hem-rate"><b id="teWR">0%</b><span>Win Rate</span></div>
+        </div>
+      </div>
+
+      <div class="hem-col-history">
+        <div class="hem-divider" style="margin-top:0;"><span>Hero Breakdown</span></div>
+        <div class="hem-breakdown-sort">
+          <select id="teHeroSort" onchange="setTeamHeroSort(this.value)">
+            <option value="picks">Sort: Picks</option>
+            <option value="winrate">Sort: Win Rate</option>
+            <option value="percentage">Sort: Pick %</option>
+          </select>
+        </div>
+        <div class="hem-history-list" id="teHeroList"></div>
       </div>
     </div>
-    
-    <div class="lbl" style="margin-bottom:5px;">Roster (5 Players)</div>
-    <div style="display:flex; gap:8px; justify-content:space-between; margin-bottom:20px;" id="teRosterContainer">
-      <!-- Generated by JS -->
+
+    <div class="mbtns" style="margin-top:18px; justify-content:space-between;">
+      <button class="btn bg2" onclick="deleteTeamEditor()" id="teDelBtn" style="color:var(--red);border-color:var(--red-b);">Delete</button>
+      <div style="display:flex; gap:7px;">
+        <button class="btn bg2" onclick="closeTeamEditor()">Cancel</button>
+        <button class="btn bp" onclick="saveTeamEditor()">Save Team</button>
+      </div>
     </div>
-    
-    <div class="mbtns">
-      <button class="btn bg2" onclick="closeTeamEditor()">Cancel</button>
-      <button class="btn bp" onclick="saveTeamEditor()">Save Team</button>
+  </div>
+</div>
+
+<!-- PLAYER MODAL (Statistics → Players) -->
+<div class="mbg" id="playerQuickEditModal" onclick="if(event.target===this)closePlayerQuickEdit()">
+  <div class="mbox modal-2col">
+    <div class="m-head"><div class="m-head-ic"><i class='bx bx-user'></i></div><div><div class="mt" id="pqeTitle">Add Player</div><div class="ms">Player identity, stats and hero breakdown</div></div></div>
+
+    <div class="hem-columns">
+      <div class="hem-col-main">
+        <input type="hidden" id="pqeId">
+
+        <div style="display:flex; gap:14px; margin-bottom:16px;">
+          <div class="td-logo-tile" onclick="document.getElementById('pqeFile').click()">
+            <i class='bx bx-image-add'></i>
+            <img id="pqeImgPreview" src="" style="display:none;" onerror="this.style.display='none'">
+            <input type="file" id="pqeFile" style="display:none;" accept="image/*" onchange="uploadQuickEditPhoto(this)">
+            <input type="hidden" id="pqeImgPath">
+          </div>
+          <div class="ig" style="flex:1;"><label class="lbl">Player IGN</label><input type="text" id="pqeName" oninput="renderPlayerModalStats(this.value)"></div>
+        </div>
+
+        <div class="ig" style="margin-bottom:16px;">
+          <label class="lbl">Team</label>
+          <select id="pqeTeam"></select>
+        </div>
+
+        <div class="hem-divider"><span>Statistics</span></div>
+        <div class="hem-stats-note"><i class='bx bx-info-circle'></i> Tracked automatically from Match History.</div>
+        <div class="hem-rates">
+          <div class="hem-rate"><b id="pqeGames">0</b><span>Games</span></div>
+          <div class="hem-rate"><b id="pqeWins">0</b><span>Wins</span></div>
+          <div class="hem-rate"><b id="pqeLosses">0</b><span>Losses</span></div>
+          <div class="hem-rate"><b id="pqeWR">0%</b><span>Win Rate</span></div>
+        </div>
+      </div>
+
+      <div class="hem-col-history">
+        <div class="hem-divider" style="margin-top:0;"><span>Hero Breakdown</span></div>
+        <div class="hem-breakdown-sort">
+          <select id="pqeHeroSort" onchange="setPlayerHeroSort(this.value)">
+            <option value="picks">Sort: Picks</option>
+            <option value="winrate">Sort: Win Rate</option>
+            <option value="percentage">Sort: Pick %</option>
+          </select>
+        </div>
+        <div class="hem-history-list" id="pqeHeroList"></div>
+      </div>
+    </div>
+
+    <div class="mbtns" style="margin-top:18px; justify-content:space-between;">
+      <button class="btn bg2" onclick="deletePlayerQuickEdit()" id="pqeDelBtn" style="color:var(--red);border-color:var(--red-b);">Delete</button>
+      <div style="display:flex; gap:7px;">
+        <button class="btn bg2" onclick="closePlayerQuickEdit()">Cancel</button>
+        <button class="btn bp" onclick="savePlayerQuickEdit()">Save</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1465,10 +1940,12 @@ input:checked + .slider:before { transform: translateX(16px); }
 const SK = 'mplDraft_v4';
 const SK_ROSTER = 'mplDraft_roster_v1'; // separate key for persistent roster
 const BCAST = 'mplDraft_bc';
-const ROLES = ['Fighter','Mage','Assassin','Marksman','Tank','Support'];
-const RI = {Fighter:'⚔',Mage:'🔮',Assassin:'🗡',Marksman:'🏹',Tank:'🛡',Support:'💚'};
 const LANES = ['EXP Lane','Jungle','Mid Lane','Gold Lane','Roam'];
-const RC = {Fighter:'#E53935',Mage:'#7B1FA2',Assassin:'#1A237E',Marksman:'#E65100',Tank:'#1565C0',Support:'#2E7D32'};
+// Colors keyed by the five draft lanes (used for hero role coloring/filtering — replaces the old
+// Fighter/Mage/Assassin/Marksman/Tank/Support class system everywhere except hero metadata editing).
+const LANE_COLORS = {'EXP Lane':'#E53935','Jungle':'#7B1FA2','Mid Lane':'#1565C0','Gold Lane':'#E65100','Roam':'#2E7D32'};
+const LANE_LABELS = {'EXP Lane':'EXP Lane','Jungle':'Jungler','Mid Lane':'Mid Lane','Gold Lane':'Gold Lane','Roam':'Roamer'};
+const LANE_ROLE_ICONS = ['assets/imgs/black_exp.png', 'assets/imgs/black_core.png', 'assets/imgs/black_mid.png', 'assets/imgs/black_gold.png', 'assets/imgs/black_roam.png'];
 
 // BGM Variables
 let bgmAudio = new Audio('assets/audio/mlbbbg.wav');
@@ -1478,7 +1955,7 @@ let bgmFadeInt = null;
 
 function bgmPlay() {
   if (bgmFadeInt) { clearInterval(bgmFadeInt); bgmFadeInt = null; }
-  bgmAudio.volume = document.getElementById('bgmVol') ? document.getElementById('bgmVol').value : 0.5;
+  bgmAudio.volume = S.settings?.audio?.bgm ?? 0.5;
   bgmAudio.play().catch(()=>{});
   updateBgmUI();
 }
@@ -1497,7 +1974,7 @@ function bgmFadeOut() {
     vol -= 0.05;
     if (vol <= 0) {
       bgmAudio.pause();
-      bgmAudio.volume = document.getElementById('bgmVol') ? document.getElementById('bgmVol').value : 0.5;
+      bgmAudio.volume = S.settings?.audio?.bgm ?? 0.5;
       clearInterval(bgmFadeInt);
       bgmFadeInt = null;
       updateBgmUI();
@@ -1509,7 +1986,7 @@ function bgmFadeOut() {
 
 function bgmRestart() {
   if (bgmFadeInt) { clearInterval(bgmFadeInt); bgmFadeInt = null; }
-  bgmAudio.volume = document.getElementById('bgmVol') ? document.getElementById('bgmVol').value : 0.5;
+  bgmAudio.volume = S.settings?.audio?.bgm ?? 0.5;
   bgmAudio.currentTime = 0;
   bgmAudio.play().catch(()=>{});
   updateBgmUI();
@@ -1553,7 +2030,8 @@ function defState() {
     roles:{blue:[],red:[]},
     basePlayers:{blue:[],red:[]},
     baseRoles:{blue:[],red:[]},
-    meta:{tournament:'MPL Season 15',match:'Upper Bracket Finals',bo:'BO3',game:1,blueWins:0,redWins:0,totalMatches:100,statsEnabled:true},
+    meta:{tournament:'MPL Season 15',match:'Upper Bracket Finals',bo:'BO3',game:1,blueWins:0,redWins:0,totalMatches:0,statsEnabled:true,matchSaved:false,predictorVisible:false},
+    rolePrediction:null,
     timerConfig:{ban:30,pick:30,lastChange:30},
     timer:{remaining:30,max:30},
     streamTimer:{remaining:0,max:0,running:false},
@@ -1563,10 +2041,45 @@ function defState() {
     blueBanIdx:0,redBanIdx:0,bluePickIdx:0,redPickIdx:0,
     phase:1,history:[],
     hud:{visible:false,lowerThird:{visible:false,text:'',subtext:''}},
-    settings:{draft:{banTimer:30,pickTimer:30,lastChangeTimer:30,banFormat:'5ban',rosterSize:5},broadcast:{playerPopups:true,autoShowOverlay:true,defaultHUD:false,heroStats:true},audio:{bgm:0.5,sfx:1,voice:1}},
+    settings:{draft:{banTimer:30,pickTimer:30,lastChangeTimer:30,banFormat:'5ban',rosterSize:5},broadcast:{playerPopups:true,autoShowOverlay:true,defaultHUD:false,heroStats:true,predictorDefaultOn:false},audio:{bgm:0.5,sfx:1,voice:1}},
     roster:loadRoster(),
   };
 }
+
+const SPLASH_EXT_OVERRIDE = {'Aldous':'.png'};
+
+// Typical/default lane per hero — for operator-side organization ONLY (e.g. future filtering).
+// The Draft Predictor never reads this; it always ranks heroes by their actual historical
+// pick-role data from Match History, never by this default.
+const DEFAULT_LANES = {
+  'Aamon':'Jungle','Akai':'Jungle','Aldous':'Jungle','Alice':'Mid Lane','Alpha':'Jungle',
+  'Alucard':'Jungle','Angela':'Roam','Argus':'EXP Lane','Arlott':'Jungle','Atlas':'Roam',
+  'Aulus':'Jungle','Aurora':'Mid Lane','Badang':'EXP Lane','Balmond':'Jungle','Bane':'EXP Lane',
+  'Barats':'Roam','Baxia':'Jungle','Beatrix':'Gold Lane','Belerick':'EXP Lane','Benedetta':'Jungle',
+  'Brody':'Gold Lane','Bruno':'Gold Lane','Carmilla':'Roam','Cecilion':'Mid Lane',"Chang'e":'Mid Lane',
+  'Chip':'Roam','Chou':'EXP Lane','Cici':'Jungle','Claude':'Gold Lane','Clint':'Gold Lane',
+  'Cyclops':'Mid Lane','Diggie':'Roam','Dyrroth':'EXP Lane','Edith':'Roam','Esmeralda':'Jungle',
+  'Estes':'Roam','Eudora':'Mid Lane','Fanny':'Jungle','Faramis':'Roam','Floryn':'Roam',
+  'Franco':'Roam','Fredrinn':'Jungle','Freya':'Jungle','Gatotkaca':'Jungle','Gloo':'EXP Lane',
+  'Gord':'Mid Lane','Granger':'Gold Lane','Grock':'EXP Lane','Guinevere':'Jungle','Gusion':'Jungle',
+  'Hanabi':'Gold Lane','Hanzo':'Jungle','Harith':'Mid Lane','Harley':'Mid Lane','Hayabusa':'Jungle',
+  'Helcurt':'Jungle','Hilda':'Jungle','Hirara':'Mid Lane','Hylos':'Roam','Irithel':'Gold Lane',
+  'Ixia':'Gold Lane','Jawhead':'Jungle','Johnson':'Roam','Joy':'Mid Lane','Julian':'Jungle',
+  'Kadita':'Mid Lane','Kagura':'Mid Lane','Kaja':'Roam','Kalea':'EXP Lane','Karina':'Jungle',
+  'Karrie':'Gold Lane','Khaleed':'EXP Lane','Khufra':'Roam','Kimmy':'Gold Lane','Lancelot':'Jungle',
+  'Lapu Lapu':'EXP Lane','Layla':'Gold Lane','Leomord':'Jungle','Lesley':'Gold Lane','Ling':'Jungle',
+  'Lolita':'Roam','Lukas':'Jungle','Lunox':'Mid Lane','Luo Yi':'Mid Lane','Lylia':'Mid Lane',
+  'Marcel':'EXP Lane','Martis':'Jungle','Masha':'Jungle','Mathilda':'Roam','Melissa':'Gold Lane',
+  'Minotaur':'Roam','Minsitthar':'Roam','Miya':'Gold Lane','Moskov':'Gold Lane','Nana':'Mid Lane',
+  'Natalia':'Jungle','Natan':'Gold Lane','Nolan':'Jungle','Novaria':'Mid Lane','Obsidia':'EXP Lane',
+  'Odette':'Mid Lane','Paquito':'EXP Lane','Pharsa':'Mid Lane','Phoveus':'EXP Lane','Popol and Kupa':'Gold Lane',
+  'Rafaela':'Roam','Roger':'Jungle','Ruby':'Jungle','Saber':'Mid Lane','Selena':'Mid Lane',
+  'Silvanna':'EXP Lane','Sora':'Gold Lane','Sun':'Jungle','Suyou':'Jungle','Terizla':'EXP Lane',
+  'Thamuz':'EXP Lane','Tigreal':'Roam','Uranus':'EXP Lane','Vale':'Mid Lane','Valentina':'Mid Lane',
+  'Valir':'Mid Lane','Vexana':'Mid Lane','Wanwan':'Gold Lane','X.Borg':'EXP Lane','Xavier':'Mid Lane',
+  'Yi Sun-shin':'Jungle','Yin':'Jungle','Yu Zhong':'EXP Lane','Yve':'Mid Lane','Zetian':'Jungle',
+  'Zhask':'Mid Lane','Zhuxin':'Mid Lane','Zilong':'Jungle'
+};
 
 function defRoster(){return[
   {name:'Aamon',role:'Assassin',img:'assets/portrait/Aamon.png',picks:38,bans:17,wins:17},
@@ -1702,11 +2215,36 @@ function defRoster(){return[
   {name:'Zhask',role:'Mage',img:'assets/portrait/Zhask.png',picks:61,bans:39,wins:37},
   {name:'Zhuxin',role:'Mage',img:'assets/portrait/Zhuxin.png',picks:74,bans:50,wins:35},
   {name:'Zilong',role:'Fighter',img:'assets/portrait/Zilong.png',picks:22,bans:69,wins:9}
-].map(h => ({...h, portrait: h.img, icon: 'assets/icon/' + h.name.toLowerCase() + '.jpg'}));}
+].map(h => ({...h, portrait: h.img, icon: 'assets/icon/' + h.name.toLowerCase() + '.jpg', splash: 'assets/splash/' + h.name + (SPLASH_EXT_OVERRIDE[h.name] || '.jpg'), lane: DEFAULT_LANES[h.name] || '', picks:0, bans:0, wins:0}));}
 
 // ═══════════════════════════════════════════════════
 //  PERSISTENT ROSTER — saved separately so images/stats survive full reset
 // ═══════════════════════════════════════════════════
+// Hero picks/bans/wins are never stored as-is — they are always rebuilt from Match History records,
+// so the roster can never drift out of sync with what was actually saved.
+function replayStatsFromMatchHistory(arr) {
+  arr.forEach(h => { h.picks = 0; h.bans = 0; h.wins = 0; });
+  let records = [];
+  try { records = JSON.parse(localStorage.getItem('mplMatchRecords_v1') || '[]'); } catch(e) { records = []; }
+  const validHeroes = list => (list||[]).filter(h=>h && h.name && h.name!=='No Ban');
+  records.forEach(rec => {
+    [...validHeroes(rec.blue?.picks), ...validHeroes(rec.red?.picks)].forEach(h=>{
+      const live = arr.find(r=>r.name===h.name);
+      if(live) live.picks = (live.picks||0)+1;
+    });
+    [...validHeroes(rec.blue?.bans), ...validHeroes(rec.red?.bans)].forEach(h=>{
+      const live = arr.find(r=>r.name===h.name);
+      if(live) live.bans = (live.bans||0)+1;
+    });
+    if(rec.winner){
+      validHeroes(rec.winner==='blue'?rec.blue?.picks:rec.red?.picks).forEach(h=>{
+        const live = arr.find(r=>r.name===h.name);
+        if(live) live.wins = (live.wins||0)+1;
+      });
+    }
+  });
+}
+
 function loadRoster() {
   const def = defRoster();
   try {
@@ -1720,17 +2258,15 @@ function loadRoster() {
           h.img = d.img;
           h.portrait = d.portrait;
           h.icon = d.icon;
-          
-          if (!h.picks && !h.bans && !h.wins) {
-            h.picks = d.picks;
-            h.bans = d.bans;
-            h.wins = d.wins;
-          }
+          if (!h.splash) h.splash = d.splash;
+          if (!h.lane) h.lane = d.lane;
         }
       });
+      replayStatsFromMatchHistory(arr);
       return arr.filter(h => h.name !== 'No Ban');
     }
   } catch(e) {}
+  replayStatsFromMatchHistory(def);
   return def;
 }
 
@@ -1777,6 +2313,8 @@ function togglePreview() {
 }
 
 function pub() {
+  recalcTotalMatches();
+  recalcDraftPrediction();
   const json = JSON.stringify(S);
   try { localStorage.setItem(SK, json); } catch(e){}
   if(bc) try { bc.postMessage({t:'STATE',d:S}); } catch(e){}
@@ -1786,6 +2324,8 @@ function pub() {
 }
 
 function saveQ() {
+  recalcTotalMatches();
+  recalcDraftPrediction();
   const json = JSON.stringify(S);
   try { localStorage.setItem(SK, json); } catch(e){}
   if(bc) try { bc.postMessage({t:'STATE',d:S}); } catch(e){}
@@ -1916,6 +2456,7 @@ function renderSettings(){
     const elPop = document.getElementById('setPlayerPopups'); if(elPop) elPop.checked=broadcast.playerPopups;
     const elOverlay = document.getElementById('setAutoOverlay'); if(elOverlay) elOverlay.checked=broadcast.autoShowOverlay;
     const elStats = document.getElementById('setHeroStats'); if(elStats) elStats.checked=broadcast.heroStats;
+    const elPredictorDefault = document.getElementById('setPredictorDefaultOn'); if(elPredictorDefault) elPredictorDefault.checked=broadcast.predictorDefaultOn || false;
     const elTourney = document.getElementById('setTourneyMode'); if(elTourney) elTourney.checked=broadcast.tourneyMode || false;
     
     // Audio Settings
@@ -2022,9 +2563,10 @@ function startTimer(secs){
     S.timer.remaining=Math.max(0,S.timer.remaining-1);
     if(S.timer.remaining===11){
       timerAudioTimeout = setTimeout(()=>{
-        try { 
+        try {
           timerAudio = new Audio('assets/audio/mlbb10timer.wav');
-          timerAudio.play().catch(()=>{}); 
+          timerAudio.volume = S.settings?.audio?.sfx ?? 1;
+          timerAudio.play().catch(()=>{});
         } catch(e){}
       }, 850); // 850ms delay means it plays 150ms before the timer flips to 10
     }
@@ -2069,7 +2611,12 @@ function startDraft(){
   S.blueBans=[];S.redBans=[];S.bluePicks=[];S.redPicks=[];
   S.blueBanIdx=0;S.redBanIdx=0;S.bluePickIdx=0;S.redPickIdx=0;
   S.history=[];S.status='running';S.phase=1;
+  S.meta.matchSaved=false;
   if(S.settings?.broadcast?.autoShowOverlay) S.overlayVisible=true;
+  const predictorDefaultOn = !!S.settings?.broadcast?.predictorDefaultOn;
+  S.meta.predictorVisible = predictorDefaultOn;
+  S.meta.banPredictorVisible = predictorDefaultOn;
+  updatePredictorBtn();
   beginStep();sw('live');
   toast('Draft started!','success');logH('🚀 Draft started');
   bgmPlay();
@@ -2220,13 +2767,13 @@ function hardReset(){
     mTour:'MPL Season 15',mMatch:'Upper Bracket Finals',
   };
   Object.entries(fields).forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.value=v;});
-  document.getElementById('mBo').value='BO3';
+  if(document.getElementById('mBo')) document.getElementById('mBo').value='BO3';
   if(document.getElementById('mGame')) document.getElementById('mGame').value=1;
-  document.getElementById('selFmt').value='3ban';
-  document.getElementById('selP').value=5;
-  document.getElementById('banT').value=30;
-  document.getElementById('pickT').value=30;
-  document.getElementById('lcT').value=30;
+  if(document.getElementById('selFmt')) document.getElementById('selFmt').value='3ban';
+  if(document.getElementById('selP')) document.getElementById('selP').value=5;
+  if(document.getElementById('banT')) document.getElementById('banT').value=30;
+  if(document.getElementById('pickT')) document.getElementById('pickT').value=30;
+  if(document.getElementById('lcT')) document.getElementById('lcT').value=30;
   
   toast('Full reset complete','info');logH('⚠ Full reset');
   pub();
@@ -2306,8 +2853,8 @@ function renderLCModal(){
       const card = document.createElement('div');
       card.className = 'lc-card';
       if(lcSource && lcSource.side === side && lcSource.idx === i) card.classList.add('selected');
-      const img = (h && (h.portrait || h.img)) ? `<img src="${h.portrait||h.img}" class="lc-img" onerror="this.style.display='none'">` : `<div class="lc-img" style="display:flex;align-items:center;justify-content:center;font-size:24px;">${RI[r]||'⚔'}</div>`;
-      const iconHTML = iconMapLC[r] ? `<img src="${iconMapLC[r]}" style="width:14px;height:14px;filter:invert(1);mix-blend-mode:multiply;opacity:0.8;">` : `<span>${RI[r]||'⚔'}</span>`;
+      const img = (h && (h.portrait || h.img)) ? `<img src="${h.portrait||h.img}" class="lc-img" onerror="this.style.display='none'">` : `<div class="lc-img" style="display:flex;align-items:center;justify-content:center;font-size:24px;">⚔</div>`;
+      const iconHTML = iconMapLC[r] ? `<img src="${iconMapLC[r]}" style="width:14px;height:14px;filter:invert(1);mix-blend-mode:multiply;opacity:0.8;">` : `<span>⚔</span>`;
       card.innerHTML = `
         ${img}
         <div class="lc-role">${iconHTML} <span style="font-size:11px;">${r}</span></div>
@@ -2339,8 +2886,8 @@ function openLCSwapModal(){
     const r = roles[i] || LANES[i];
     const card = document.createElement('div');
     card.className = 'lc-card';
-    const img = (h && (h.portrait || h.img)) ? `<img src="${h.portrait||h.img}" class="lc-img" onerror="this.style.display='none'">` : `<div class="lc-img" style="display:flex;align-items:center;justify-content:center;font-size:24px;">${RI[r]||'⚔'}</div>`;
-    const iconHTML = iconMapLC[r] ? `<img src="${iconMapLC[r]}" style="width:14px;height:14px;filter:invert(1);mix-blend-mode:multiply;opacity:0.8;">` : `<span>${RI[r]||'⚔'}</span>`;
+    const img = (h && (h.portrait || h.img)) ? `<img src="${h.portrait||h.img}" class="lc-img" onerror="this.style.display='none'">` : `<div class="lc-img" style="display:flex;align-items:center;justify-content:center;font-size:24px;">⚔</div>`;
+    const iconHTML = iconMapLC[r] ? `<img src="${iconMapLC[r]}" style="width:14px;height:14px;filter:invert(1);mix-blend-mode:multiply;opacity:0.8;">` : `<span>⚔</span>`;
     card.innerHTML = `
       ${img}
       <div class="lc-role">${iconHTML} <span style="font-size:11px;">${r}</span></div>
@@ -2395,7 +2942,7 @@ function openFlexModal(hero, step) {
   flexStep = step;
   
   document.getElementById('fmName').textContent = hero.name;
-  document.getElementById('fmRole').textContent = `${RI[hero.role]||'⚔'} ${hero.role}`;
+  document.getElementById('fmRole').textContent = LANE_LABELS[hero.lane] || hero.lane || '—';
   const imgEl=document.getElementById('fmImg');
   imgEl.innerHTML=(hero.portrait||hero.img)?`<img src="${hero.portrait||hero.img}" style="width:38px;height:38px;border-radius:6px;object-fit:cover;">`:'';
   
@@ -2406,7 +2953,7 @@ function openFlexModal(hero, step) {
   const roles = S.roles[step.side] || ['EXP Lane','Jungle','Mid Lane','Gold Lane','Roam'];
   const currentIdx = step.side === 'blue' ? S.bluePickIdx : S.redPickIdx;
   
-  const iconMap = {'EXP Lane':'assets/imgs/exp.png', 'Jungle':'assets/imgs/jungler.png', 'Mid Lane':'assets/imgs/mid.png', 'Gold Lane':'assets/imgs/gold.png', 'Roam':'assets/imgs/Roamer.png'};
+  const iconMap = {'EXP Lane':'assets/imgs/black_exp.png', 'Jungle':'assets/imgs/black_core.png', 'Mid Lane':'assets/imgs/black_mid.png', 'Gold Lane':'assets/imgs/black_gold.png', 'Roam':'assets/imgs/black_roam.png'};
   
   const picksList = step.side === 'blue' ? S.bluePicks : S.redPicks;
   
@@ -2528,14 +3075,16 @@ function applyHero(hero,step,preFlexSnap=null){
   };
   logH(`${step.action==='ban'?'🚫':'✅'} ${step.side==='blue'?'Blue':'Red'} ${step.action}: ${hero.name}`,snap);
   const heroSafe = hero.name.replace(/[^a-zA-Z0-9]/g, '');
+  const sfxVol = S.settings?.audio?.sfx ?? 1;
+  const voiceVol = S.settings?.audio?.voice ?? 1;
   if(step.action==='ban'){
-    try { new Audio('assets/audio/mlbbban.wav').play().catch(()=>{}); } catch(e){}
-    try { new Audio(`assets/audio/heroes/${heroSafe}.ogg`).play().catch(()=>{}); } catch(e){}
+    try { const a=new Audio('assets/audio/mlbbban.wav'); a.volume=sfxVol; a.play().catch(()=>{}); } catch(e){}
+    try { const a=new Audio(`assets/audio/heroes/${heroSafe}.ogg`); a.volume=voiceVol; a.play().catch(()=>{}); } catch(e){}
     if(step.side==='blue'){S.blueBans.push(hero);S.blueBanIdx++;}
     else{S.redBans.push(hero);S.redBanIdx++;}
   } else {
-    try { new Audio('assets/audio/mlbbpick.wav').play().catch(()=>{}); } catch(e){}
-    try { new Audio(`assets/audio/heroes/${heroSafe}.ogg`).play().catch(()=>{}); } catch(e){}
+    try { const a=new Audio('assets/audio/mlbbpick.wav'); a.volume=sfxVol; a.play().catch(()=>{}); } catch(e){}
+    try { const a=new Audio(`assets/audio/heroes/${heroSafe}.ogg`); a.volume=voiceVol; a.play().catch(()=>{}); } catch(e){}
     if(step.side==='blue'){S.bluePicks.push(hero);S.bluePickIdx++;}
     else{S.redPicks.push(hero);S.redPickIdx++;}
   }
@@ -2590,7 +3139,7 @@ function renderModifyGrid(search) {
     const u=h.used;
     const el=document.createElement('div');
     el.className=`hcard mhc${u?' hu mu':''}`;
-    el.innerHTML=`<div class="hci">${(h.portrait||h.img)?`<img src="${h.portrait||h.img}" onerror="this.style.display='none'">`:`<span class="hph">${RI[h.role]||'⚔'}</span>`}<div class="hrd" style="background:${RC[h.role]||'#546E7A'}"></div></div><div class="hcn">${h.name}</div>`;
+    el.innerHTML=`<div class="hci">${(h.portrait||h.img)?`<img src="${h.portrait||h.img}" onerror="this.style.display='none'">`:`<span class="hph">⚔</span>`}<div class="hrd" style="background:${LANE_COLORS[h.lane]||'#546E7A'}"></div></div><div class="hcn">${h.name}</div>`;
     if(!u){
       el.onclick=()=>{
         document.getElementById('mmg').querySelectorAll('.mhc').forEach(c=>c.classList.remove('msel'));
@@ -2647,17 +3196,21 @@ function doModify(){
 //  ESPORTS SETTINGS
 // ═══════════════════════════════════════════════════
 function openEsports() {
-  document.getElementById('emTotalMatches').value = S.meta.totalMatches || 0;
-  document.getElementById('emStatsEnabled').checked = S.meta.statsEnabled !== false;
+  recalcTotalMatches();
+  document.getElementById('emTotalMatches').textContent = S.meta.totalMatches || 0;
+  document.getElementById('emTotalPicks').textContent = S.roster.reduce((s,h)=>s+(h.picks||0),0);
+  document.getElementById('emTotalBans').textContent = S.roster.reduce((s,h)=>s+(h.bans||0),0);
   document.getElementById('esportsModal').classList.add('show');
 }
 function cEsports() { document.getElementById('esportsModal').classList.remove('show'); }
-function doEsports() {
-  S.meta.totalMatches = parseInt(document.getElementById('emTotalMatches').value) || 0;
-  S.meta.statsEnabled = document.getElementById('emStatsEnabled').checked;
-  cEsports();
-  toast('Esports settings saved','success');
-  pub(); renderRoster();
+
+function resetAllHeroStats() {
+  if(!confirm('Reset picks, bans and wins to 0 for every hero? This cannot be undone.')) return;
+  S.roster.forEach(h=>{ h.picks=0; h.bans=0; h.wins=0; });
+  recalcTotalMatches();
+  saveRoster(); pub(); renderRoster();
+  openEsports();
+  toast('All hero stats reset','info');
 }
 
 // ═══════════════════════════════════════════════════
@@ -2666,18 +3219,69 @@ function doEsports() {
 let editHeroIdx = null;
 
 
+function hemCap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+
+function setHemPreview(slot, url) {
+  const box = document.getElementById(`hem${hemCap(slot)}In`);
+  const wrap = document.getElementById(`hem${hemCap(slot)}Up`);
+  if(url) {
+    box.innerHTML = `<img src="${url}?t=${Date.now()}" onerror="this.parentElement.parentElement.classList.remove('has-img');this.parentElement.innerHTML=\`<i class='bx bx-image-add'></i>\`;">`;
+    wrap.classList.add('has-img');
+  } else {
+    box.innerHTML = `<i class='bx bx-image-add'></i>`;
+    wrap.classList.remove('has-img');
+  }
+}
+
+function handleHeroUpload(input, slot) {
+  const file = input.files && input.files[0];
+  if(!file) return;
+  const name = document.getElementById('hemName').value.trim();
+  if(!name) { toast('Enter a hero name first','error'); input.value=''; return; }
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('type', slot);
+  fd.append('name', name);
+  fetch('upload.php', { method:'POST', body: fd })
+    .then(r=>r.json())
+    .then(data=>{
+      if(data.success) {
+        document.getElementById(`hem${hemCap(slot)}`).value = data.path;
+        setHemPreview(slot, data.path);
+        toast(`${hemCap(slot)} uploaded`,'success');
+      } else {
+        toast('Upload failed: '+(data.message||'unknown error'),'error');
+      }
+    })
+    .catch(err=>toast('Upload error: '+err.message,'error'));
+  input.value = '';
+}
+
+// Hides the stats/breakdown column while adding something brand new — there's nothing to show yet.
+// Also shrinks the whole modal back to a normal single-column width instead of stretching the left column full-width.
+function setModalColumns(modalId, showHistory){
+  const modal = document.getElementById(modalId);
+  if(!modal) return;
+  const cols = modal.querySelector('.hem-columns');
+  const box = modal.querySelector('.mbox');
+  if(cols) cols.classList.toggle('single-col', !showHistory);
+  if(box) box.classList.toggle('single', !showHistory);
+}
+
 function openAddHero() {
   editHeroIdx = -1; // -1 means new
   document.getElementById('hemTitle').textContent = "Add New Hero";
   document.getElementById('hemName').value = '';
-  document.getElementById('hemRole').value = 'Fighter';
+  document.getElementById('hemRole').value = 'EXP Lane';
   document.getElementById('hemIcon').value = '';
   document.getElementById('hemPortrait').value = '';
-  document.getElementById('hemPicks').value = 0;
-  document.getElementById('hemBans').value = 0;
-  document.getElementById('hemWins').value = 0;
+  document.getElementById('hemSplash').value = '';
+  setHemPreview('icon','');setHemPreview('portrait','');setHemPreview('splash','');
   document.getElementById('hemDelBtn').style.display = 'none';
-  updHemRates();
+  updHemRates(0,0,0);
+  renderHeroRoleStats(null);
+  renderHeroSideStats(null);
+  setModalColumns('heroEditModal', false);
   document.getElementById('heroEditModal').classList.add('show');
 }
 
@@ -2686,65 +3290,39 @@ function openHeroEdit(idx) {
   const h = S.roster[idx];
   document.getElementById('hemTitle').textContent = `Edit Hero: ${h.name}`;
   document.getElementById('hemName').value = h.name || '';
-  document.getElementById('hemRole').value = h.role || 'Fighter';
+  document.getElementById('hemRole').value = h.lane || 'EXP Lane';
   document.getElementById('hemIcon').value = h.icon || '';
   document.getElementById('hemPortrait').value = h.portrait || h.img || '';
-  document.getElementById('hemPicks').value = h.picks || 0;
-  document.getElementById('hemBans').value = h.bans || 0;
-  document.getElementById('hemWins').value = h.wins || 0;
-  
-  if (h.name === 'No Ban') {
-    document.getElementById('hemRole').disabled = true;
-    document.getElementById('hemIcon').disabled = true;
-    document.getElementById('hemPortrait').disabled = true;
-    document.getElementById('hemPicks').disabled = true;
-    document.getElementById('hemBans').disabled = true;
-    document.getElementById('hemWins').disabled = true;
-    document.getElementById('hemDelBtn').style.display = 'none';
-  } else {
-    document.getElementById('hemRole').disabled = false;
-    document.getElementById('hemIcon').disabled = false;
-    document.getElementById('hemPortrait').disabled = false;
-    document.getElementById('hemPicks').disabled = false;
-    document.getElementById('hemBans').disabled = false;
-    document.getElementById('hemWins').disabled = false;
-    document.getElementById('hemDelBtn').style.display = 'block';
-  }
-  
-  updHemRates();
+  document.getElementById('hemSplash').value = h.splash || '';
+  setHemPreview('icon', h.icon || '');
+  setHemPreview('portrait', h.portrait || h.img || '');
+  setHemPreview('splash', h.splash || '');
+
+  document.getElementById('hemRole').disabled = h.name === 'No Ban';
+  document.getElementById('hemDelBtn').style.display = h.name === 'No Ban' ? 'none' : 'block';
+
+  updHemRates(h.picks||0, h.bans||0, h.wins||0);
+  setModalColumns('heroEditModal', true);
+  renderHeroPickHistory(h.name);
+  renderHeroRoleStats(h.name);
+  renderHeroSideStats(h.name);
   document.getElementById('heroEditModal').classList.add('show');
 }
 
 function cHeroEdit() { document.getElementById('heroEditModal').classList.remove('show'); editHeroIdx = null; }
 
-function updHemRates() {
-  let pInp = document.getElementById('hemPicks');
-  let bInp = document.getElementById('hemBans');
-  let wInp = document.getElementById('hemWins');
-  
-  let p = parseInt(pInp.value) || 0;
-  let b = parseInt(bInp.value) || 0;
-  let w = parseInt(wInp.value) || 0;
+function updHemRates(p, b, w) {
   const t = S.meta.totalMatches || 0;
-  
-  if (t > 0 && p + b > t) {
-    if (p > t) p = t;
-    b = t - p;
-    pInp.value = p;
-    bInp.value = b;
-    toast(`Picks + Bans cannot exceed Total Matches (${t})`, 'error');
-  }
-  if (w > p) {
-    w = p;
-    wInp.value = w;
-    toast(`Wins cannot exceed Picks (${p})`, 'error');
-  }
-  
+
+  document.getElementById('hemPicksView').textContent = p;
+  document.getElementById('hemBansView').textContent = b;
+  document.getElementById('hemWinsView').textContent = w;
+
   const pr = t>0 ? ((p/t)*100).toFixed(1) : 0;
   const br = t>0 ? ((b/t)*100).toFixed(1) : 0;
   const cr = t>0 ? (((p+b)/t)*100).toFixed(1) : 0;
   const wr = p>0 ? ((w/p)*100).toFixed(1) : 0;
-  
+
   document.getElementById('hemPR').textContent = pr + '%';
   document.getElementById('hemBR').textContent = br + '%';
   document.getElementById('hemCR').textContent = cr + '%';
@@ -2754,20 +3332,18 @@ function updHemRates() {
 function doHeroEdit() {
   const n = document.getElementById('hemName').value.trim();
   if(!n) { toast('Enter name','error'); return; }
-  
+
   const hData = {
     name: n,
-    role: document.getElementById('hemRole').value,
+    lane: document.getElementById('hemRole').value,
     icon: document.getElementById('hemIcon').value.trim(),
     portrait: document.getElementById('hemPortrait').value.trim(),
-    picks: parseInt(document.getElementById('hemPicks').value) || 0,
-    bans: parseInt(document.getElementById('hemBans').value) || 0,
-    wins: parseInt(document.getElementById('hemWins').value) || 0,
+    splash: document.getElementById('hemSplash').value.trim(),
   };
-  
+
   if (editHeroIdx === -1) {
     if(S.roster.find(h=>h.name.toLowerCase()===n.toLowerCase())){ toast('Already exists','error'); return; }
-    S.roster.push(hData);
+    S.roster.push({...hData, picks:0, bans:0, wins:0});
     toast(`${n} added`,'success');
   } else {
     S.roster[editHeroIdx] = { ...S.roster[editHeroIdx], ...hData };
@@ -2812,26 +3388,31 @@ function importRoster(input) {
   reader.readAsText(file);
 }
 
-function setRosterSort(key, el) {
-  Array.from(el.parentElement.children).forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  if(rosterSortKey===key) rosterSortDir*=-1;
-  else { rosterSortKey=key; rosterSortDir=1; }
-  document.getElementById('rosterSortDirBtn').textContent = rosterSortDir===1 ? '↓' : '↑';
+function setRosterSort(key) {
+  rosterSortKey = key;
   renderRoster();
 }
 
 function toggleRosterSortDir() {
-  rosterSortDir*=-1;
-  document.getElementById('rosterSortDirBtn').textContent = rosterSortDir===1 ? '↓' : '↑';
+  rosterSortDir *= -1;
+  const ic = document.querySelector('#rosterSortDirBtn i');
+  if(ic) ic.className = `bx bx-sort-${rosterSortDir===1?'down':'up'}`;
   renderRoster();
 }
 
+// "Total games" = number of games actually recorded in Match History (one record per completed draft),
+// NOT the sum of picks+bans across heroes — that would wildly overcount and break every rate below 100%.
+function recalcTotalMatches(){
+  S.meta.totalMatches = loadMatchRecords().length;
+}
+
 function renderRoster(){
+  recalcTotalMatches();
   const div=document.getElementById('rosterList');div.innerHTML='';
-  const q=(document.getElementById('rosterSearch').value||'').toLowerCase();
+  const q=(document.getElementById('statSearch').value||'').toLowerCase();
   let heroes = [...S.roster].filter(h=>h.name!=='No Ban');
-  if(q) heroes = heroes.filter(h=>h.name.toLowerCase().includes(q)||h.role.toLowerCase().includes(q));
+  if(q) heroes = heroes.filter(h=>h.name.toLowerCase().includes(q)||(h.lane||'').toLowerCase().includes(q));
+  if(statMode==='heroes'){ const hpCount=document.getElementById('hpCount'); if(hpCount) hpCount.textContent = `${heroes.length} hero${heroes.length===1?'':'es'}`; }
   heroes.sort((a,b)=>{
     let av=a[rosterSortKey]??'',bv=b[rosterSortKey]??'';
     if(rosterSortKey==='contestRate') {
@@ -2847,11 +3428,566 @@ function renderRoster(){
   heroes.forEach(h=>{
     const i=S.roster.indexOf(h);
     const el=document.createElement('div');
-    el.className='hcard';
-    el.innerHTML=`<div class="hci">${(h.portrait||h.img)?`<img src="${h.portrait||h.img}" onerror="this.style.display='none'">`:`<span class="hph">${RI[h.role]||'⚔'}</span>`}<div class="hrd" style="background:${RC[h.role]||'#546E7A'}"></div></div><div class="hcn">${h.name}</div>`;
+    el.className='pcard';
+    const picks=h.picks||0, bans=h.bans||0, wins=h.wins||0;
+    const wr=picks>0?Math.round((wins/picks)*100):0;
+    const wrColor=wr>=55?'#2E7D32':wr>=45?'#E65100':'#C62828';
+    const rc=LANE_COLORS[h.lane]||'#546E7A';
+    el.innerHTML=`<div class="pci">${(h.portrait||h.img)?`<img src="${h.portrait||h.img}" onerror="this.style.display='none'">`:''}</div><div class="pinfo"><div class="pname">${h.name}</div><div class="prole" style="color:${rc}">${LANE_LABELS[h.lane]||h.lane||'—'}</div><div class="pstats"><div class="pstat"><div class="pstat-v">${picks}</div><div class="pstat-l">Picks</div></div><div class="pstat"><div class="pstat-v">${bans}</div><div class="pstat-l">Bans</div></div><div class="pstat"><div class="pstat-v" style="color:${wrColor}">${wr}%</div><div class="pstat-l">Win</div></div></div><div class="pwr-bar"><div class="pwr-fill" style="width:${wr}%;background:${wrColor}"></div></div></div>`;
     el.onclick=()=>openHeroEdit(i);
     div.appendChild(el);
   });
+}
+
+// ═══════════════════════════════════════════════════
+//  STATISTICS — MODE SWITCH (Heroes / Players / Teams)
+// ═══════════════════════════════════════════════════
+let statMode = 'heroes';
+
+function setStatMode(mode, el){
+  statMode = mode;
+  document.querySelectorAll('#statModeSwitch .seg-btn').forEach(b=>b.classList.remove('active'));
+  (el||document.querySelector(`#statModeSwitch [data-mode="${mode}"]`))?.classList.add('active');
+
+  document.getElementById('heroesToolbar').style.display = mode==='heroes' ? 'flex' : 'none';
+  document.getElementById('playersToolbar').style.display = mode==='players' ? 'flex' : 'none';
+  document.getElementById('teamsToolbar').style.display = mode==='teams' ? 'flex' : 'none';
+  document.getElementById('rosterList').style.display = mode==='heroes' ? 'grid' : 'none';
+  document.getElementById('playerStatsList').style.display = mode==='players' ? 'grid' : 'none';
+  document.getElementById('teamStatsList').style.display = mode==='teams' ? 'grid' : 'none';
+
+  const search = document.getElementById('statSearch');
+  search.placeholder = mode==='heroes' ? 'Search heroes...' : mode==='players' ? 'Search players...' : 'Search teams...';
+
+  renderStatMode();
+}
+
+function onStatSearch(){ renderStatMode(); }
+
+function renderStatMode(){
+  if(statMode==='heroes') renderRoster();
+  else if(statMode==='players') renderPlayerStats();
+  else renderTeamStats();
+}
+
+// Player/team stats are derived entirely from saved Match History records — never stored separately.
+function buildPlayerStats(){
+  const map = {};
+  // Seed from the Player Database first, so every registered player appears even with 0 games played.
+  mplPlayersDB.forEach(p=>{
+    const pname = (p.name||'').trim();
+    if(!pname) return;
+    map[pname] = {id:p.id, name:pname, teamId:p.teamId, games:0, wins:0, heroes:{}};
+  });
+  loadMatchRecords().forEach(rec=>{
+    ['blue','red'].forEach(side=>{
+      const team = rec[side];
+      if(!team) return;
+      const decided = !!rec.winner;
+      const won = rec.winner===side;
+      (team.players||[]).forEach((pname,i)=>{
+        pname = (pname||'').trim();
+        if(!pname) return;
+        const hero = team.picks?.[i];
+        if(!map[pname]) map[pname] = {name:pname, games:0, wins:0, heroes:{}};
+        const pl = map[pname];
+        pl.games++;
+        if(decided && won) pl.wins++;
+        if(hero && hero.name){
+          if(!pl.heroes[hero.name]) pl.heroes[hero.name] = {name:hero.name, portrait:hero.portrait||hero.img, games:0, wins:0};
+          pl.heroes[hero.name].games++;
+          if(decided && won) pl.heroes[hero.name].wins++;
+        }
+      });
+    });
+  });
+  return Object.values(map).sort((a,b)=>b.games-a.games);
+}
+
+function buildTeamStats(){
+  const map = {};
+  // Seed from the Team Database first, so every registered team appears even with 0 games played.
+  mplTeamsDB.forEach(t=>{
+    const tname = (t.name||'').trim();
+    if(!tname) return;
+    map[tname] = {id:t.id, name:tname, logo:t.logo||'', games:0, wins:0, losses:0};
+  });
+  loadMatchRecords().forEach(rec=>{
+    ['blue','red'].forEach(side=>{
+      const team = rec[side];
+      if(!team) return;
+      const name = (team.name||'').trim() || (side==='blue'?'Blue Team':'Red Team');
+      const decided = !!rec.winner;
+      const won = rec.winner===side;
+      if(!map[name]) map[name] = {name, logo:team.logo||'', games:0, wins:0, losses:0};
+      const t = map[name];
+      t.games++;
+      if(decided){ if(won) t.wins++; else t.losses++; }
+      if(team.logo && !t.logo) t.logo = team.logo;
+    });
+  });
+  return Object.values(map).sort((a,b)=>b.games-a.games);
+}
+
+function wrColorFor(wr){ return wr>=55?'#2E7D32':wr>=45?'#E65100':'#C62828'; }
+
+// Every time this hero was picked, in any saved match: which team/player picked it, in what role, when, and the result.
+function roleIconFor(role){
+  const i = TEAM_ROLES.indexOf(role);
+  return i>=0 ? LANE_ROLE_ICONS[i] : '';
+}
+function teamLogoFor(teamName){
+  const t = mplTeamsDB.find(x=>x.name===teamName);
+  return t ? (t.logo||'') : '';
+}
+
+function buildHeroPickHistory(heroName){
+  const rows = [];
+  loadMatchRecords().forEach(rec=>{
+    ['blue','red'].forEach(side=>{
+      const team = rec[side];
+      if(!team) return;
+      (team.picks||[]).forEach((h,i)=>{
+        if(!h || h.name!==heroName) return;
+        const teamName = team.name || (side==='blue'?'Blue Team':'Red Team');
+        rows.push({
+          matchId: rec.id,
+          side,
+          team: teamName,
+          teamLogo: team.logo || teamLogoFor(teamName),
+          player: team.players?.[i] || 'Unknown Player',
+          role: team.roles?.[i] || TEAM_ROLES[i] || '—',
+          timestamp: rec.timestamp,
+          result: rec.winner ? (rec.winner===side ? 'win' : 'loss') : 'pending'
+        });
+      });
+    });
+  });
+  return rows; // loadMatchRecords() returns newest-first already
+}
+
+function buildHeroBanHistory(heroName){
+  const rows = [];
+  loadMatchRecords().forEach(rec=>{
+    ['blue','red'].forEach(side=>{
+      const team = rec[side];
+      if(!team) return;
+      (team.bans||[]).forEach(h=>{
+        if(!h || h.name!==heroName || h.name==='No Ban') return;
+        rows.push({ matchId: rec.id, side, team: team.name || (side==='blue'?'Blue Team':'Red Team') });
+      });
+    });
+  });
+  return rows;
+}
+
+function jumpToMatchHistory(matchId){
+  document.querySelectorAll('.mbg.show').forEach(m=>m.classList.remove('show'));
+  sw('matchHistory', document.querySelector('[data-tab="matchHistory"]'));
+  openMatchDetail(matchId);
+}
+
+// ═══════════════════════════════════════════════════
+//  DRAFT PREDICTOR
+//  Ranks heroes purely by ACTUAL historical pick-role data (Match History's
+//  roles[i]/picks[i] alignment) — never by a hero's class or default lane.
+// ═══════════════════════════════════════════════════
+
+// How often each hero was actually picked while playing a specific lane role, across all saved matches.
+function buildRolePickStats(role){
+  const counts = {};
+  loadMatchRecords().forEach(rec=>{
+    ['blue','red'].forEach(side=>{
+      const team = rec[side];
+      if(!team) return;
+      const decided = !!rec.winner;
+      const won = rec.winner===side;
+      (team.picks||[]).forEach((h,i)=>{
+        if(!h || !h.name || h.name==='No Ban') return;
+        if((team.roles?.[i]) !== role) return;
+        if(!counts[h.name]) counts[h.name] = {name:h.name, portrait:h.portrait||h.img, picks:0, wins:0};
+        counts[h.name].picks++;
+        if(decided && won) counts[h.name].wins++;
+      });
+    });
+  });
+  return Object.values(counts).sort((a,b)=>b.picks-a.picks);
+}
+
+// The lane roles a side hasn't filled yet — a flex-pick can still route the next hero into any of them.
+function getRemainingRolesForSide(side){
+  const pickIdx = side==='blue' ? (S.bluePickIdx||0) : (S.redPickIdx||0);
+  const roles = S.roles?.[side] || TEAM_ROLES;
+  return roles.slice(pickIdx);
+}
+
+// Top 10 for the side about to pick: merges pick-count across every role still open for that side,
+// so a hero strong across multiple open roles ranks above one strong in only one.
+function buildDraftPrediction(side){
+  const roles = getRemainingRolesForSide(side);
+  if(!roles.length) return [];
+  const merged = {};
+  roles.forEach(role=>{
+    buildRolePickStats(role).forEach(h=>{
+      if(!merged[h.name]) merged[h.name] = {name:h.name, portrait:h.portrait, picks:0, wins:0};
+      merged[h.name].picks += h.picks;
+      merged[h.name].wins += h.wins;
+    });
+  });
+  const total = S.meta?.totalMatches || 0;
+  const list = Object.values(merged)
+    .filter(h => !isUsed(h.name))
+    .map(h => ({...h, pickRate: total>0 ? Math.round((h.picks/total)*1000)/10 : 0, winRate: h.picks>0 ? Math.round((h.wins/h.picks)*100) : 0}))
+    .sort((a,b)=>b.picks-a.picks);
+  return list.slice(0,10);
+}
+
+// The lane roles the OPPONENT of `side` hasn't filled yet — what a ban on this turn should deny.
+function getEnemyRemainingRoles(side){
+  const enemy = side==='blue' ? 'red' : 'blue';
+  return getRemainingRolesForSide(enemy);
+}
+
+// Top 10 bans for the side about to ban: ranks available heroes by actual historical pick
+// frequency in whichever lanes the enemy team still needs to fill (same role-specific stats
+// engine as the Draft Predictor — never a hero's default/original role).
+function buildBanPrediction(side){
+  const rosterMap = {};
+  (S.roster || []).forEach(r => { if(r && r.name) rosterMap[r.name] = r; });
+  const total = S.meta?.totalMatches || 0;
+  const enemyRoles = getEnemyRemainingRoles(side);
+
+  if(enemyRoles.length){
+    const merged = {};
+    enemyRoles.forEach(role=>{
+      buildRolePickStats(role).forEach(h=>{
+        if(!merged[h.name]) merged[h.name] = {name:h.name, portrait:h.portrait, picks:0, wins:0};
+        merged[h.name].picks += h.picks;
+        merged[h.name].wins += h.wins;
+      });
+    });
+    const list = Object.values(merged)
+      .filter(h => h.picks > 0 && !isUsed(h.name))
+      .map(h => {
+        const r = rosterMap[h.name];
+        const pickRate = total > 0 ? Math.round((h.picks / total) * 1000) / 10 : 0;
+        return { ...h, portrait: h.portrait || r?.portrait || '', pickRate, banRate: pickRate };
+      })
+      .sort((a,b)=>b.picks-a.picks);
+    if(list.length) return list.slice(0,10);
+  }
+
+  // Fallback (no remaining enemy roles resolved, or no role-specific pick data yet):
+  // rank by raw historical ban frequency across all saved matches.
+  const counts = {};
+  loadMatchRecords().forEach(rec => {
+    ['blue','red'].forEach(s => {
+      const team = rec[s];
+      if(!team) return;
+      (team.bans || []).forEach(h => {
+        if(!h || !h.name || h.name === 'No Ban') return;
+        if(!counts[h.name]){
+          const r = rosterMap[h.name];
+          counts[h.name] = {
+            name: h.name,
+            portrait: r?.portrait || h.portrait || h.img || h.icon || '',
+            bans: 0,
+            picks: r?.picks || 0
+          };
+        }
+        counts[h.name].bans++;
+      });
+    });
+  });
+
+  const list = Object.values(counts)
+    .filter(h => h.bans > 0 && !isUsed(h.name))
+    .map(h => {
+      const banRate = total > 0 ? Math.round((h.bans / total) * 1000) / 10 : 0;
+      return { ...h, pickRate: banRate, banRate };
+    })
+    .sort((a,b) => (b.bans - a.bans) || (b.picks - a.picks));
+  return list.slice(0, 10);
+}
+
+// Recomputes S.rolePrediction to reflect whichever side/action (ban or pick) is currently active — call before every publish.
+function recalcDraftPrediction(){
+  const step = S.steps?.[S.currentStep];
+  if(!step || S.status !== 'running'){
+    S.rolePrediction = null;
+    return;
+  }
+  const side = step.side;
+  if(step.action === 'pick'){
+    if(!S.meta?.predictorVisible){
+      S.rolePrediction = null;
+      return;
+    }
+    const top10 = buildDraftPrediction(side);
+    S.rolePrediction = top10.length ? { action: 'pick', side, pickIdx: side==='blue'?S.bluePickIdx:S.redPickIdx, top10 } : null;
+  } else if(step.action === 'ban'){
+    const banOn = S.meta?.banPredictorVisible !== undefined ? !!S.meta.banPredictorVisible : !!S.meta?.predictorVisible;
+    if(!banOn){
+      S.rolePrediction = null;
+      return;
+    }
+    const top10 = buildBanPrediction(side);
+    const banIdx = side==='blue' ? S.blueBanIdx : S.redBanIdx;
+    S.rolePrediction = top10.length ? { action: 'ban', side, pickIdx: banIdx, banIdx, top10 } : null;
+  } else {
+    S.rolePrediction = null;
+  }
+}
+
+// Single switch for both the Pick and Ban Predictor — they're always shown/hidden together.
+// (Ban Prediction can never be on while Pick Prediction is off, or vice versa.)
+function toggleDraftPredictor(){
+  const on = !S.meta?.predictorVisible;
+  S.meta.predictorVisible = on;
+  S.meta.banPredictorVisible = on;
+  updatePredictorBtn();
+  toast(on ? 'Draft Predictor shown' : 'Draft Predictor hidden', 'info');
+  pub();
+}
+function updatePredictorBtn(){
+  const btn = document.getElementById('btnLiveTogglePredictor');
+  if(btn){
+    const on = !!S.meta?.predictorVisible;
+    btn.classList.toggle('bp', on);
+    btn.classList.toggle('bg2', !on);
+    btn.title = `Draft Predictor${on?': ON':': OFF'}`;
+  }
+}
+
+function renderHeroPickHistory(heroName){
+  const list = document.getElementById('hemHistoryList');
+  if(!list) return;
+  if(!heroName){ list.innerHTML = `<div class="hem-history-empty">Save the hero first to start tracking picks.</div>`; return; }
+
+  const rows = buildHeroPickHistory(heroName);
+  if(rows.length===0){
+    list.innerHTML = `<div class="hem-history-empty">No pick history yet — this hero hasn't appeared in a saved match.</div>`;
+    return;
+  }
+
+  const resultLabel = {win:'Win', loss:'Loss', pending:'Pending'};
+  list.innerHTML = rows.map(r => {
+    const roleIcon = roleIconFor(r.role);
+    return `
+    <div class="hem-history-row" onclick="jumpToMatchHistory('${r.matchId}')">
+      <div class="hem-history-top">
+        <div class="hem-history-left">
+          <div class="hem-history-icons">
+            ${r.teamLogo?`<img class="hem-history-team-icon" src="${r.teamLogo}" onerror="this.style.display='none'">`:''}
+            ${roleIcon?`<img class="hem-history-role-icon" src="${roleIcon}">`:''}
+          </div>
+          <div class="hem-history-player">${r.player}</div>
+        </div>
+        <span class="hem-history-result ${r.result}">${resultLabel[r.result]}</span>
+      </div>
+      <div class="hem-history-meta">
+        <span class="hem-history-side-tag ${r.side}">${r.side}</span>
+        <span>${r.team}</span>
+        <span>${r.role}</span>
+        <span>${r.timestamp}</span>
+      </div>
+    </div>
+  `;
+  }).join('');
+}
+
+function renderHeroSideStats(heroName){
+  const el = document.getElementById('hemBluePicks');
+  if(!el) return;
+
+  const picks = heroName ? buildHeroPickHistory(heroName) : [];
+  const bans = heroName ? buildHeroBanHistory(heroName) : [];
+
+  ['blue','red'].forEach(side=>{
+    const cap = side==='blue' ? 'Blue' : 'Red';
+    const sidePicks = picks.filter(r=>r.side===side);
+    const sideBans = bans.filter(r=>r.side===side);
+    const decided = sidePicks.filter(r=>r.result!=='pending');
+    const wins = decided.filter(r=>r.result==='win').length;
+    const wr = decided.length>0 ? Math.round((wins/decided.length)*100) : 0;
+    document.getElementById(`hem${cap}Picks`).textContent = sidePicks.length;
+    document.getElementById(`hem${cap}Bans`).textContent = sideBans.length;
+    document.getElementById(`hem${cap}WR`).textContent = wr+'%';
+  });
+}
+
+function renderHeroRoleStats(heroName){
+  const el = document.getElementById('hemRoleStats');
+  if(!el) return;
+  const rows = heroName ? buildHeroPickHistory(heroName) : [];
+  const total = rows.length;
+  el.innerHTML = TEAM_ROLES.map((role,i) => {
+    const count = rows.filter(r=>r.role===role).length;
+    const pct = total>0 ? Math.round((count/total)*100) : 0;
+    return `<div class="hem-role-stat">
+      <img class="hem-role-icon" src="${LANE_ROLE_ICONS[i]}">
+      <div class="hem-role-count">${count}</div>
+      <div class="hem-role-pct">${pct}%</div>
+    </div>`;
+  }).join('');
+}
+
+let lastPlayerStats = [];
+// Cross-references a player's name against the Team Database player pool to find their photo.
+function playerImageFor(name){
+  if(!name) return '';
+  const n = name.trim().toLowerCase();
+  const p = mplPlayersDB.find(x=>(x.name||'').trim().toLowerCase()===n && x.image);
+  return p ? p.image : '';
+}
+
+let playerSortKey = 'name', playerSortDir = 1;
+function setPlayerSort(key){ playerSortKey = key; renderPlayerStats(); }
+function togglePlayerSortDir(){
+  playerSortDir *= -1;
+  const ic = document.querySelector('#playerSortDirBtn i');
+  if(ic) ic.className = `bx bx-sort-${playerSortDir===1?'down':'up'}`;
+  renderPlayerStats();
+}
+
+function renderPlayerStats(){
+  const list = document.getElementById('playerStatsList');
+  const q = (document.getElementById('statSearch').value||'').toLowerCase();
+  let players = buildPlayerStats();
+  if(q) players = players.filter(p=>p.name.toLowerCase().includes(q));
+
+  players.sort((a,b)=>{
+    let av, bv;
+    if(playerSortKey==='winrate'){ av=a.games>0?a.wins/a.games:0; bv=b.games>0?b.wins/b.games:0; }
+    else if(playerSortKey==='losses'){ av=a.games-a.wins; bv=b.games-b.wins; }
+    else if(playerSortKey==='name'){ av=a.name.toLowerCase(); bv=b.name.toLowerCase(); }
+    else { av=a[playerSortKey]||0; bv=b[playerSortKey]||0; }
+    return av<bv?-playerSortDir:av>bv?playerSortDir:0;
+  });
+
+  lastPlayerStats = players;
+  const hpCount=document.getElementById('hpCount'); if(hpCount) hpCount.textContent = `${players.length} player${players.length===1?'':'s'}`;
+
+  if(players.length===0){
+    list.innerHTML = `<div class="mh-empty"><i class='bx bx-user'></i><div class="mh-empty-t">No players yet</div><div class="mh-empty-d">Click "Add Player" to register your first player.</div></div>`;
+    return;
+  }
+
+  list.innerHTML = players.map((p,idx)=>{
+    const wr = p.games>0 ? Math.round((p.wins/p.games)*100) : 0;
+    const losses = p.games - p.wins;
+    const img = playerImageFor(p.name);
+    const wrColor = wrColorFor(wr);
+    return `
+    <div class="pcard" onclick="openPlayerQuickEdit(${idx})">
+      <div class="pci">${img?`<img src="${img}" onerror="this.style.display='none'">`:`<div class="pci-fallback"><i class='bx bx-user'></i></div>`}</div>
+      <div class="pinfo">
+        <div class="pname">${p.name}</div>
+        <div class="prole" style="color:var(--text3)">${p.games} game${p.games===1?'':'s'}</div>
+        <div class="pstats">
+          <div class="pstat"><div class="pstat-v">${p.wins}</div><div class="pstat-l">Wins</div></div>
+          <div class="pstat"><div class="pstat-v">${losses}</div><div class="pstat-l">Losses</div></div>
+          <div class="pstat"><div class="pstat-v" style="color:${wrColor}">${wr}%</div><div class="pstat-l">Win Rate</div></div>
+        </div>
+        <div class="pwr-bar"><div class="pwr-fill" style="width:${wr}%;background:${wrColor}"></div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+let lastTeamStats = [];
+let teamSortKey = 'name', teamSortDir = 1;
+function setTeamSort(key){ teamSortKey = key; renderTeamStats(); }
+function toggleTeamSortDir(){
+  teamSortDir *= -1;
+  const ic = document.querySelector('#teamSortDirBtn i');
+  if(ic) ic.className = `bx bx-sort-${teamSortDir===1?'down':'up'}`;
+  renderTeamStats();
+}
+
+function renderTeamStats(){
+  const list = document.getElementById('teamStatsList');
+  const q = (document.getElementById('statSearch').value||'').toLowerCase();
+  let teams = buildTeamStats();
+  if(q) teams = teams.filter(t=>t.name.toLowerCase().includes(q));
+
+  teams.sort((a,b)=>{
+    let av, bv;
+    const ad=a.wins+a.losses, bd=b.wins+b.losses;
+    if(teamSortKey==='winrate'){ av=ad>0?a.wins/ad:0; bv=bd>0?b.wins/bd:0; }
+    else if(teamSortKey==='name'){ av=a.name.toLowerCase(); bv=b.name.toLowerCase(); }
+    else { av=a[teamSortKey]||0; bv=b[teamSortKey]||0; }
+    return av<bv?-teamSortDir:av>bv?teamSortDir:0;
+  });
+
+  lastTeamStats = teams;
+  const hpCount=document.getElementById('hpCount'); if(hpCount) hpCount.textContent = `${teams.length} team${teams.length===1?'':'s'}`;
+
+  if(teams.length===0){
+    list.innerHTML = `<div class="mh-empty"><i class='bx bx-id-card'></i><div class="mh-empty-t">No teams yet</div><div class="mh-empty-d">Click "Create Team" to add your first team.</div></div>`;
+    return;
+  }
+
+  list.innerHTML = teams.map((t,idx)=>{
+    const decided = t.wins + t.losses;
+    const wr = decided>0 ? Math.round((t.wins/decided)*100) : 0;
+    const wrColor = wrColorFor(wr);
+    return `
+    <div class="pcard" onclick="openTeamEditor(${idx})">
+      <div class="pci logo">${t.logo?`<img src="${t.logo}" onerror="this.style.display='none'">`:`<div class="pci-fallback"><i class='bx bx-id-card'></i></div>`}</div>
+      <div class="pinfo">
+        <div class="pname">${t.name}</div>
+        <div class="prole" style="color:var(--text3)">${t.games} game${t.games===1?'':'s'}</div>
+        <div class="pstats">
+          <div class="pstat"><div class="pstat-v">${t.wins}</div><div class="pstat-l">Wins</div></div>
+          <div class="pstat"><div class="pstat-v">${t.losses}</div><div class="pstat-l">Losses</div></div>
+          <div class="pstat"><div class="pstat-v" style="color:${wrColor}">${wr}%</div><div class="pstat-l">Win Rate</div></div>
+        </div>
+        <div class="pwr-bar"><div class="pwr-fill" style="width:${wr}%;background:${wrColor}"></div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function heroPortraitFor(name){
+  const h = S.roster.find(r=>r.name===name);
+  return h ? (h.portrait||h.img) : '';
+}
+
+// Shared hero-breakdown renderer used by both the Player and Team modals.
+function pdHeroRows(heroes, sortKey){
+  if(!heroes.length) return `<div class="mhd-none">No hero picks recorded</div>`;
+  const totalGames = heroes.reduce((s,h)=>s+h.games,0) || 1;
+  const withPct = heroes.map(h=>({...h, wr: h.games>0?Math.round((h.wins/h.games)*100):0, pct: Math.round((h.games/totalGames)*100)}));
+  if(sortKey==='winrate') withPct.sort((a,b)=>b.wr-a.wr);
+  else if(sortKey==='percentage') withPct.sort((a,b)=>b.pct-a.pct);
+  else withPct.sort((a,b)=>b.games-a.games); // picks (default)
+
+  return withPct.map(h=>{
+    const img = h.portrait || heroPortraitFor(h.name);
+    return `<div class="pd-hero-row">${img?`<img src="${img}" onerror="this.style.display='none'">`:''}<div class="pd-hero-name">${h.name}</div><span class="pd-hero-stat">${h.games}g · ${h.pct}%</span><span class="pd-hero-wr" style="color:${wrColorFor(h.wr)}">${h.wr}%</span></div>`;
+  }).join('');
+}
+
+// Every hero this team's players have picked, across all saved matches.
+function buildTeamHeroMap(teamName){
+  const heroMap = {};
+  loadMatchRecords().forEach(rec=>{
+    ['blue','red'].forEach(side=>{
+      const team = rec[side];
+      const name = team && ((team.name||'').trim() || (side==='blue'?'Blue Team':'Red Team'));
+      if(!team || name!==teamName) return;
+      const decided = !!rec.winner;
+      const won = rec.winner===side;
+      (team.picks||[]).forEach(hero=>{
+        if(!hero || !hero.name) return;
+        if(!heroMap[hero.name]) heroMap[hero.name] = {name:hero.name, portrait:hero.portrait||hero.img, games:0, wins:0};
+        heroMap[hero.name].games++;
+        if(decided && won) heroMap[hero.name].wins++;
+      });
+    });
+  });
+  return heroMap;
 }
 
 // ═══════════════════════════════════════════════════
@@ -2863,7 +3999,7 @@ let hGridEls = [];
 function renderHGrid(){ console.log('Starting renderHGrid');
   const grid=document.getElementById('hgrid');
   const search=document.getElementById('hsearch').value.toLowerCase();
-  let heroes=S.roster.filter(h=>(h.name!=='No Ban')&&(rfilt==='all'||h.role===rfilt)&&(!search||h.name.toLowerCase().includes(search)));
+  let heroes=S.roster.filter(h=>(h.name!=='No Ban')&&(rfilt==='all'||h.lane===rfilt)&&(!search||h.name.toLowerCase().includes(search)));
   
   const step = S.steps?.[S.currentStep];
   const isBan = step && step.action === 'ban';
@@ -2880,7 +4016,7 @@ function renderHGrid(){ console.log('Starting renderHGrid');
     hGridEls = [];
     heroes.forEach(hero=>{
       const el=document.createElement('div');
-      el.innerHTML=`<div class="hci">${(hero.portrait||hero.img)?`<img src="${hero.portrait||hero.img}" onerror="this.style.display='none'">`:`<span class="hph">${RI[hero.role]||'⚔'}</span>`}<div class="hrd" style="background:${RC[hero.role]||'#546E7A'}"></div></div><div class="hcn">${hero.name}</div>`;
+      el.innerHTML=`<div class="hci">${(hero.portrait||hero.img)?`<img src="${hero.portrait||hero.img}" onerror="this.style.display='none'">`:`<span class="hph">⚔</span>`}<div class="hrd" style="background:${LANE_COLORS[hero.lane]||'#546E7A'}"></div></div><div class="hcn">${hero.name}</div>`;
       grid.appendChild(el);
       hGridEls.push({hero, el});
     });
@@ -2900,9 +4036,12 @@ function renderHGrid(){ console.log('Starting renderHGrid');
 
 function renderRChips(){
   const div=document.getElementById('rchips');div.innerHTML='';
-  ['all',...ROLES].forEach(r=>{
-    const el=document.createElement('div');el.className=`chip${r===rfilt?' active':''}`;el.textContent=r==='all'?'All':r;
-    el.onclick=()=>{rfilt=r;document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderHGrid();};
+  ['all',...LANES].forEach((r,i)=>{
+    const el=document.createElement('div');
+    el.className=`chip role-chip${r===rfilt?' active':''}`;
+    el.title = r==='all' ? 'All' : (LANE_LABELS[r]||r);
+    el.innerHTML = r==='all' ? `<i class='bx bx-grid-alt'></i>` : `<span class="role-chip-icon" style="-webkit-mask-image:url('${LANE_ROLE_ICONS[i-1]}');mask-image:url('${LANE_ROLE_ICONS[i-1]}');"></span>`;
+    el.onclick=()=>{rfilt=r;document.querySelectorAll('.role-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderHGrid();};
     div.appendChild(el);
   });
 }
@@ -3001,9 +4140,9 @@ function renderHDraft(){ console.log('Starting renderHDraft');
       mkItems('hdBB',S.blueBans,bc,'ban');mkItems('hdBP',S.bluePicks,S.numPlayers,'pick');
       mkItems('hdRB',S.redBans,bc,'ban');mkItems('hdRP',S.redPicks,S.numPlayers,'pick');
       
-      // Update Teams Data
+      // Update Teams Data — stays hidden on the draftboard until the match is actually started
       const updateTeamUI = (side) => {
-          const team = S.teams?.[side] || {};
+          const team = S.status === 'idle' ? {} : (S.teams?.[side] || {});
           const isB = side === 'blue';
           
           const logoEl = document.getElementById(isB ? 'blueTeamLogo' : 'redTeamLogo');
@@ -3060,6 +4199,9 @@ function rStatusUI(){
     const bResume = document.getElementById('btnResume'); if(bResume) bResume.disabled=S.status!=='paused';
     const bSkip = document.getElementById('btnSkip'); if(bSkip) bSkip.disabled=S.status!=='running'&&S.status!=='paused';
     const bUndo = document.getElementById('btnUndo'); if(bUndo) bUndo.disabled=!S.history.some(h=>h.snap);
+    const canSaveMatch = S.status==='complete' && !S.meta.matchSaved;
+    const bSaveMatch = document.getElementById('btnSaveMatch'); if(bSaveMatch) bSaveMatch.disabled=!canSaveMatch;
+    const bhpSave = document.getElementById('hpSaveMatchBtn'); if(bhpSave) bhpSave.disabled=!canSaveMatch;
 
     const blStart = document.getElementById('btnLiveStart'); if(blStart) blStart.disabled=S.status!=='idle';
     const blToggle = document.getElementById('btnLiveTogglePause'); 
@@ -3119,13 +4261,7 @@ const ROLE_ICONS = {
   'Jungle':'assets/imgs/jungler.png',
   'Mid Lane':'assets/imgs/mid.png',
   'Gold Lane':'assets/imgs/gold.png',
-  'Roam':'assets/imgs/Roamer.png',
-  'Fighter':'assets/imgs/exp.png',
-  'Assassin':'assets/imgs/jungler.png',
-  'Mage':'assets/imgs/mid.png',
-  'Marksman':'assets/imgs/gold.png',
-  'Tank':'assets/imgs/Roamer.png',
-  'Support':'assets/imgs/Roamer.png'
+  'Roam':'assets/imgs/Roamer.png'
 };
 
 let currentHUDEvent = '';
@@ -3247,7 +4383,7 @@ function renderHUDPreview(){
 
 function renderUI(){ console.log('Starting renderUI');
   rTimerUI();rStatusUI();renderHGrid();renderHDraft();renderRoster();renderStreamTimerUI();
-  updateHUDBtns();updatePlayerPopupBtn();
+  updateHUDBtns();updatePlayerPopupBtn();updatePredictorBtn();
 }
 
 // ═══════════════════════════════════════════════════
@@ -3279,9 +4415,9 @@ function openAct(title,sub,hero,cb,btnCls='bp',btnLabel='Confirm'){
   if(hero){
     badge.style.display='flex';
     document.getElementById('amName').textContent=hero.name;
-    document.getElementById('amRole').textContent=`${RI[hero.role]||'⚔'} ${hero.role}`;
+    document.getElementById('amRole').textContent=LANE_LABELS[hero.lane] || hero.lane || '—';
     const imgEl=document.getElementById('amImg');
-    imgEl.innerHTML=(hero.portrait||hero.img)?`<img src="${hero.portrait||hero.img}" style="width:38px;height:38px;border-radius:6px;object-fit:cover;" onerror="this.style.display='none'">`:`<div style="width:38px;height:38px;border-radius:6px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:20px;">${RI[hero.role]||'⚔'}</div>`;
+    imgEl.innerHTML=(hero.portrait||hero.img)?`<img src="${hero.portrait||hero.img}" style="width:38px;height:38px;border-radius:6px;object-fit:cover;" onerror="this.style.display='none'">`:`<div style="width:38px;height:38px;border-radius:6px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:20px;">⚔</div>`;
   } else { badge.style.display='none'; }
   const ok=document.getElementById('amOk');ok.className=`btn ${btnCls}`;ok.textContent=btnLabel;
   actCb=cb;document.getElementById('actModal').classList.add('show');
@@ -3292,14 +4428,28 @@ function doAct(){const cb=actCb; cAct(); if(cb)cb();}
 // ═══════════════════════════════════════════════════
 //  TABS
 // ═══════════════════════════════════════════════════
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar'), layout=document.getElementById('layout');
+  const collapsed=sb.classList.toggle('collapsed');
+  layout.classList.toggle('sb-collapsed',collapsed);
+  try{localStorage.setItem('mpl_sb_collapsed',collapsed?'1':'0');}catch(e){}
+}
+(function(){
+  try{
+    if(localStorage.getItem('mpl_sb_collapsed')==='1'){
+      document.getElementById('sidebar').classList.add('collapsed');
+      document.getElementById('layout').classList.add('sb-collapsed');
+    }
+  }catch(e){}
+})();
 function sw(id,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   const t=el||document.querySelector(`[data-tab="${id}"]`);if(t)t.classList.add('active');
   const p=document.getElementById(`tab-${id}`);if(p)p.classList.add('active');
-  if(id==='records')renderMatchRecords();
+  if(id==='matchHistory')renderMatchHistory();
   if(id==='live')renderHGrid();
-  if(id==='heroes')renderRoster();
+  if(id==='heroes')renderStatMode();
   if(id==='sequence')renderSeqList();
   if(id==='roster')renderRoster();
   if(id==='stats')renderStatsGrid();
@@ -3325,9 +4475,54 @@ function saveMatchRecordsArray(arr) {
   } catch(e) {}
 }
 
+function validPickList(list){ return (list||[]).filter(h=>h && h.name && h.name!=='No Ban'); }
+function validBanList(list){ return (list||[]).filter(h=>h && h.name && h.name!=='No Ban'); }
+
+// Picks/bans are counted into hero totals as soon as a match is saved.
+// Wins are only counted once a winner is chosen, and are moved (not double-added) if the winner changes.
+function applyMatchStats(rec){
+  [...validPickList(rec.blue.picks), ...validPickList(rec.red.picks)].forEach(h=>{
+    const live = S.roster.find(r=>r.name===h.name);
+    if(live) live.picks = (live.picks||0)+1;
+  });
+  [...validBanList(rec.blue.bans), ...validBanList(rec.red.bans)].forEach(h=>{
+    const live = S.roster.find(r=>r.name===h.name);
+    if(live) live.bans = (live.bans||0)+1;
+  });
+}
+
+function revertMatchStats(rec){
+  [...validPickList(rec.blue.picks), ...validPickList(rec.red.picks)].forEach(h=>{
+    const live = S.roster.find(r=>r.name===h.name);
+    if(live) live.picks = Math.max(0,(live.picks||0)-1);
+  });
+  [...validBanList(rec.blue.bans), ...validBanList(rec.red.bans)].forEach(h=>{
+    const live = S.roster.find(r=>r.name===h.name);
+    if(live) live.bans = Math.max(0,(live.bans||0)-1);
+  });
+  if(rec.winner) applyWinDelta(rec, rec.winner, -1);
+}
+
+function applyWinDelta(rec, side, delta){
+  const picks = validPickList(side==='blue'?rec.blue.picks:rec.red.picks);
+  picks.forEach(h=>{
+    const live = S.roster.find(r=>r.name===h.name);
+    if(live) live.wins = Math.max(0,(live.wins||0)+delta);
+  });
+}
+
 function saveMatchRecord() {
+  if (S.status !== 'complete') {
+    toast('Complete the draft before saving to Match History', 'error');
+    return;
+  }
+  if (S.meta.matchSaved) {
+    toast('This match is already saved to Match History', 'info');
+    return;
+  }
+
   const records = loadMatchRecords();
-  
+
   const record = {
     id: 'match_' + Date.now(),
     timestamp: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' ' + new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
@@ -3336,199 +4531,194 @@ function saveMatchRecord() {
     game: S.meta?.game || 1,
     bo: S.meta?.bo || 'BO3',
     format: S.format || '3ban',
-    status: S.status,
+    winner: null,
     blue: {
       name: S.teams?.blue?.name || 'Blue Team',
       tag: S.teams?.blue?.tag || 'BLUE',
       logo: S.teams?.blue?.logo || '',
-      wins: S.meta?.blueWins || 0,
       bans: JSON.parse(JSON.stringify(S.blueBans || [])),
       picks: JSON.parse(JSON.stringify(S.bluePicks || [])),
       players: JSON.parse(JSON.stringify(S.players?.blue || [])),
-      roles: JSON.parse(JSON.stringify(S.roles?.blue || [])),
-      playerImages: JSON.parse(JSON.stringify(S.playerImages?.blue || []))
+      roles: JSON.parse(JSON.stringify(S.roles?.blue || []))
     },
     red: {
       name: S.teams?.red?.name || 'Red Team',
       tag: S.teams?.red?.tag || 'RED',
       logo: S.teams?.red?.logo || '',
-      wins: S.meta?.redWins || 0,
       bans: JSON.parse(JSON.stringify(S.redBans || [])),
       picks: JSON.parse(JSON.stringify(S.redPicks || [])),
       players: JSON.parse(JSON.stringify(S.players?.red || [])),
-      roles: JSON.parse(JSON.stringify(S.roles?.red || [])),
-      playerImages: JSON.parse(JSON.stringify(S.playerImages?.red || []))
+      roles: JSON.parse(JSON.stringify(S.roles?.red || []))
     }
   };
 
   records.unshift(record);
   saveMatchRecordsArray(records);
-  toast('Match record saved!', 'success');
-  logH('💾 Match Record Saved');
-  renderMatchRecords();
+  applyMatchStats(record);
+  S.meta.matchSaved = true;
+  recalcTotalMatches();
+  saveRoster(); pub();
+  renderRoster(); renderMatchHistory();
+  toast('Match saved to history', 'success');
+  logH('💾 Match saved to history');
 }
 
-function renderMatchRecords() {
-  const container = document.getElementById('tab-records');
-  if (!container) return;
+function matchResultLabel(rec){
+  if(rec.winner==='blue') return `<span class="mh-result blue">${rec.blue.name} Won</span>`;
+  if(rec.winner==='red') return `<span class="mh-result red">${rec.red.name} Won</span>`;
+  return `<span class="mh-result pending">Pending</span>`;
+}
 
+function renderMatchHistory(){
+  const list = document.getElementById('mhList');
+  if(!list) return;
   const records = loadMatchRecords();
+  const count = document.getElementById('mhCount');
+  if(count) count.textContent = `${records.length} match${records.length===1?'':'es'}`;
 
-  if (records.length === 0) {
-    container.innerHTML = `
-      <div style="padding:40px; text-align:center; color:var(--text3);">
-        <i class='bx bx-folder-open' style="font-size:48px; opacity:0.4; margin-bottom:10px;"></i>
-        <div style="font-size:16px; font-weight:700; color:var(--text2);">No Match Records Found</div>
-        <div style="font-size:12px; margin-top:5px;">Click <b>💾 Save Match</b> under Draft Controls to save the current match state.</div>
-      </div>
-    `;
+  if(records.length===0){
+    list.innerHTML = `
+      <div class="mh-empty">
+        <i class='bx bx-history'></i>
+        <div class="mh-empty-t">No matches saved yet</div>
+        <div class="mh-empty-d">Finish a draft, then hit the save icon in Hero Pool or Broadcast to record it here.</div>
+      </div>`;
     return;
   }
 
-  let html = `
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-      <div>
-        <h3 style="margin:0; font-size:16px; font-weight:700;">Recorded Matches (${records.length})</h3>
-        <div style="font-size:11px; color:var(--text3);">View, export, or manage saved match draft records</div>
+  list.innerHTML = records.map(rec => `
+    <div class="mh-card" onclick="openMatchDetail('${rec.id}')">
+      <div class="mh-teams">
+        <span class="mh-team mh-team-b">${rec.blue.name}</span>
+        <span class="mh-vs">VS</span>
+        <span class="mh-team mh-team-r">${rec.red.name}</span>
       </div>
-      <div style="display:flex; gap:8px;">
-        <button class="btn bp bsm" onclick="exportAllMatchRecords()"><i class='bx bx-download'></i> Export All (JSON)</button>
-        <button class="btn bd bsm" onclick="clearAllMatchRecords()"><i class='bx bx-trash'></i> Clear All</button>
+      <div class="mh-meta">${rec.tournament} · ${rec.bo} G${rec.game} · ${rec.timestamp}</div>
+      ${matchResultLabel(rec)}
+    </div>
+  `).join('');
+}
+
+let mhdCurrentId = null;
+
+function mhdPickRow(h, player, role){
+  if(!h || !h.name) return `<div class="mhd-pick-row"><div class="mhd-none">${player||'Empty slot'} — No Pick</div></div>`;
+  const img = h.portrait || h.img;
+  return `<div class="mhd-pick-row">${img?`<img src="${img}" onerror="this.style.display='none'">`:''}<div class="mhd-pick-name">${h.name}</div><span class="mhd-pick-player">${player||''}${role?' · '+role:''}</span></div>`;
+}
+
+function mhdBanChips(list){
+  const bans = validBanList(list);
+  if(!bans.length) return `<div class="mhd-none">No bans</div>`;
+  return `<div class="mhd-bans">${bans.map(h=>`<div class="mhd-ban-chip">${h.icon||h.portrait||h.img?`<img src="${h.icon||h.portrait||h.img}" onerror="this.style.display='none'">`:''}<span>${h.name}</span></div>`).join('')}</div>`;
+}
+
+function openMatchDetail(id){
+  mhdCurrentId = id;
+  renderMatchDetail();
+  document.getElementById('matchDetailModal').classList.add('show');
+}
+function closeMatchDetail(){
+  document.getElementById('matchDetailModal').classList.remove('show');
+  mhdCurrentId = null;
+}
+
+function renderMatchDetail(){
+  const records = loadMatchRecords();
+  const rec = records.find(r=>r.id===mhdCurrentId);
+  if(!rec){ closeMatchDetail(); return; }
+
+  document.getElementById('mhdTitle').textContent = `${rec.blue.name} vs ${rec.red.name}`;
+  document.getElementById('mhdSub').textContent = `${rec.tournament} · ${rec.match} · ${rec.bo} Game ${rec.game} · ${rec.timestamp}`;
+
+  const body = document.getElementById('mhdBody');
+  body.innerHTML = `
+    <div class="mhd-sides">
+      <div>
+        <div class="mhd-side-head blue"><i class='bx bxs-circle' style="font-size:8px;"></i> ${rec.blue.name}</div>
+        <div class="mhd-sec-lbl">Bans</div>
+        ${mhdBanChips(rec.blue.bans)}
+        <div class="mhd-sec-lbl">Picks</div>
+        <div class="mhd-picks">${(rec.blue.picks||[]).map((h,i)=>mhdPickRow(h, rec.blue.players?.[i], rec.blue.roles?.[i])).join('')}</div>
+      </div>
+      <div>
+        <div class="mhd-side-head red"><i class='bx bxs-circle' style="font-size:8px;"></i> ${rec.red.name}</div>
+        <div class="mhd-sec-lbl">Bans</div>
+        ${mhdBanChips(rec.red.bans)}
+        <div class="mhd-sec-lbl">Picks</div>
+        <div class="mhd-picks">${(rec.red.picks||[]).map((h,i)=>mhdPickRow(h, rec.red.players?.[i], rec.red.roles?.[i])).join('')}</div>
       </div>
     </div>
-    <div style="display:flex; flex-direction:column; gap:15px;">
-  `;
-
-  records.forEach(rec => {
-    const bName = rec.blue.name || rec.blue.tag || 'Blue Team';
-    const rName = rec.red.name || rec.red.tag || 'Red Team';
-    const bLogo = rec.blue.logo ? `<img src="${rec.blue.logo}" style="width:24px;height:24px;object-fit:contain;">` : '';
-    const rLogo = rec.red.logo ? `<img src="${rec.red.logo}" style="width:24px;height:24px;object-fit:contain;">` : '';
-
-    html += `
-      <div style="background:var(--panel); border:1px solid var(--border); border-radius:var(--rs); padding:14px; position:relative;">
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:8px; margin-bottom:10px;">
-          <div>
-            <span style="font-weight:700; color:var(--blue); font-size:13px;">${rec.tournament}</span> · 
-            <span style="font-size:12px; color:var(--text2);">${rec.match} (${rec.bo} - Game ${rec.game})</span>
-            <span style="font-size:10px; background:var(--panel2); padding:2px 6px; border-radius:4px; margin-left:6px; border:1px solid var(--border);">${rec.format.toUpperCase()}</span>
-          </div>
-          <div style="font-size:11px; color:var(--text3); display:flex; align-items:center; gap:8px;">
-            <span><i class='bx bx-time'></i> ${rec.timestamp}</span>
-            <button class="btn bg2 bsm" onclick="copySingleRecord('${rec.id}')" title="Copy Record JSON"><i class='bx bx-copy'></i></button>
-            <button class="btn bd bsm" onclick="deleteSingleRecord('${rec.id}')" title="Delete Record"><i class='bx bx-trash'></i></button>
-          </div>
-        </div>
-
-        <!-- TEAM SCORE HEADER -->
-        <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:15px; align-items:center; margin-bottom:12px; background:var(--panel2); padding:10px 15px; border-radius:var(--rs);">
-          <!-- Blue Team -->
-          <div style="display:flex; align-items:center; gap:10px;">
-            ${bLogo}
-            <div>
-              <div style="font-weight:700; color:var(--blue); font-size:14px;">${bName}</div>
-              <div style="font-size:10px; color:var(--text3);">${rec.blue.tag || ''}</div>
-            </div>
-          </div>
-          <!-- Score -->
-          <div style="font-size:18px; font-weight:900; letter-spacing:2px; text-align:center;">
-            <span style="color:var(--blue);">${rec.blue.wins}</span> : <span style="color:var(--red);">${rec.red.wins}</span>
-          </div>
-          <!-- Red Team -->
-          <div style="display:flex; align-items:center; justify-content:flex-end; gap:10px; text-align:right;">
-            <div>
-              <div style="font-weight:700; color:var(--red); font-size:14px;">${rName}</div>
-              <div style="font-size:10px; color:var(--text3);">${rec.red.tag || ''}</div>
-            </div>
-            ${rLogo}
-          </div>
-        </div>
-
-        <!-- BANS SUMMARY -->
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:12px;">
-          <div>
-            <div style="font-size:10px; font-weight:700; color:var(--text3); margin-bottom:4px;">BLUE BANS</div>
-            <div style="display:flex; gap:5px; flex-wrap:wrap;">
-              ${rec.blue.bans.map(h => `
-                <div style="display:flex; align-items:center; gap:4px; background:var(--panel2); border:1px solid var(--border); padding:2px 6px; border-radius:4px; font-size:11px;">
-                  ${h.icon ? `<img src="${h.icon}" style="width:16px;height:16px;object-fit:cover;border-radius:2px;filter:grayscale(100%);">` : ''}
-                  <span>${h.name}</span>
-                </div>
-              `).join('') || '<span style="font-size:11px;color:var(--text3);">None</span>'}
-            </div>
-          </div>
-          <div>
-            <div style="font-size:10px; font-weight:700; color:var(--text3); margin-bottom:4px;">RED BANS</div>
-            <div style="display:flex; gap:5px; flex-wrap:wrap;">
-              ${rec.red.bans.map(h => `
-                <div style="display:flex; align-items:center; gap:4px; background:var(--panel2); border:1px solid var(--border); padding:2px 6px; border-radius:4px; font-size:11px;">
-                  ${h.icon ? `<img src="${h.icon}" style="width:16px;height:16px;object-fit:cover;border-radius:2px;filter:grayscale(100%);">` : ''}
-                  <span>${h.name}</span>
-                </div>
-              `).join('') || '<span style="font-size:11px;color:var(--text3);">None</span>'}
-            </div>
-          </div>
-        </div>
-
-        <!-- PICKS AND ROSTER -->
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
-          <!-- Blue Picks -->
-          <div>
-            <div style="font-size:10px; font-weight:700; color:var(--blue); margin-bottom:4px;">BLUE ROSTER & PICKS</div>
-            <div style="display:flex; flex-direction:column; gap:4px;">
-              ${rec.blue.players.map((p, i) => {
-                const r = rec.blue.roles[i] || '';
-                const h = rec.blue.picks[i];
-                return `
-                  <div style="display:flex; align-items:center; justify-content:space-between; background:var(--panel2); border:1px solid var(--border); padding:4px 8px; border-radius:4px; font-size:11px;">
-                    <div>
-                      <span style="font-weight:700;">${p || 'Player '+(i+1)}</span>
-                      <span style="font-size:9px; color:var(--text3); margin-left:4px;">(${r})</span>
-                    </div>
-                    ${h ? `
-                      <div style="display:flex; align-items:center; gap:5px;">
-                        ${h.portrait || h.img ? `<img src="${h.portrait || h.img}" style="width:20px;height:20px;object-fit:cover;border-radius:2px;">` : ''}
-                        <span style="font-weight:700; color:var(--gold-accent);">${h.name}</span>
-                      </div>
-                    ` : '<span style="color:var(--text3);">No Pick</span>'}
-                  </div>
-                `;
-              }).join('')}
-            </div>
-          </div>
-
-          <!-- Red Picks -->
-          <div>
-            <div style="font-size:10px; font-weight:700; color:var(--red); margin-bottom:4px;">RED ROSTER & PICKS</div>
-            <div style="display:flex; flex-direction:column; gap:4px;">
-              ${rec.red.players.map((p, i) => {
-                const r = rec.red.roles[i] || '';
-                const h = rec.red.picks[i];
-                return `
-                  <div style="display:flex; align-items:center; justify-content:space-between; background:var(--panel2); border:1px solid var(--border); padding:4px 8px; border-radius:4px; font-size:11px;">
-                    <div>
-                      <span style="font-weight:700;">${p || 'Player '+(i+1)}</span>
-                      <span style="font-size:9px; color:var(--text3); margin-left:4px;">(${r})</span>
-                    </div>
-                    ${h ? `
-                      <div style="display:flex; align-items:center; gap:5px;">
-                        ${h.portrait || h.img ? `<img src="${h.portrait || h.img}" style="width:20px;height:20px;object-fit:cover;border-radius:2px;">` : ''}
-                        <span style="font-weight:700; color:var(--gold-accent);">${h.name}</span>
-                      </div>
-                    ` : '<span style="color:var(--text3);">No Pick</span>'}
-                  </div>
-                `;
-              }).join('')}
-            </div>
-          </div>
-        </div>
-
+    <div class="mhd-winner">
+      <div class="mhd-sec-lbl" style="margin:0;">Match Result</div>
+      <div class="mhd-winner-row">
+        <div class="mhd-win-btn ${rec.winner==='blue'?'sel-blue':''}" onclick="setMatchWinner('${rec.id}','blue')"><i class='bx ${rec.winner==='blue'?'bxs-trophy':'bx-trophy'}'></i>${rec.blue.name} Won</div>
+        <div class="mhd-win-btn ${rec.winner==='red'?'sel-red':''}" onclick="setMatchWinner('${rec.id}','red')"><i class='bx ${rec.winner==='red'?'bxs-trophy':'bx-trophy'}'></i>${rec.red.name} Won</div>
       </div>
-    `;
-  });
+      ${rec.winner?`<div class="mhd-clear-link" onclick="clearMatchWinner('${rec.id}')">Clear result</div>`:''}
+    </div>
+  `;
+}
 
-  html += `</div>`;
-  container.innerHTML = html;
+function setMatchWinner(id, side){
+  const records = loadMatchRecords();
+  const rec = records.find(r=>r.id===id);
+  if(!rec || rec.winner===side) return;
+  if(rec.winner) applyWinDelta(rec, rec.winner, -1);
+  applyWinDelta(rec, side, 1);
+  rec.winner = side;
+  saveMatchRecordsArray(records);
+  recalcTotalMatches();
+  saveRoster(); pub();
+  renderRoster(); renderMatchHistory(); renderMatchDetail();
+  toast(`${side==='blue'?rec.blue.name:rec.red.name} marked as winner`, 'success');
+}
+
+function clearMatchWinner(id){
+  const records = loadMatchRecords();
+  const rec = records.find(r=>r.id===id);
+  if(!rec || !rec.winner) return;
+  applyWinDelta(rec, rec.winner, -1);
+  rec.winner = null;
+  saveMatchRecordsArray(records);
+  recalcTotalMatches();
+  saveRoster(); pub();
+  renderRoster(); renderMatchHistory(); renderMatchDetail();
+  toast('Match result cleared', 'info');
+}
+
+function deleteMatchFromDetail(){
+  if(!mhdCurrentId) return;
+  deleteSingleRecord(mhdCurrentId);
+}
+
+function deleteSingleRecord(id) {
+  let records = loadMatchRecords();
+  const rec = records.find(r => r.id === id);
+  if(!rec) return;
+  if(!confirm('Delete this match record? Its picks, bans and win stats will be removed from Hero Pool totals.')) return;
+  revertMatchStats(rec);
+  records = records.filter(r => r.id !== id);
+  saveMatchRecordsArray(records);
+  recalcTotalMatches();
+  saveRoster(); pub();
+  renderRoster(); renderMatchHistory();
+  if(mhdCurrentId === id) closeMatchDetail();
+  toast('Match record deleted', 'info');
+}
+
+function clearAllMatchRecords() {
+  const records = loadMatchRecords();
+  if(!records.length){ toast('No match records to clear','info'); return; }
+  if (confirm('Delete ALL saved match records? Their contribution to Hero Pool stats will be removed too.')) {
+    records.forEach(rec=>revertMatchStats(rec));
+    saveMatchRecordsArray([]);
+    recalcTotalMatches();
+    saveRoster(); pub();
+    renderRoster(); renderMatchHistory();
+    closeMatchDetail();
+    toast('All match records cleared', 'info');
+  }
 }
 
 function exportAllMatchRecords() {
@@ -3536,37 +4726,211 @@ function exportAllMatchRecords() {
   const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(records, null, 2));
   const dlAnchor = document.createElement('a');
   dlAnchor.setAttribute("href", dataStr);
-  dlAnchor.setAttribute("download", `mpl_match_records_${Date.now()}.json`);
+  dlAnchor.setAttribute("download", `mpl_match_history_${Date.now()}.json`);
   document.body.appendChild(dlAnchor);
   dlAnchor.click();
   dlAnchor.remove();
-  toast('Exported match records JSON', 'success');
+  toast('Exported match history JSON', 'success');
 }
 
-function clearAllMatchRecords() {
-  if (confirm('Are you sure you want to delete ALL saved match records?')) {
-    saveMatchRecordsArray([]);
-    renderMatchRecords();
-    toast('All match records cleared', 'info');
-  }
+function importMatchRecords(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if(!Array.isArray(imported)) { toast('Invalid JSON format','error'); return; }
+
+      const existing = loadMatchRecords();
+      const existingIds = new Set(existing.map(r=>r.id));
+      let added = 0;
+      imported.forEach(rec => {
+        if(!rec || !rec.id || existingIds.has(rec.id)) return;
+        existing.push(rec);
+        existingIds.add(rec.id);
+        added++;
+      });
+
+      if(added === 0){ toast('No new matches to import','info'); input.value=''; return; }
+
+      saveMatchRecordsArray(existing);
+      replayStatsFromMatchHistory(S.roster);
+      recalcTotalMatches();
+      saveRoster(); pub();
+      renderRoster(); renderMatchHistory();
+      toast(`Imported ${added} match${added===1?'':'es'}`, 'success');
+    } catch(err) { toast('Error parsing JSON','error'); }
+    input.value = '';
+  };
+  reader.readAsText(file);
 }
 
-function deleteSingleRecord(id) {
-  let records = loadMatchRecords();
-  records = records.filter(r => r.id !== id);
-  saveMatchRecordsArray(records);
-  renderMatchRecords();
-  toast('Match record deleted', 'info');
-}
+function build50ProMatchRecords(){
+  const rosterMap = {};
+  (S?.roster || defRoster()).forEach(r => { if(r && r.name) rosterMap[r.name] = r; });
+  const heroObj = (name) => {
+    const r = rosterMap[name] || {};
+    return {
+      name,
+      role: r.role || 'Fighter',
+      img: r.img || `assets/portrait/${name}.png`,
+      portrait: r.portrait || r.img || `assets/portrait/${name}.png`,
+      icon: r.icon || `assets/icon/${name.toLowerCase()}.jpg`
+    };
+  };
 
-function copySingleRecord(id) {
-  const records = loadMatchRecords();
-  const rec = records.find(r => r.id === id);
-  if (rec) {
-    navigator.clipboard.writeText(JSON.stringify(rec, null, 2)).then(() => {
-      toast('Copied match JSON to clipboard', 'success');
+  const fallbackTeams = [
+    {
+      name: 'ONIC Philippines', tag: 'ONIC', logo: 'assets/teams/6a9cf3b848a6f_onic.png',
+      players: ['Kirk', 'Kingkong', 'Super Frince', 'Savero', 'Super Yoshi']
+    },
+    {
+      name: 'Team Falcons PH', tag: 'FLCN', logo: 'assets/teams/6a9cf4d3d984c_teamfalcons.png',
+      players: ['Flap', 'Kyle', 'Hadji', 'Super Marco', 'Owgwen']
+    },
+    {
+      name: 'Aurora Gaming', tag: 'RORA', logo: 'assets/teams/6a9cf652cf842_aurora.png',
+      players: ['Nathzz', 'Koyl', 'Yue', 'Domeng', 'Light']
+    }
+  ];
+
+  const dbTeams = (Array.isArray(mplTeamsDB) && mplTeamsDB.length >= 2) ? mplTeamsDB.map(t => {
+    const lineupNames = (t.lineup || []).slice(0, 5).map(pid => {
+      const p = (mplPlayersDB || []).find(x => x.id === pid);
+      return p ? p.name : '';
     });
+    const fb = fallbackTeams.find(f => f.name === t.name || f.tag === t.tag);
+    return {
+      name: t.name,
+      tag: t.tag || 'TEAM',
+      logo: t.logo || (fb ? fb.logo : ''),
+      players: lineupNames.filter(Boolean).length === 5 ? lineupNames : (fb ? fb.players : ['Player 1','Player 2','Player 3','Player 4','Player 5'])
+    };
+  }) : fallbackTeams;
+
+  // Distinct stepped pro-play pick counts across 50 matches (100 picks per role: 25, 19, 15, 12, 9, 7, 5, 4, 3, 1)
+  const ROLE_QUOTAS = {
+    'EXP Lane': [['Edith',25],['Hylos',19],['Phoveus',15],['Terizla',12],['Ruby',9],['Arlott',7],['Yu Zhong',5],['Benedetta',4],['Cici',3],['Lapu Lapu',1]],
+    'Jungle':   [['Suyou',25],['Alpha',19],['Joy',15],['Hayabusa',12],['Nolan',9],['Ling',7],['Fredrinn',5],['Bane',4],['Lancelot',3],['Fanny',1]],
+    'Mid Lane': [['Valentina',25],['Yve',19],['Aurora',15],['Faramis',12],['Vexana',9],['Luo Yi',7],['Pharsa',5],['Zhuxin',4],['Novaria',3],['Lylia',1]],
+    'Gold Lane':[['Moskov',25],['Harith',19],['Claude',15],['Beatrix',12],['Roger',9],['Karrie',7],['Natan',5],['Bruno',4],['Clint',3],['Wanwan',1]],
+    'Roam':     [['Chou',25],['Khufra',19],['Mathilda',15],['Tigreal',12],['Minotaur',9],['Jawhead',7],['Chip',5],['Gatotkaca',4],['Carmilla',3],['Kaja',1]]
+  };
+
+  // Stepped pro-play ban hierarchy across 50 matches (44 down to 6 bans -> 88% down to 12%)
+  const BAN_POOL = [
+    ['Fanny',44],['Zhuxin',41],['Chip',38],['Luo Yi',35],['Ling',32],
+    ['Mathilda',29],['Nolan',26],['Hayabusa',23],['Joy',20],['Harith',17],
+    ['Phoveus',15],['Suyou',14],['Valentina',13],['Hylos',12],['Moskov',11],
+    ['Tigreal',10],['Arlott',9],['Ruby',8],['Claude',7],['Edith',6],
+    ['Helcurt',16],['Kalea',15],['Lukas',14],['Guinevere',13],['Gloo',12],['Diggie',11],['Angela',9]
+  ];
+
+  const drafts = Array.from({ length: 50 }, () => ({
+    used: new Set(),
+    bluePicks: [],
+    redPicks: [],
+    blueBans: [],
+    redBans: []
+  }));
+
+  const roles = ['EXP Lane', 'Jungle', 'Mid Lane', 'Gold Lane', 'Roam'];
+  roles.forEach((role, rIdx) => {
+    const expanded = [];
+    ROLE_QUOTAS[role].forEach(([h, c]) => { for(let i = 0; i < c; i++) expanded.push(h); });
+    for(let m = 0; m < 50; m++){
+      const idx = (m + rIdx * 7) % 50;
+      const bHero = expanded[idx];
+      const rHero = expanded[idx + 50];
+      drafts[m].bluePicks.push(bHero);
+      drafts[m].redPicks.push(rHero);
+      drafts[m].used.add(bHero);
+      drafts[m].used.add(rHero);
+    }
+  });
+
+  const banRem = BAN_POOL.map(([h, c]) => ({ h, c }));
+  for(const item of banRem){
+    const avail = drafts
+      .map((d, i) => ({ d, i, count: d.blueBans.length + d.redBans.length }))
+      .filter(x => !x.d.used.has(item.h) && x.count < 10)
+      .sort((a, b) => a.count - b.count);
+    for(let k = 0; k < item.c && k < avail.length; k++){
+      const targetD = avail[k].d;
+      targetD.used.add(item.h);
+      if(targetD.blueBans.length < 5) targetD.blueBans.push(item.h);
+      else targetD.redBans.push(item.h);
+    }
   }
+
+  // Build all pair combinations between teams in teams_db
+  const matchups = [];
+  for(let i = 0; i < dbTeams.length; i++){
+    for(let j = 0; j < dbTeams.length; j++){
+      if(i !== j) matchups.push([dbTeams[i], dbTeams[j]]);
+    }
+  }
+
+  const stageLabels = [
+    'Regular Season W1', 'Regular Season W2', 'Regular Season W3', 'Regular Season W4',
+    'Regular Season W5', 'Regular Season W6', 'Regular Season W7', 'Regular Season W8',
+    'Playoffs Upper Bracket', 'Grand Finals'
+  ];
+
+  const baseDate = new Date('2026-08-01T16:00:00');
+  return drafts.map((d, m) => {
+    const [blueT, redT] = matchups[m % matchups.length];
+    const dt = new Date(baseDate.getTime() + m * 18 * 3600 * 1000);
+    const ts = dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' ' +
+               dt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    const stage = stageLabels[Math.floor(m / 5) % stageLabels.length];
+    const gameNum = (m % 3) + 1;
+    const winner = ((m * 3 + (m % 2)) % 5 < 3) ? 'blue' : 'red';
+
+    return {
+      id: 'match_pro50_' + String(m + 1).padStart(2, '0'),
+      timestamp: ts,
+      tournament: S.meta?.tournament || 'MPL Season 15',
+      match: stage,
+      game: gameNum,
+      bo: stage.includes('Finals') ? 'BO5' : 'BO3',
+      format: '5ban',
+      winner,
+      blue: {
+        name: blueT.name,
+        tag: blueT.tag,
+        logo: blueT.logo,
+        bans: d.blueBans.map(heroObj),
+        picks: d.bluePicks.map(heroObj),
+        players: [...blueT.players],
+        roles: [...roles]
+      },
+      red: {
+        name: redT.name,
+        tag: redT.tag,
+        logo: redT.logo,
+        bans: d.redBans.map(heroObj),
+        picks: d.redPicks.map(heroObj),
+        players: [...redT.players],
+        roles: [...roles]
+      }
+    };
+  });
+}
+
+function seed50ProMatchRecords(silent = false){
+  const seeded = build50ProMatchRecords();
+  saveMatchRecordsArray(seeded);
+  try { localStorage.setItem('mplPro50Seeded_v2', '1'); } catch(e){}
+  if(!S.roster || !S.roster.length) S.roster = loadRoster();
+  replayStatsFromMatchHistory(S.roster);
+  recalcTotalMatches();
+  saveRoster();
+  pub();
+  renderRoster();
+  renderMatchHistory();
+  if(!silent) toast('Seeded 50 pro-play matches into Match History', 'success');
 }
 
 // ═══════════════════════════════════════════════════
@@ -3677,7 +5041,6 @@ function ltPreset(text,subtext){
 
 function renderHUDPreview(){
   const LANES2=['EXP Lane','Jungle','Mid Lane','Gold Lane','Roam'];
-  const RI2={Fighter:'⚔',Mage:'🔮',Assassin:'🗡',Marksman:'🏹',Tank:'🛡',Support:'💚'};
   ['blue','red'].forEach(side=>{
     const div=document.getElementById('hudPreview'+side.charAt(0).toUpperCase()+side.slice(1));
     if(!div)return;
@@ -3689,7 +5052,7 @@ function renderHUDPreview(){
       const h=picks[i];const p=players[i]||`P${i+1}`;const r=roles[i]||LANES2[i];
       const row=document.createElement('div');
       row.style.cssText='display:flex;align-items:center;gap:6px;padding:4px 6px;background:var(--panel);border:1px solid var(--border);border-radius:3px;font-size:11px;';
-      row.innerHTML=`<span style="width:20px;height:20px;border-radius:3px;overflow:hidden;background:var(--bg);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;">${h?((h.portrait||h.img)?`<img src="${h.portrait||h.img}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.textContent='${RI2[h.role]||'⚔'}'">`:RI2[h.role]||'⚔'):''}</span><span style="font-weight:700;flex:1;color:var(--text);">${p}</span><span style="color:var(--text3);">${h?h.name:'—'}</span>`;
+      row.innerHTML=`<span style="width:20px;height:20px;border-radius:3px;overflow:hidden;background:var(--bg);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;">${h?((h.portrait||h.img)?`<img src="${h.portrait||h.img}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.textContent='⚔'">`:'⚔'):''}</span><span style="font-weight:700;flex:1;color:var(--text);">${p}</span><span style="color:var(--text3);">${h?h.name:'—'}</span>`;
       div.appendChild(row);
     }
   });
@@ -3746,183 +5109,371 @@ function init(){ console.log('Starting init');
 init();
 
 // ==============================================
-// TEAM DATABASE LOGIC
+// TEAM & PLAYER DATABASE LOGIC
 // ==============================================
 let mplTeamsDB = JSON.parse(localStorage.getItem('mplTeamsDB') || '[]');
+let mplPlayersDB = JSON.parse(localStorage.getItem('mplPlayersDB') || '[]');
 
-fetch('teams_db.php')
-  .then(r => r.json())
-  .then(data => {
-    if (Array.isArray(data) && data.length > 0) {
-      mplTeamsDB = data;
+function newId(prefix){ return prefix+'_'+Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
+
+// Converts legacy teams (a fixed 5-slot `roster` array) into standalone player records
+// plus a `lineup` of player ids, so players can be a shared pool with real substitutions.
+function migrateTeamsDB(){
+  let changed = false;
+  mplTeamsDB.forEach(t => { if(!t.id){ t.id = newId('team'); changed = true; } });
+  mplTeamsDB.forEach(t => {
+    if (Array.isArray(t.roster)) {
+      t.lineup = t.roster.map(p => {
+        const player = { id: newId('player'), name: p.name || '', image: p.image || '', teamId: t.id };
+        mplPlayersDB.push(player);
+        return player.id;
+      });
+      delete t.roster;
+      changed = true;
     }
-    
-    // Auto-fix ONIC Philippines if it was created with AP Bren players
-    let __needsSave = false;
-    mplTeamsDB.forEach(t => {
-      if (t.name.toLowerCase().includes('onic')) {
-        if (t.roster && t.roster.length === 5 && t.roster[0].name === 'Owgwen') {
-          t.roster[0].name = 'Kelra'; t.roster[0].role = 'Gold Lane';
-          t.roster[1].name = 'K1NGKONG'; t.roster[1].role = 'Jungle';
-          t.roster[2].name = 'Super Frince'; t.roster[2].role = 'Mid Lane';
-          t.roster[3].name = 'Escalera'; t.roster[3].role = 'EXP Lane';
-          t.roster[4].name = 'Brusko'; t.roster[4].role = 'Roam';
-          __needsSave = true;
-        }
-        // Also fix if it has Flap, Kyle, etc. in normal order
-        else if (t.roster && t.roster.length === 5 && t.roster[0].name === 'Flap') {
-          t.roster[0].name = 'Escalera'; t.roster[0].role = 'EXP Lane';
-          t.roster[1].name = 'K1NGKONG'; t.roster[1].role = 'Jungle';
-          t.roster[2].name = 'Super Frince'; t.roster[2].role = 'Mid Lane';
-          t.roster[3].name = 'Kelra'; t.roster[3].role = 'Gold Lane';
-          t.roster[4].name = 'Brusko'; t.roster[4].role = 'Roam';
-          __needsSave = true;
-        }
-      }
-    });
-    if (__needsSave) {
-      saveDB();
-    } else {
-      renderTeamDB();
-      populateTeamSelects();
-    }
-  })
-  .catch(() => {
-    renderTeamDB();
-    populateTeamSelects();
+    if (!Array.isArray(t.lineup)) { t.lineup = []; changed = true; }
+    while (t.lineup.length < 5) { t.lineup.push(null); changed = true; }
   });
+  if (changed) { saveDB(); savePlayersDB(); }
+}
+
+Promise.all([
+  fetch('teams_db.php').then(r=>r.json()).catch(()=>[]),
+  fetch('players_db.php').then(r=>r.json()).catch(()=>[])
+]).then(([teams, players]) => {
+  if (Array.isArray(teams) && teams.length > 0) mplTeamsDB = teams;
+  if (Array.isArray(players)) mplPlayersDB = players;
+
+  // Auto-fix ONIC Philippines if it was created with AP Bren players (only relevant to pre-migration data)
+  mplTeamsDB.forEach(t => {
+    if (t.name.toLowerCase().includes('onic') && Array.isArray(t.roster) && t.roster.length === 5) {
+      if (t.roster[0].name === 'Owgwen') {
+        t.roster[0].name = 'Kelra'; t.roster[0].role = 'Gold Lane';
+        t.roster[1].name = 'K1NGKONG'; t.roster[1].role = 'Jungle';
+        t.roster[2].name = 'Super Frince'; t.roster[2].role = 'Mid Lane';
+        t.roster[3].name = 'Escalera'; t.roster[3].role = 'EXP Lane';
+        t.roster[4].name = 'Brusko'; t.roster[4].role = 'Roam';
+      } else if (t.roster[0].name === 'Flap') {
+        t.roster[0].name = 'Escalera'; t.roster[0].role = 'EXP Lane';
+        t.roster[1].name = 'K1NGKONG'; t.roster[1].role = 'Jungle';
+        t.roster[2].name = 'Super Frince'; t.roster[2].role = 'Mid Lane';
+        t.roster[3].name = 'Kelra'; t.roster[3].role = 'Gold Lane';
+        t.roster[4].name = 'Brusko'; t.roster[4].role = 'Roam';
+      }
+    }
+  });
+
+  migrateTeamsDB();
+  renderStatMode();
+  populateTeamSelects();
+});
 
 
 function saveDB() {
   localStorage.setItem('mplTeamsDB', JSON.stringify(mplTeamsDB));
   fetch('teams_db.php', { method: 'POST', body: JSON.stringify(mplTeamsDB) }).catch(()=>{});
-  renderTeamDB();
+  if(statMode==='teams') renderTeamStats();
   populateTeamSelects();
 }
 
-function renderTeamDB() { console.log('Starting renderTeamDB');
-  const container = document.getElementById('teamDbList');
-  if (!container) return;
-  container.innerHTML = '';
-  
-  if (mplTeamsDB.length === 0) {
-    container.innerHTML = `<div style="grid-column:1/-1; padding:20px; text-align:center; color:var(--text3); border:1px dashed var(--border); border-radius:var(--r);">No teams saved yet. Click 'Create New Team' to add one!</div>`;
-    return;
-  }
-  
-  mplTeamsDB.forEach((team, idx) => {
-    container.innerHTML += `
-      <div style="background:var(--panel); border:1px solid var(--border); border-radius:var(--r); padding:15px; display:flex; flex-direction:column; gap:10px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-           <div style="display:flex; gap:10px; align-items:center;">
-             <img src="${team.logo || ''}" onerror="this.style.display='none'" style="width:40px;height:40px;object-fit:contain;">
-             <div>
-               <div style="font-weight:bold; font-size:16px;">${team.name}</div>
-               <div style="font-size:11px; color:var(--text2);">${team.tag}</div>
-             </div>
-           </div>
-           <div>
-             <button class="btn bgo bsm" onclick="editTeamDB(${idx})"><i class='bx bx-edit'></i></button>
-             <button class="btn bd bsm" onclick="deleteTeamDB(${idx})"><i class='bx bx-trash'></i></button>
-           </div>
-        </div>
-        <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:5px; margin-top:10px;">
-          ${team.roster.map(p => `
-             <div style="text-align:center; background:var(--bg); border-radius:var(--rs); padding:5px;">
-               <img src="${p.image || ''}" onerror="this.style.display='none'" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:4px; margin-bottom:5px;">
-               <div style="font-size:10px; font-weight:bold; overflow:hidden; text-overflow:ellipsis;">${p.name || '-'}</div>
-             </div>
-          `).join('')}
-        </div>
-      </div>
-    `;
-  });
+function savePlayersDB() {
+  localStorage.setItem('mplPlayersDB', JSON.stringify(mplPlayersDB));
+  fetch('players_db.php', { method: 'POST', body: JSON.stringify(mplPlayersDB) }).catch(()=>{});
+  if(statMode==='players') renderPlayerStats();
 }
 
-function openTeamEditor() {
-  document.getElementById('teId').value = '';
-  document.getElementById('teName').value = '';
-  document.getElementById('teTag').value = '';
-  document.getElementById('teLogoPreview').src = '';
-  document.getElementById('teLogoPreview').style.display = 'none';
-  document.getElementById('teLogoPath').value = '';
-  
-  const rc = document.getElementById('teRosterContainer');
-  rc.innerHTML = '';
-  const roles = ['EXP Lane', 'Jungle', 'Mid Lane', 'Gold Lane', 'Roam'];
-  
-  for(let i=0; i<5; i++) {
-    rc.innerHTML += `
-      <div style="flex:1; display:flex; flex-direction:column; align-items:center; background:var(--bg); padding:10px; border:1px solid var(--border); border-radius:var(--r); position:relative; cursor:pointer;" onclick="document.getElementById('tePlayerFile${i}').click()">
-         <div style="font-size:9px; color:var(--text3); margin-bottom:5px; text-transform:uppercase;">${roles[i]}</div>
-         
-         <img id="tePlayerImgPreview${i}" src="" style="width:60px; height:60px; object-fit:cover; border-radius:4px; margin-bottom:10px; display:none;">
-         <div id="tePlayerPlaceholder${i}" style="width:60px; height:60px; display:flex; align-items:center; justify-content:center; background:var(--panel); border-radius:4px; margin-bottom:10px; color:var(--text3); border:1px dashed var(--border);"><i class='bx bx-image-add' style="font-size:24px;"></i></div>
-         
-         <input type="text" id="tePlayerName${i}" placeholder="Player Name" autocomplete="off" style="text-align:center; width:100%; margin-top:auto;" onclick="event.stopPropagation()">
-         <input type="hidden" id="tePlayerRole${i}" value="${roles[i]}">
-         <input type="hidden" id="tePlayerImgPath${i}" value="">
-         <input type="file" id="tePlayerFile${i}" style="display:none;" accept="image/*" onchange="uploadFile(this, 'player', 'tePlayerImgPreview${i}', 'tePlayerImgPath${i}'); document.getElementById('tePlayerPlaceholder${i}').style.display='none';">
-      </div>
-    `;
+function exportPlayersDB(){
+  const b=new Blob([JSON.stringify(mplPlayersDB,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='players.json';a.click();
+}
+
+function importPlayersDB(input){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if(Array.isArray(data)){
+        mplPlayersDB = data;
+        savePlayersDB();
+        toast('Players imported','success');
+      } else { toast('Invalid JSON format','error'); }
+    } catch(err){ toast('Error parsing JSON','error'); }
+    input.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function exportTeamsDB(){
+  const b=new Blob([JSON.stringify(mplTeamsDB,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='teams.json';a.click();
+}
+
+function importTeamsDB(input){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if(Array.isArray(data)){
+        mplTeamsDB = data;
+        saveDB();
+        populateTeamSelects();
+        toast('Teams imported','success');
+      } else { toast('Invalid JSON format','error'); }
+    } catch(err){ toast('Error parsing JSON','error'); }
+    input.value = '';
+  };
+  reader.readAsText(file);
+}
+
+const TEAM_ROLES = ['EXP Lane', 'Jungle', 'Mid Lane', 'Gold Lane', 'Roam'];
+
+let pqeCurrentId = null;
+let playerHeroSortKey = 'picks';
+function setPlayerHeroSort(key){ playerHeroSortKey = key; renderPlayerModalStats(document.getElementById('pqeName').value); }
+
+function openPlayerQuickEdit(statIdx){
+  const stat = (statIdx!=null) ? lastPlayerStats[statIdx] : null;
+  const p = stat && stat.id ? mplPlayersDB.find(x=>x.id===stat.id) : null;
+  pqeCurrentId = p ? p.id : null;
+  const name = p?.name || stat?.name || '';
+
+  document.getElementById('pqeId').value = pqeCurrentId || '';
+  document.getElementById('pqeTitle').textContent = p ? 'Edit Player' : 'Add Player';
+  document.getElementById('pqeName').value = name;
+  document.getElementById('pqeImgPath').value = p?.image || '';
+  const img = document.getElementById('pqeImgPreview');
+  if(p?.image){ img.src = p.image; img.style.display='block'; } else { img.style.display='none'; }
+
+  const sel = document.getElementById('pqeTeam');
+  if(mplTeamsDB.length===0){
+    sel.innerHTML = `<option value="">No teams yet — create one first</option>`;
+  } else {
+    sel.innerHTML = mplTeamsDB.map(t=>`<option value="${t.id}">${t.name}</option>`).join('');
+    sel.value = p?.teamId || mplTeamsDB[0].id;
   }
-  
-  document.getElementById('teTitle').textContent = 'Create Team';
+
+  document.getElementById('pqeDelBtn').style.display = p ? 'block' : 'none';
+  playerHeroSortKey = 'picks';
+  document.getElementById('pqeHeroSort').value = 'picks';
+  setModalColumns('playerQuickEditModal', !!(p || stat));
+  renderPlayerModalStats(name);
+  document.getElementById('playerQuickEditModal').classList.add('show');
+}
+
+function renderPlayerModalStats(name){
+  name = (name||'').trim();
+  const stat = buildPlayerStats().find(x=>x.name.toLowerCase()===name.toLowerCase());
+  const games = stat?.games || 0;
+  const wins = stat?.wins || 0;
+  const losses = games - wins;
+  const wr = games>0 ? Math.round((wins/games)*100) : 0;
+  document.getElementById('pqeGames').textContent = games;
+  document.getElementById('pqeWins').textContent = wins;
+  document.getElementById('pqeLosses').textContent = losses;
+  document.getElementById('pqeWR').textContent = wr+'%';
+  document.getElementById('pqeHeroList').innerHTML = pdHeroRows(stat ? Object.values(stat.heroes) : [], playerHeroSortKey);
+}
+
+function closePlayerQuickEdit(){
+  document.getElementById('playerQuickEditModal').classList.remove('show');
+  pqeCurrentId = null;
+}
+
+function uploadQuickEditPhoto(input){
+  const file = input.files && input.files[0];
+  if(!file) return;
+  const name = (document.getElementById('pqeName').value || 'player').trim();
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('type', 'players');
+  fd.append('name', name + '_' + Date.now().toString(36).slice(-6));
+  fetch('upload.php', { method:'POST', body: fd })
+    .then(r=>r.json())
+    .then(data=>{
+      if(data.success){
+        document.getElementById('pqeImgPath').value = data.path;
+        const img = document.getElementById('pqeImgPreview');
+        img.src = data.path; img.style.display = 'block';
+        toast('Photo uploaded','success');
+      } else {
+        toast('Upload failed: '+(data.message||'unknown error'),'error');
+      }
+    })
+    .catch(err=>toast('Upload error: '+err.message,'error'));
+  input.value = '';
+}
+
+function savePlayerQuickEdit(){
+  const id = pqeCurrentId;
+  const name = document.getElementById('pqeName').value.trim();
+  if(!name){ toast('Enter a player IGN','error'); return; }
+  const teamId = document.getElementById('pqeTeam').value;
+  if(!teamId){ toast('Create a team first','error'); return; }
+  const image = document.getElementById('pqeImgPath').value;
+
+  if(id){
+    const p = mplPlayersDB.find(x=>x.id===id);
+    if(p){ p.name = name; p.image = image; p.teamId = teamId; }
+  } else {
+    const newP = {id:newId('player'), name, image, teamId};
+    mplPlayersDB.push(newP);
+    const team = mplTeamsDB.find(t=>t.id===teamId);
+    if(team){
+      if(!Array.isArray(team.lineup)) team.lineup = [null,null,null,null,null];
+      const emptyIdx = team.lineup.findIndex(x=>!x);
+      if(emptyIdx>=0){ team.lineup[emptyIdx] = newP.id; saveDB(); }
+    }
+  }
+
+  savePlayersDB();
+  closePlayerQuickEdit();
+  toast('Player saved','success');
+}
+
+function deletePlayerQuickEdit(){
+  const id = pqeCurrentId;
+  if(!id) return;
+  if(!confirm('Delete this player? They will be removed from any team lineup too.')) return;
+  mplPlayersDB = mplPlayersDB.filter(p=>p.id!==id);
+  mplTeamsDB.forEach(t=>{ if(Array.isArray(t.lineup)) t.lineup = t.lineup.map(pid=>pid===id?null:pid); });
+  saveDB();
+  savePlayersDB();
+  closePlayerQuickEdit();
+  toast('Player deleted','info');
+}
+
+// Working draft state while the Team Editor modal is open — the lineup is committed to mplTeamsDB on Save,
+// discarded on Cancel. Players themselves are managed entirely from the Players tab (Team Database → Players).
+let teEditingTeamId = null;
+let teDraftLineup = [null,null,null,null,null]; // 5 player ids (or null), one per TEAM_ROLES slot
+
+let teamHeroSortKey = 'picks';
+function setTeamHeroSort(key){ teamHeroSortKey = key; renderTeamModalStats(document.getElementById('teName').value); }
+
+function openTeamEditor(statIdx){
+  const stat = (statIdx!=null) ? lastTeamStats[statIdx] : null;
+  const t = stat && stat.id ? mplTeamsDB.find(x=>x.id===stat.id) : null;
+
+  teEditingTeamId = t ? t.id : newId('team'); // real id up front, so a newly-added player can reference this team immediately after save
+  document.getElementById('teId').value = t ? t.id : '';
+  document.getElementById('teTitle').textContent = t ? 'Edit Team' : 'Create Team';
+  document.getElementById('teName').value = t?.name || stat?.name || '';
+  document.getElementById('teTag').value = t?.tag || '';
+  document.getElementById('teLogoPreview').src = t?.logo || '';
+  document.getElementById('teLogoPreview').style.display = t?.logo ? 'block' : 'none';
+  document.getElementById('teLogoPath').value = t?.logo || '';
+
+  teDraftLineup = (t?.lineup||[]).slice(0,5);
+  while(teDraftLineup.length<5) teDraftLineup.push(null);
+  renderLineupEditor();
+
+  document.getElementById('teDelBtn').style.display = t ? 'block' : 'none';
+  teamHeroSortKey = 'picks';
+  document.getElementById('teHeroSort').value = 'picks';
+  setModalColumns('teamEditorModal', !!(t || stat));
+  renderTeamModalStats(document.getElementById('teName').value);
+
   document.getElementById('teamEditorModal').classList.add('show');
 }
 
-function editTeamDB(idx) {
-  openTeamEditor();
-  const t = mplTeamsDB[idx];
-  document.getElementById('teId').value = idx;
-  document.getElementById('teTitle').textContent = 'Edit Team';
-  document.getElementById('teName').value = t.name;
-  document.getElementById('teTag').value = t.tag;
-  if (t.logo) {
-    document.getElementById('teLogoPreview').src = t.logo;
-    document.getElementById('teLogoPreview').style.display = 'block';
-    document.getElementById('teLogoPath').value = t.logo;
-  }
-  
-  t.roster.forEach((p, i) => {
-    document.getElementById('tePlayerName'+i).value = p.name;
-    if (p.image) {
-      document.getElementById('tePlayerImgPreview'+i).src = p.image;
-      document.getElementById('tePlayerImgPreview'+i).style.display = 'block';
-      document.getElementById('tePlayerPlaceholder'+i).style.display = 'none';
-      document.getElementById('tePlayerImgPath'+i).value = p.image;
-    }
-  });
+function renderTeamModalStats(name){
+  name = (name||'').trim();
+  const stat = buildTeamStats().find(x=>x.name.toLowerCase()===name.toLowerCase());
+  const games = stat?.games || 0;
+  const wins = stat?.wins || 0;
+  const losses = stat?.losses || 0;
+  const decided = wins+losses;
+  const wr = decided>0 ? Math.round((wins/decided)*100) : 0;
+  document.getElementById('teGames').textContent = games;
+  document.getElementById('teWins').textContent = wins;
+  document.getElementById('teLosses').textContent = losses;
+  document.getElementById('teWR').textContent = wr+'%';
+  const heroMap = name ? buildTeamHeroMap(name) : {};
+  document.getElementById('teHeroList').innerHTML = pdHeroRows(Object.values(heroMap), teamHeroSortKey);
 }
 
 function closeTeamEditor() {
   document.getElementById('teamEditorModal').classList.remove('show');
+  teEditingTeamId = null; teDraftLineup = [null,null,null,null,null];
+}
+
+// ---- Starting lineup (5 role slots, each assigned a player already on this team's roster) ----
+function teamPlayerPool(){
+  return mplPlayersDB.filter(p=>p.teamId===teEditingTeamId);
+}
+
+function renderLineupEditor(){
+  const c = document.getElementById('teLineupContainer');
+  c.innerHTML = TEAM_ROLES.map((role,i) => `
+    <div class="td-player-edit">
+      <div class="td-player-role">${role}</div>
+      <div class="td-player-tile readonly" id="teLineupTile${i}">
+        <img class="td-role-fallback-icon" id="teLineupRoleIcon${i}" src="${LANE_ROLE_ICONS[i]}">
+        <img class="td-tile-photo" id="teLineupImg${i}" src="" style="display:none;" onerror="this.style.display='none'; this.previousElementSibling.style.display='block';">
+      </div>
+      <select id="teLineupSel${i}" onchange="onLineupSelect(${i}, this.value)"></select>
+    </div>
+  `).join('');
+  refreshLineupSelects();
+}
+
+function refreshLineupSelects(){
+  const pool = teamPlayerPool();
+  for(let i=0;i<5;i++){
+    const sel = document.getElementById(`teLineupSel${i}`);
+    if(!sel) continue;
+    const cur = teDraftLineup[i] || '';
+    sel.innerHTML = `<option value="">— Empty —</option>` + pool.map(p=>
+      `<option value="${p.id}">${p.name || '(unnamed)'}</option>`).join('');
+    sel.value = cur;
+    updateLineupTile(i);
+  }
+}
+
+function updateLineupTile(i){
+  const pid = teDraftLineup[i];
+  const p = teamPlayerPool().find(x=>x.id===pid);
+  const photo = document.getElementById(`teLineupImg${i}`);
+  const roleIcon = document.getElementById(`teLineupRoleIcon${i}`);
+  if(!photo || !roleIcon) return;
+  if(p && p.image){
+    photo.src = p.image;
+    photo.style.display = 'block';
+    roleIcon.style.display = 'none';
+  } else {
+    photo.style.display = 'none';
+    roleIcon.style.display = 'block';
+  }
+}
+
+function onLineupSelect(i, value){
+  // A player can only start in one slot at a time — clear them from any other slot first.
+  teDraftLineup = teDraftLineup.map(pid => pid===value ? null : pid);
+  teDraftLineup[i] = value || null;
+  refreshLineupSelects();
 }
 
 function saveTeamEditor() {
   try {
-    const tId = document.getElementById('teId').value;
+    const name = document.getElementById('teName').value.trim();
+    if(!name){ toast('Enter a team name','error'); return; }
+
+    const teamId = teEditingTeamId || newId('team');
     const team = {
-      name: document.getElementById('teName').value,
-      tag: document.getElementById('teTag').value,
+      id: teamId,
+      name,
+      tag: document.getElementById('teTag').value.trim(),
       logo: document.getElementById('teLogoPath').value,
-      roster: []
+      lineup: teDraftLineup.slice(0,5)
     };
-    
-    for(let i=0; i<5; i++) {
-      team.roster.push({
-        name: document.getElementById('tePlayerName'+i).value,
-        role: document.getElementById('tePlayerRole'+i).value,
-        image: document.getElementById('tePlayerImgPath'+i).value
-      });
-    }
-    
-    if (tId !== '') {
-      mplTeamsDB[tId] = team;
-    } else {
-      mplTeamsDB.push(team);
-    }
-    
+
+    const idx = mplTeamsDB.findIndex(t=>t.id===teamId);
+    if (idx>=0) mplTeamsDB[idx] = team; else mplTeamsDB.push(team);
+
     saveDB();
     closeTeamEditor();
     toast('Team saved successfully!', 'success');
@@ -3932,11 +5483,16 @@ function saveTeamEditor() {
   }
 }
 
-function deleteTeamDB(idx) {
-  if (confirm('Delete this team?')) {
-    mplTeamsDB.splice(idx, 1);
-    saveDB();
-  }
+function deleteTeamEditor() {
+  const id = teEditingTeamId;
+  if(!id) return;
+  if(!confirm('Delete this team and its player roster?')) return;
+  mplTeamsDB = mplTeamsDB.filter(t=>t.id!==id);
+  mplPlayersDB = mplPlayersDB.filter(p=>p.teamId!==id);
+  saveDB();
+  savePlayersDB();
+  closeTeamEditor();
+  toast('Team deleted','info');
 }
 
 function uploadFile(input, type, previewId, pathId) {
@@ -3970,7 +5526,7 @@ function populateTeamSelects() {
   const redSel = document.getElementById('dbRedTeamSelect');
   if(!blueSel || !redSel) return;
   
-  const opts = `<option value="">-- Select Saved Team --</option>` + mplTeamsDB.map((t, i) => `<option value="${i}">${t.name}</option>`).join('');
+  const opts = `<option value="">-- Select Saved Team --</option>` + mplTeamsDB.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
   
   const bVal = blueSel.value;
   const rVal = redSel.value;
@@ -3983,35 +5539,40 @@ function populateTeamSelects() {
   updateSetupStartButton();
 }
 
-function loadTeamFromDB(side, idx) {
-  if (idx === '') return;
-  const t = mplTeamsDB[idx];
-  
+function loadTeamFromDB(side, teamId) {
+  if (teamId === '') return;
+  const t = mplTeamsDB.find(x=>x.id===teamId);
+  if (!t) return;
+
   S.teams[side].name = t.name;
   S.teams[side].tag = t.tag;
   S.teams[side].logo = t.logo;
-  
-  t.roster.forEach((p, i) => {
+
+  const lineup = (t.lineup||[]).slice(0,5);
+  while(lineup.length<5) lineup.push(null);
+  const starters = lineup.map(pid => mplPlayersDB.find(p=>p.id===pid) || {name:'', image:''});
+
+  starters.forEach((p, i) => {
     if(!S.players[side]) S.players[side] = [];
     if(!S.roles[side]) S.roles[side] = [];
     if(!S.playerImages[side]) S.playerImages[side] = [];
     if(!S.basePlayers[side]) S.basePlayers[side] = [];
     if(!S.baseRoles[side]) S.baseRoles[side] = [];
     if(!S.basePlayerImages[side]) S.basePlayerImages[side] = [];
-    
+
     S.players[side][i] = p.name;
-    S.roles[side][i] = p.role;
+    S.roles[side][i] = TEAM_ROLES[i];
     S.playerImages[side][i] = p.image;
-    
+
     S.basePlayers[side][i] = p.name;
-    S.baseRoles[side][i] = p.role;
+    S.baseRoles[side][i] = TEAM_ROLES[i];
     S.basePlayerImages[side][i] = p.image;
   });
-  
+
   // Render preview
   const previewBox = document.getElementById(`${side}TeamPreview`);
   const icons = ['assets/imgs/black_exp.png', 'assets/imgs/black_core.png', 'assets/imgs/black_mid.png', 'assets/imgs/black_gold.png', 'assets/imgs/black_roam.png'];
-  
+
       const logoBlock = `
       <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:120px; ${side==='blue' ? 'margin-right:20px;' : 'margin-left:20px;'}">
         <img src="${t.logo}" style="width:100px; height:100px; object-fit:contain; margin-bottom:8px;" onerror="this.style.display='none'">
@@ -4020,7 +5581,7 @@ function loadTeamFromDB(side, idx) {
     `;
     const rosterBlock = `
       <div style="display:flex; gap:12px;">
-        ${t.roster.map((p, i) => `
+        ${starters.map((p, i) => `
           <div class="setup-player-card">
             <div class="setup-player-portrait">
               ${p.image ? `<img src="${p.image}" class="player-img" onerror="this.src='${icons[i]}'; this.className='role-icon'">` : `<img src="${icons[i]}" class="role-icon">`}
@@ -4031,7 +5592,7 @@ function loadTeamFromDB(side, idx) {
       </div>
     `;
     previewBox.innerHTML = side === 'blue' ? logoBlock + rosterBlock : rosterBlock + logoBlock;
-  
+
   pub();
 }
 
@@ -4054,8 +5615,10 @@ renderTimerUI = function() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  renderTeamDB();
   populateTeamSelects();
+  if(localStorage.getItem('mplPro50Seeded_v2') !== '1' || loadMatchRecords().length < 50){
+    seed50ProMatchRecords(true);
+  }
 });
 
 

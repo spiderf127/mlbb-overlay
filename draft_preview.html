@@ -32,11 +32,11 @@
     user-select: none;
   }
 
-  /* Main Dynamic Background - 60% Black Overlay */
+  /* Main Dynamic Background - 90% Black Overlay */
   #mainBg {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.9);
     z-index: -1;
     opacity: 0;
     transition: opacity 0.6s ease-in-out;
@@ -315,6 +315,14 @@
   @keyframes slideOutToRight {
     0% { opacity: 1; transform: translateX(0); }
     100% { opacity: 0; transform: translateX(100vw); }
+  }
+  @keyframes fadeInMain {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  @keyframes fadeOutMain {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
   }
 
   .play-anim { opacity: 1 !important; }

@@ -18,7 +18,7 @@
   
   function bgmPlay() {
     if (bgmFadeInt) { clearInterval(bgmFadeInt); bgmFadeInt = null; }
-    bgmAudio.volume = document.getElementById('bgmVol') ? document.getElementById('bgmVol').value : 0.5;
+    bgmAudio.volume = S.settings?.audio?.bgm ?? 0.5;
     bgmAudio.play().catch(()=>{});
     updateBgmUI();
   }
@@ -37,7 +37,7 @@
       vol -= 0.05;
       if (vol <= 0) {
         bgmAudio.pause();
-        bgmAudio.volume = document.getElementById('bgmVol') ? document.getElementById('bgmVol').value : 0.5;
+        bgmAudio.volume = S.settings?.audio?.bgm ?? 0.5;
         clearInterval(bgmFadeInt);
         bgmFadeInt = null;
         updateBgmUI();
@@ -49,9 +49,9 @@
   
   function bgmRestart() {
     if (bgmFadeInt) { clearInterval(bgmFadeInt); bgmFadeInt = null; }
-    bgmAudio.volume = document.getElementById('bgmVol') ? document.getElementById('bgmVol').value : 0.5;
+    bgmAudio.volume = S.settings?.audio?.bgm ?? 0.5;
     bgmAudio.currentTime = 0;
-    bgmAudio.play().catch(()=>{});
+    bgmAudio.pause();
     updateBgmUI();
   }
   
@@ -460,6 +460,7 @@
       
       // Audio Settings
       const elBgm = document.getElementById('setBgmVolume'); if(elBgm) elBgm.value=audio.bgm;
+      bgmAudio.volume = audio.bgm !== undefined ? audio.bgm : 0.5;
       const elSfx = document.getElementById('setSfxVolume'); if(elSfx) elSfx.value=audio.sfx;
       const elVoice = document.getElementById('setVoiceVolume'); if(elVoice) elVoice.value=audio.voice;
       const elAutoVoice = document.getElementById('setAutoVoice'); if(elAutoVoice) elAutoVoice.checked=audio.autoVoice || false;
@@ -760,13 +761,13 @@
       mTour:'MPL Season 15',mMatch:'Upper Bracket Finals',
     };
     Object.entries(fields).forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.value=v;});
-    document.getElementById('mBo').value='BO3';
+    if(document.getElementById('mBo')) document.getElementById('mBo').value='BO3';
     if(document.getElementById('mGame')) document.getElementById('mGame').value=1;
-    document.getElementById('selFmt').value='3ban';
-    document.getElementById('selP').value=5;
-    document.getElementById('banT').value=30;
-    document.getElementById('pickT').value=30;
-    document.getElementById('lcT').value=30;
+    if(document.getElementById('selFmt')) document.getElementById('selFmt').value='3ban';
+    if(document.getElementById('selP')) document.getElementById('selP').value=5;
+    if(document.getElementById('banT')) document.getElementById('banT').value=30;
+    if(document.getElementById('pickT')) document.getElementById('pickT').value=30;
+    if(document.getElementById('lcT')) document.getElementById('lcT').value=30;
     
     toast('Full reset complete','info');logH('⚠ Full reset');
     pub();
